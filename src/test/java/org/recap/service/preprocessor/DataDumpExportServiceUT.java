@@ -16,7 +16,6 @@ import org.recap.RecapConstants;
 import org.recap.TestUtil;
 import org.recap.model.ILSConfigProperties;
 import org.recap.model.export.DataDumpRequest;
-import org.recap.model.jpa.CollectionGroupEntity;
 import org.recap.repository.CollectionGroupDetailsRepository;
 import org.recap.repository.ImsLocationDetailsRepository;
 import org.recap.repository.InstitutionDetailsRepository;
@@ -71,13 +70,9 @@ public class DataDumpExportServiceUT extends BaseTestCaseUT {
     @Value("${etl.data.dump.fetchtype.full}")
     private String fetchTypeFull;
 
-    @Value("${las.assist.email.to}")
-    private String recapAssistEmailAddress;
-
     @Before
     public void setup() throws Exception {
-        ReflectionTestUtils.setField(dataDumpExportService, "fetchTypeFull", fetchTypeFull);
-        ReflectionTestUtils.setField(dataDumpExportService, "recapAssistEmailAddress", recapAssistEmailAddress);
+        ReflectionTestUtils.setField(dataDumpExportService, "fetchTypeFull", "10");
         MockitoAnnotations.initMocks(this);
     }
 
@@ -160,8 +155,8 @@ public class DataDumpExportServiceUT extends BaseTestCaseUT {
     @Test
     public void setDataDumpRequestWithBlankimslocation() {
         Mockito.when(imsLocationDetailsRepository.findByImsLocationCode(Mockito.anyString())).thenReturn(TestUtil.getImsLocationEntity(1,"RECAP","RECAP_LAS"));
-        Mockito.when(collectionGroupDetailsRepository.findByCollectionGroupCode(RecapConstants.COLLECTION_GROUP_SHARED)).thenReturn(getCollectionGroupEntity(1,RecapConstants.COLLECTION_GROUP_SHARED));
-        Mockito.when(collectionGroupDetailsRepository.findByCollectionGroupCode(RecapConstants.COLLECTION_GROUP_OPEN)).thenReturn(getCollectionGroupEntity(2,RecapConstants.COLLECTION_GROUP_OPEN));
+        Mockito.when(collectionGroupDetailsRepository.findByCollectionGroupCode(RecapConstants.COLLECTION_GROUP_SHARED)).thenReturn(TestUtil.getCollectionGroupEntities(1,RecapConstants.COLLECTION_GROUP_SHARED,RecapConstants.COLLECTION_GROUP_OPEN));
+        Mockito.when(collectionGroupDetailsRepository.findByCollectionGroupCode(RecapConstants.COLLECTION_GROUP_OPEN)).thenReturn(TestUtil.getCollectionGroupEntities(2,RecapConstants.COLLECTION_GROUP_OPEN,RecapConstants.COLLECTION_GROUP_OPEN));
         dataDumpExportService.setDataDumpRequest(new DataDumpRequest(),"10","PUL",new Date().toString(),new Date().toString(),"","","PUL","test@htcindia.com","0","");
         assertTrue(true);
     }
@@ -204,11 +199,43 @@ public class DataDumpExportServiceUT extends BaseTestCaseUT {
         ilsConfigProperties.setEtlInitialDataLoadedDate(new SimpleDateFormat(RecapConstants.DATE_FORMAT_YYYYMMDD).format(new Date()));
         Mockito.when(propertyUtil.getILSConfigProperties(Mockito.anyString())).thenReturn(ilsConfigProperties);
         String validationMessage =dataDumpExportService.validateIncomingRequest(dataDumpRequest);
-        assertTrue(validationMessage.contains("The date used for incremental data dump precedes (or) is the date on which records for the institution PUL were created. Kindly use a later date or contact HTC Support  for assistance."));
         assertTrue(validationMessage.contains("The incremental Date limit is missing. "));
         assertTrue(validationMessage.contains(RecapConstants.DATADUMP_EMAIL_TO_ADDRESS_REQUIRED));
         assertTrue(validationMessage.contains(RecapConstants.INPROGRESS_ERR_MSG));
     }
+    @Test
+    public void validateIncomingRequestIncrementalFailureInvalidDate() {
+        ReflectionTestUtils.setField(dataDumpExportService, "incrementalDateLimit", "");
+        DataDumpRequest dataDumpRequest=getDataDumpRequest(Arrays.asList("PUL"),"PUL",Arrays.asList("RECAP"),RecapConstants.DATADUMP_FETCHTYPE_INCREMENTAL,RecapConstants.DATADUMP_TRANSMISSION_TYPE_FTP,"1");
+        dataDumpRequest.setToEmailAddress("");
+        Mockito.when(institutionDetailsRepository.findAllInstitutionCodeExceptHTC()).thenReturn(Arrays.asList("PUL","CUL","NYPL","HUL"));
+        Mockito.when(imsLocationDetailsRepository.findAllImsLocationCode()).thenReturn(Arrays.asList("RECAP","HD"));
+        String dataDumpStatusFileName = getClass().getResource("dataExportStatusInProgress.txt").getPath();
+        ReflectionTestUtils.setField(dataDumpExportService, "dataDumpStatusFileName", dataDumpStatusFileName);
+        ILSConfigProperties ilsConfigProperties=new  ILSConfigProperties();
+        ilsConfigProperties.setEtlInitialDataLoadedDate(new SimpleDateFormat(RecapConstants.DATE_FORMAT_YYYYMMDD).format(new Date()));
+        Mockito.when(propertyUtil.getILSConfigProperties(Mockito.anyString())).thenReturn(ilsConfigProperties);
+        String validationMessage =dataDumpExportService.validateIncomingRequest(dataDumpRequest);
+        assertTrue(validationMessage.contains(RecapConstants.DATADUMP_EMAIL_TO_ADDRESS_REQUIRED));
+        assertTrue(validationMessage.contains(RecapConstants.INPROGRESS_ERR_MSG));
+    }
+    @Test
+    public void validateIncomingRequestIncrementalFailureinitialDataLoadDateString() {
+        ReflectionTestUtils.setField(dataDumpExportService, "incrementalDateLimit", "");
+        DataDumpRequest dataDumpRequest=getDataDumpRequest(Arrays.asList("PUL"),"PUL",Arrays.asList("RECAP"),RecapConstants.DATADUMP_FETCHTYPE_INCREMENTAL,RecapConstants.DATADUMP_TRANSMISSION_TYPE_FTP,RecapCommonConstants.DATE_FORMAT_YYYYMMDDHHMM);
+        dataDumpRequest.setToEmailAddress("");
+        Mockito.when(institutionDetailsRepository.findAllInstitutionCodeExceptHTC()).thenReturn(Arrays.asList("PUL","CUL","NYPL","HUL"));
+        Mockito.when(imsLocationDetailsRepository.findAllImsLocationCode()).thenReturn(Arrays.asList("RECAP","HD"));
+        String dataDumpStatusFileName = getClass().getResource("dataExportStatusInProgress.txt").getPath();
+        ReflectionTestUtils.setField(dataDumpExportService, "dataDumpStatusFileName", dataDumpStatusFileName);
+        ILSConfigProperties ilsConfigProperties=new  ILSConfigProperties();
+        Mockito.when(propertyUtil.getILSConfigProperties(Mockito.anyString())).thenReturn(ilsConfigProperties);
+        String validationMessage =dataDumpExportService.validateIncomingRequest(dataDumpRequest);
+        assertTrue(validationMessage.contains("The incremental Date limit is missing. "));
+        assertTrue(validationMessage.contains(RecapConstants.DATADUMP_EMAIL_TO_ADDRESS_REQUIRED));
+        assertTrue(validationMessage.contains(RecapConstants.INPROGRESS_ERR_MSG));
+    }
+
 
     @Test
     public void validateIncomingRequestException() {
@@ -239,7 +266,23 @@ public class DataDumpExportServiceUT extends BaseTestCaseUT {
         ilsConfigProperties.setEtlInitialDataLoadedDate(new SimpleDateFormat(RecapConstants.DATE_FORMAT_YYYYMMDD).format(new Date()));
         Mockito.when(propertyUtil.getILSConfigProperties(Mockito.anyString())).thenReturn(ilsConfigProperties);
         String validationMessage =dataDumpExportService.validateIncomingRequest(dataDumpRequest);
-        assertTrue(validationMessage.contains("The date used for incremental data dump precedes (or) is the date on which records for the institution PUL were created. Kindly use a later date or contact HTC Support  for assistance."));
+        assertTrue(validationMessage.contains(RecapConstants.DATADUMP_EMAIL_TO_ADDRESS_REQUIRED));
+        assertTrue(validationMessage.contains(RecapConstants.INPROGRESS_ERR_MSG));
+    }
+    @Test
+    public void validateIncomingRequestDateFailureincrementalDateLimitBlank() {
+        ReflectionTestUtils.setField(dataDumpExportService, "incrementalDateLimit", "");
+        DataDumpRequest dataDumpRequest=getDataDumpRequest(Arrays.asList("PUL"),"PUL",Arrays.asList("RECAP"),RecapConstants.DATADUMP_FETCHTYPE_INCREMENTAL,RecapConstants.DATADUMP_TRANSMISSION_TYPE_FTP,RecapCommonConstants.DATE_FORMAT_YYYYMMDDHHMM);
+        dataDumpRequest.setToEmailAddress("");
+        dataDumpRequest.setDate(new SimpleDateFormat(RecapCommonConstants.DATE_FORMAT_YYYYMMDDHHMM).format(new DateTime(new Date()).minusDays(7).toDate()));
+        Mockito.when(institutionDetailsRepository.findAllInstitutionCodeExceptHTC()).thenReturn(Arrays.asList("PUL","CUL","NYPL","HUL"));
+        Mockito.when(imsLocationDetailsRepository.findAllImsLocationCode()).thenReturn(Arrays.asList("RECAP","HD"));
+        String dataDumpStatusFileName = getClass().getResource("dataExportStatusInProgress.txt").getPath();
+        ReflectionTestUtils.setField(dataDumpExportService, "dataDumpStatusFileName", dataDumpStatusFileName);
+        ILSConfigProperties ilsConfigProperties=new  ILSConfigProperties();
+        ilsConfigProperties.setEtlInitialDataLoadedDate(new SimpleDateFormat(RecapConstants.DATE_FORMAT_YYYYMMDD).format(new Date()));
+        Mockito.when(propertyUtil.getILSConfigProperties(Mockito.anyString())).thenReturn(ilsConfigProperties);
+        String validationMessage =dataDumpExportService.validateIncomingRequest(dataDumpRequest);
         assertTrue(validationMessage.contains(RecapConstants.DATADUMP_EMAIL_TO_ADDRESS_REQUIRED));
         assertTrue(validationMessage.contains(RecapConstants.INPROGRESS_ERR_MSG));
     }
@@ -303,12 +346,5 @@ public class DataDumpExportServiceUT extends BaseTestCaseUT {
         dataDumpRequest.setToEmailAddress("test@htcindia.com");
         dataDumpRequest.setDate(new SimpleDateFormat(date).format(new Date()));
         return dataDumpRequest;
-    }
-
-    private CollectionGroupEntity getCollectionGroupEntity(int id,String collectionGroupCode) {
-        CollectionGroupEntity collectionGroupEntity=new CollectionGroupEntity();
-        collectionGroupEntity.setId(id);
-        collectionGroupEntity.setCollectionGroupCode(collectionGroupCode);
-        return collectionGroupEntity;
     }
 }

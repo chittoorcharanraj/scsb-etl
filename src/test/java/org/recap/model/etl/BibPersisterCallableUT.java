@@ -1,11 +1,9 @@
 package org.recap.model.etl;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.recap.BaseTestCaseUT;
 import org.recap.TestUtil;
 import org.recap.model.csv.FailureReportReCAPCSVRecord;
@@ -58,6 +56,9 @@ public class BibPersisterCallableUT extends BaseTestCaseUT {
     private Map<String, Integer> collectionGroupMap;
 
     @Mock
+    Map<String, Integer>  imsLocationCodeMap;
+
+    @Mock
     BibRecord bibRecord;
 
     @Mock
@@ -87,12 +88,6 @@ public class BibPersisterCallableUT extends BaseTestCaseUT {
     @Mock
     ImsLocationDetailsRepository imsLocationDetailsRepository;
 
-    @Before
-    public void setUp() {
-
-        MockitoAnnotations.initMocks(this);
-    }
-
     @Test
     public void newInstance() {
         BibRecord bibRecord = new BibRecord();
@@ -100,9 +95,10 @@ public class BibPersisterCallableUT extends BaseTestCaseUT {
         bibPersisterCallable.setItemStatusMap(itemStatusMap);
         bibPersisterCallable.setInstitutionEntitiesMap(institutionMap);
         bibPersisterCallable.setCollectionGroupMap(collectionGroupMap);
+        bibPersisterCallable.setImsLocationCodeMap(imsLocationCodeMap);
         bibPersisterCallable.setBibRecord(bibRecord);
         bibPersisterCallable.setInstitutionName("PUL");
-        assertEquals("PUL",bibPersisterCallable.getInstitutionName());
+        assertEquals("PUL", bibPersisterCallable.getInstitutionName());
     }
 
     @Test
@@ -110,6 +106,7 @@ public class BibPersisterCallableUT extends BaseTestCaseUT {
         Mockito.when(institutionMap.get("NYPL")).thenReturn(3);
         Mockito.when(itemStatusMap.get("Available")).thenReturn(1);
         Mockito.when(collectionGroupMap.get("Open")).thenReturn(2);
+        Mockito.when(imsLocationCodeMap.get(Mockito.anyString())).thenReturn(1);
 
         List<FailureReportReCAPCSVRecord> failureReportReCAPCSVRecords = new ArrayList<>();
 
@@ -154,6 +151,7 @@ public class BibPersisterCallableUT extends BaseTestCaseUT {
         ReflectionTestUtils.setField(bibPersisterCallable,"marcUtil",marcUtil);
         Mockito.when(marcUtil.getControlFieldValue(recordType, "001")).thenReturn("NYPG001000011-B");
         ReflectionTestUtils.setField(bibPersisterCallable,"imsLocationDetailsRepository",imsLocationDetailsRepository);
+        ReflectionTestUtils.setField(bibPersisterCallable,"imsLocationCodeMap",imsLocationCodeMap);
         Mockito.when(imsLocationDetailsRepository.findByImsLocationCode(Mockito.anyString())).thenReturn(TestUtil.getImsLocationEntity(1,"RECAP","RECAP_LAS"));
         Map<String, Object> map = (Map<String, Object>) bibPersisterCallable.call();
         if (map != null) {
@@ -206,7 +204,6 @@ public class BibPersisterCallableUT extends BaseTestCaseUT {
         File file = new File(resource.toURI());
         assertNotNull(file);
         assertTrue(file.exists());
-
         BibPersisterCallable bibPersisterCallable = new BibPersisterCallable();
         bibPersisterCallable.setItemStatusMap(itemStatusMap);
         bibPersisterCallable.setInstitutionEntitiesMap(institutionMap);
@@ -216,6 +213,12 @@ public class BibPersisterCallableUT extends BaseTestCaseUT {
         bibPersisterCallable.setDbReportUtil(dbReportUtil);
         ReflectionTestUtils.setField(bibPersisterCallable,"marcUtil",marcUtil);
         Mockito.when(marcUtil.getDataFieldValue(recordType, "900", null, null, "a")).thenReturn("Open");
+        Mockito.when(marcUtil.getDataFieldValue(recordType, "876", null, null, "p")).thenReturn("123456");
+        Mockito.when(marcUtil.getDataFieldValue(recordType, "876", null, null, "l")).thenReturn("RECAP");
+        Mockito.when(marcUtil.getDataFieldValue(recordType, "876", null, null, "t")).thenReturn("4745");
+        Mockito.when(marcUtil.getDataFieldValue(recordType, "876", null, null, "a")).thenReturn("9");
+        Mockito.when(marcUtil.getDataFieldValue(recordType, "876", null, null, "h")).thenReturn("In Library Use");
+        Mockito.when(marcUtil.getDataFieldValue(recordType, "900", null, null, "b")).thenReturn("PA");
         Mockito.when(collectionGroupMap.containsKey("Open")).thenReturn(true);
         assertNotNull(bibPersisterCallable.getItemStatusMap());
         assertNotNull(bibPersisterCallable.getInstitutionEntitiesMap());
@@ -223,6 +226,7 @@ public class BibPersisterCallableUT extends BaseTestCaseUT {
         assertNotNull(bibPersisterCallable.getXmlRecordEntity());
         assertNotNull(bibPersisterCallable.getBibRecord());
         ReflectionTestUtils.setField(bibPersisterCallable,"imsLocationDetailsRepository",imsLocationDetailsRepository);
+        ReflectionTestUtils.setField(bibPersisterCallable,"imsLocationCodeMap",imsLocationCodeMap);
         Mockito.when(imsLocationDetailsRepository.findByImsLocationCode(Mockito.anyString())).thenReturn(TestUtil.getImsLocationEntity(1,"RECAP","RECAP_LAS"));
 
         Map<String, Object> map = (Map<String, Object>) bibPersisterCallable.call();
@@ -270,6 +274,7 @@ public class BibPersisterCallableUT extends BaseTestCaseUT {
         assertNotNull(bibPersisterCallable.getBibRecord());
         ReflectionTestUtils.setField(bibPersisterCallable,"marcUtil",marcUtil);
         ReflectionTestUtils.setField(bibPersisterCallable,"imsLocationDetailsRepository",imsLocationDetailsRepository);
+        ReflectionTestUtils.setField(bibPersisterCallable,"imsLocationCodeMap",imsLocationCodeMap);
         Mockito.when(imsLocationDetailsRepository.findByImsLocationCode(Mockito.anyString())).thenReturn(TestUtil.getImsLocationEntity(1,"RECAP","RECAP_LAS"));
 
         Map<String, Object> map = (Map<String, Object>) bibPersisterCallable.call();
