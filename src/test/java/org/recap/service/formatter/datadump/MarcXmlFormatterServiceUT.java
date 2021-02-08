@@ -213,11 +213,90 @@ public class MarcXmlFormatterServiceUT extends BaseTestCaseUT {
             "    </record>\n" +
             "</collection>\n";
 
+    private String bibContent1 = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+            "<collection>\n" +
+            "    <record>\n" +
+            "        <leader>00800cas a2200277 i 4500</leader>\n" +
+            "        <controlfield tag=\"003\">NNC</controlfield>\n" +
+            "        <controlfield tag=\"005\">20100215174244.0</controlfield>\n" +
+            "        <controlfield tag=\"008\">810702c19649999ilufr p       0   a0engxd</controlfield>\n" +
+            "        <datafield ind1=\" \" ind2=\" \" tag=\"035\">\n" +
+            "            <subfield code=\"a\">(OCoLC)502399218</subfield>\n" +
+            "        </datafield>\n" +
+            "        <datafield ind1=\" \" ind2=\" \" tag=\"035\">\n" +
+            "            <subfield code=\"a\">(OCoLC)ocn502399218</subfield>\n" +
+            "        </datafield>\n" +
+            "        <datafield ind1=\" \" ind2=\" \" tag=\"035\">\n" +
+            "            <subfield code=\"a\">(CStRLIN)NYCG022-S</subfield>\n" +
+            "        </datafield>\n" +
+            "        <datafield ind1=\" \" ind2=\" \" tag=\"035\">\n" +
+            "            <subfield code=\"9\">AAA0010CU</subfield>\n" +
+            "        </datafield>\n" +
+            "        <datafield ind1=\" \" ind2=\" \" tag=\"035\">\n" +
+            "            <subfield code=\"a\">(NNC)10</subfield>\n" +
+            "        </datafield>\n" +
+            "        <datafield ind1=\" \" ind2=\" \" tag=\"040\">\n" +
+            "            <subfield code=\"a\">NNC</subfield>\n" +
+            "            <subfield code=\"c\">NNC</subfield>\n" +
+            "        </datafield>\n" +
+            "        <datafield ind1=\" \" ind2=\" \" tag=\"090\">\n" +
+            "            <subfield code=\"a\">TA434</subfield>\n" +
+            "            <subfield code=\"b\">.S15</subfield>\n" +
+            "        </datafield>\n" +
+            "        <datafield ind1=\"0\" ind2=\"0\" tag=\"245\">\n" +
+            "            <subfield code=\"a\">SOâ\u0082\u0083 abstracts &amp; newsletter.</subfield>\n" +
+            "        </datafield>\n" +
+            "        <datafield ind1=\"3\" ind2=\"3\" tag=\"246\">\n" +
+            "            <subfield code=\"a\">SO three abstracts &amp; newsletter</subfield>\n" +
+            "        </datafield>\n" +
+            "        <datafield ind1=\" \" ind2=\" \" tag=\"260\">\n" +
+            "            <subfield code=\"a\">[Chicago] :</subfield>\n" +
+            "            <subfield code=\"b\">United States Gypsum,</subfield>\n" +
+            "            <subfield code=\"c\">[1964?]-&lt;1979&gt;</subfield>\n" +
+            "        </datafield>\n" +
+            "        <datafield ind1=\" \" ind2=\" \" tag=\"300\">\n" +
+            "            <subfield code=\"a\">v. :</subfield>\n" +
+            "            <subfield code=\"b\">ill. ;</subfield>\n" +
+            "            <subfield code=\"c\">28 cm.</subfield>\n" +
+            "        </datafield>\n" +
+            "        <datafield ind1=\"0\" ind2=\" \" tag=\"362\">\n" +
+            "            <subfield code=\"a\">Vol. 1, no. 1-</subfield>\n" +
+            "        </datafield>\n" +
+            "        <datafield ind1=\" \" ind2=\" \" tag=\"500\">\n" +
+            "            <subfield code=\"a\">Editor: W.C. Hansen, 1964-1979.</subfield>\n" +
+            "        </datafield>\n" +
+            "        <datafield ind1=\" \" ind2=\"0\" tag=\"650\">\n" +
+            "            <subfield code=\"a\">Cement</subfield>\n" +
+            "            <subfield code=\"v\">Periodicals.</subfield>\n" +
+            "        </datafield>\n" +
+            "        <datafield ind1=\" \" ind2=\"0\" tag=\"650\">\n" +
+            "            <subfield code=\"a\">Gypsum</subfield>\n" +
+            "            <subfield code=\"v\">Periodicals.</subfield>\n" +
+            "        </datafield>\n" +
+            "        <datafield ind1=\"1\" ind2=\" \" tag=\"700\">\n" +
+            "            <subfield code=\"a\">Hansen, W. C.</subfield>\n" +
+            "            <subfield code=\"q\">(Waldemar Conrad),</subfield>\n" +
+            "            <subfield code=\"d\">1896-</subfield>\n" +
+            "        </datafield>\n" +
+            "        <datafield ind1=\"2\" ind2=\" \" tag=\"710\">\n" +
+            "            <subfield code=\"a\">United States Gypsum Co.</subfield>\n" +
+            "        </datafield>\n" +
+            "        <datafield tag=\"852\" ind1=\" \" ind2=\" \">\n" +
+            "              <subfield code=\"a\">NNC-EA</subfield>\n" +
+            "              <subfield code=\"b\">eax</subfield>\n" +
+            "              <subfield code=\"h\">UB271.J3</subfield>\n" +
+            "              <subfield code=\"i\">W8 2005</subfield>\n" +
+            "              <subfield code=\"x\">CIN=AC; OID=AC</subfield>\n" +
+            "        </datafield>" +
+            "    </record>\n" +
+            "</collection>\n";
+
     private String holdingContent = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
             "<collection>\n" +
             "    <record>\n" +
             "        <datafield ind1=\"0\" ind2=\"1\" tag=\"852\">\n" +
             "            <subfield code=\"b\">off,che</subfield>\n" +
+            "            <subfield code=\"0\">1</subfield>\n" +
             "            <subfield code=\"h\">QD79.C454 H533</subfield>\n" +
             "        </datafield>\n" +
             "        <datafield ind1=\"0\" ind2=\"0\" tag=\"866\">\n" +
@@ -229,7 +308,22 @@ public class MarcXmlFormatterServiceUT extends BaseTestCaseUT {
     @Test
     public void generateMarcXml() throws Exception {
         Mockito.when(propertyUtil.getILSConfigProperties(Mockito.anyString())).thenReturn(getIlsConfigProperties());
-        Map<String, Object> successAndFailureFormattedList = marcXmlFormatterService.prepareMarcRecords(Arrays.asList(getBibliographicEntity()));
+        Map<String, Object> successAndFailureFormattedList = marcXmlFormatterService.prepareMarcRecords(Arrays.asList(getBibliographicEntity(bibContent.getBytes())));
+        String marcXmlString = marcXmlFormatterService.covertToMarcXmlString((List<Record>)successAndFailureFormattedList.get(RecapCommonConstants.SUCCESS));
+        List<Record> recordList = readMarcXml(marcXmlString);
+        assertNotNull(recordList);
+        assertEquals("SCSB-100", recordList.get(0).getControlFields().get(0).getData());
+        assertEquals("x", String.valueOf(recordList.get(0).getDataFields().get(19).getSubfields().get(7).getCode()));
+        assertEquals("Shared", recordList.get(0).getDataFields().get(19).getSubfields().get(7).getData());
+        assertEquals("z", String.valueOf(recordList.get(0).getDataFields().get(19).getSubfields().get(8).getCode()));
+        assertEquals("PA", recordList.get(0).getDataFields().get(19).getSubfields().get(8).getData());
+    }
+
+
+    @Test
+    public void generateMarcXmlupdate001Field() throws Exception {
+        Mockito.when(propertyUtil.getILSConfigProperties(Mockito.anyString())).thenReturn(getIlsConfigProperties());
+        Map<String, Object> successAndFailureFormattedList = marcXmlFormatterService.prepareMarcRecords(Arrays.asList(getBibliographicEntity(bibContent1.getBytes())));
         String marcXmlString = marcXmlFormatterService.covertToMarcXmlString((List<Record>)successAndFailureFormattedList.get(RecapCommonConstants.SUCCESS));
         List<Record> recordList = readMarcXml(marcXmlString);
         assertNotNull(recordList);
@@ -310,10 +404,10 @@ public class MarcXmlFormatterServiceUT extends BaseTestCaseUT {
         return bibliographicEntity;
     }
 
-    private BibliographicEntity getBibliographicEntity() throws URISyntaxException, IOException {
+    private BibliographicEntity getBibliographicEntity(byte[] content) throws URISyntaxException, IOException {
         BibliographicEntity bibliographicEntity = new BibliographicEntity();
         bibliographicEntity.setId(100);
-        bibliographicEntity.setContent(bibContent.getBytes());
+        bibliographicEntity.setContent(content);
         bibliographicEntity.setCreatedDate(new Date());
         bibliographicEntity.setLastUpdatedDate(new Date());
         bibliographicEntity.setCreatedBy("tst");
@@ -386,12 +480,8 @@ public class MarcXmlFormatterServiceUT extends BaseTestCaseUT {
 
     @Test
     public void generatedFormattedString() throws Exception {
-
         Optional<BibliographicEntity> bibliographicEntity = Optional.ofNullable(saveBibSingleHoldingsSingleItem("100", "330033001"));
-
-        ArrayList<Record> recordList = new ArrayList<>();
         Mockito.when(propertyUtil.getILSConfigProperties(Mockito.anyString())).thenReturn(getIlsConfigProperties());
-
         Map<String, Object> recordMap = marcXmlFormatterService.prepareMarcRecord(bibliographicEntity.get());
         Record record = (Record) recordMap.get(RecapCommonConstants.SUCCESS);
         assertNotNull(record);
@@ -416,16 +506,19 @@ public class MarcXmlFormatterServiceUT extends BaseTestCaseUT {
         itemEntity.setCustomerCode("1");
         itemEntity.setImsLocationEntity(TestUtil.getImsLocationEntity(1,"RECAP","RECAP_LAS"));
         itemEntity.setItemAvailabilityStatusId(1);
-        itemEntity.setHoldingsEntities(Arrays.asList(getHoldingsEntity(random, 1)));
+        List<HoldingsEntity> holdingsEntityList=new ArrayList<>();
+        HoldingsEntity holdingsEntity=getHoldingsEntity(random, 1);
+        holdingsEntity.setItemEntities(Arrays.asList(itemEntity));
+        holdingsEntity.setBibliographicEntities(Arrays.asList(bibliographicEntity));
+        holdingsEntityList.add(holdingsEntity);
+        itemEntity.setHoldingsEntities(holdingsEntityList);
         ItemStatusEntity itemStatusEntity=new ItemStatusEntity();
         itemStatusEntity.setStatusCode("available");
         itemEntity.setItemStatusEntity(itemStatusEntity);
         CollectionGroupEntity collectionGroupEntity=new CollectionGroupEntity();
         collectionGroupEntity.setCollectionGroupCode("code");
         itemEntity.setCollectionGroupEntity(collectionGroupEntity);
-        getHoldingsEntity(random, 1).setItemEntities(Arrays.asList(itemEntity));
-        getHoldingsEntity(random, 1).setBibliographicEntities(Arrays.asList(bibliographicEntity));
-        bibliographicEntity.setHoldingsEntities(Arrays.asList(getHoldingsEntity(random, 1)));
+        bibliographicEntity.setHoldingsEntities(holdingsEntityList);
         bibliographicEntity.setItemEntities(Arrays.asList(itemEntity));
         return  bibliographicEntity;
     }
