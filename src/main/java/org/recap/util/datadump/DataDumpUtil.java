@@ -8,6 +8,7 @@ import org.recap.model.jpa.ExportStatusEntity;
 import org.recap.repository.CollectionGroupDetailsRepository;
 import org.recap.repository.ETLRequestLogDetailsRepository;
 import org.recap.repository.ExportStatusDetailsRepository;
+import org.recap.service.preprocessor.DataDumpExportService;
 import org.recap.util.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +36,9 @@ public class DataDumpUtil {
 
     @Autowired
     ExportStatusDetailsRepository exportStatusDetailsRepository;
+
+    @Autowired
+    private DataDumpExportService dataDumpExportService;
 
     public String getFetchType(String fetchTypeNumber) {
         String fetchType ="";
@@ -127,6 +131,10 @@ public class DataDumpUtil {
                 exportLog.setEtlStatusId(exportStatusEntity.getId());
                 exportLog.setExportStatusEntity(exportStatusEntity);
                 exportLog.setMessage("Diplayed the result in the response");
+                DataDumpRequest awaitingReqIfAny = verifyAndPrepareAwaitingReqIfAny();
+                if(awaitingReqIfAny!=null){
+                    dataDumpExportService.startDataDumpProcess(dataDumpRequest);
+                }
             }
             else{
                 ExportStatusEntity exportStatusEntity = exportStatusDetailsRepository.findByExportStatusCode(outputString);
@@ -172,10 +180,21 @@ public class DataDumpUtil {
         return dataDumpRequestForAwaiting;
     }
 
+    public DataDumpRequest verifyAndPrepareAwaitingReqIfAny() {
+        ExportStatusEntity awaitingStatusEntity = exportStatusDetailsRepository.findByExportStatusCode(RecapConstants.AWAITING);
+        List<ETLRequestLogEntity> etlRequestsAwaitingForExport = etlRequestLogDetailsRepository.findAllByEtlStatusIdOrderByRequestedTime(awaitingStatusEntity.getId());
+        if(!etlRequestsAwaitingForExport.isEmpty()){
+            return prepareRequestForExistinAwaiting();
+        }
+        return null;
+    }
 
     public DataDumpRequest prepareRequestForExistinAwaiting() {
         ExportStatusEntity exportStatusEntity = exportStatusDetailsRepository.findByExportStatusCode(RecapConstants.AWAITING);
         List<ETLRequestLogEntity> allByStatusOrderByRequestedTime = etlRequestLogDetailsRepository.findAllByEtlStatusIdOrderByRequestedTime(exportStatusEntity.getId());
         return prepareDataDumpReq(allByStatusOrderByRequestedTime.get(0));
     }
+
+
+
 }

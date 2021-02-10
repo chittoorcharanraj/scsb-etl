@@ -239,14 +239,14 @@ public class DataExportEmailProcessor implements Processor {
             inProgressRequestLogEntity.setExportStatusEntity(exportStatusEntity);
             inProgressRequestLogEntity.setCompleteTime(new Date());
             etlRequestLogDetailsRepository.saveAndFlush(inProgressRequestLogEntity);
-            ExportStatusEntity awaitingStatusEntity = exportStatusDetailsRepository.findByExportStatusCode(RecapConstants.AWAITING);
-            List<ETLRequestLogEntity> etlRequestsAwaitingForExport = etlRequestLogDetailsRepository.findAllByEtlStatusIdOrderByRequestedTime(awaitingStatusEntity.getId());
-            if(!etlRequestsAwaitingForExport.isEmpty()){
-                DataDumpRequest dataDumpRequest = dataDumpUtil.prepareRequestForExistinAwaiting();
+            DataDumpRequest dataDumpRequest = dataDumpUtil.verifyAndPrepareAwaitingReqIfAny();
+            if(dataDumpRequest!=null){
                 dataDumpExportService.startDataDumpProcess(dataDumpRequest);
             }
         }
     }
+
+
 
     /**
      * To send an email for data dump export process.
