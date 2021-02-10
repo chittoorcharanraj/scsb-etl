@@ -350,7 +350,7 @@ public class DataDumpExportService {
                         if(isValidDate) {
                         for (String institutionCode : institutionCodes) {
                             ILSConfigProperties ilsConfigProperties = propertyUtil.getILSConfigProperties(institutionCode);
-                                errorcount = checkToRestrictFullDumpViaIncremental(errorMessageMap, errorcount, dataDumpRequestDateString, "2021-01-01 00:00", institutionCode, imsLocationCode);
+                                errorcount = checkToRestrictFullDumpViaIncremental(errorMessageMap, errorcount, dataDumpRequestDateString, propertyUtil.getPropertyByImsLocationAndKey(imsLocationCode, "las.email.assist.to"), institutionCode, imsLocationCode);
                             }
 
                         errorcount = checkForIncrementalDateLimit(currentDate, errorMessageMap, errorcount, dataDumpRequestDateString, imsLocationCode);
@@ -413,11 +413,11 @@ public class DataDumpExportService {
         long days = TimeUnit.DAYS.convert(dateDifference, TimeUnit.MILLISECONDS);
 
         if(StringUtils.isBlank(incrementalDateLimit)) {
-            errorMessageMap.put(errorcount, MessageFormat.format(RecapConstants.INCREMENTAL_DATE_LIMIT_EMPTY_ERR_MSG, "harikrishnan.v@htcindia.com"));
+            errorMessageMap.put(errorcount, MessageFormat.format(RecapConstants.INCREMENTAL_DATE_LIMIT_EMPTY_ERR_MSG, propertyUtil.getPropertyByImsLocationAndKey(imsLocationCode, "las.email.assist.to")));
             errorcount++;
         } else {
             if(Math.toIntExact(days) > Integer.valueOf(incrementalDateLimit)) {
-                errorMessageMap.put(errorcount, MessageFormat.format(RecapConstants.DATADUMP_DAYS_LIMIT_EXCEEDED_ERROR_MSG, incrementalDateLimit, "harikrishnan.v@htcindia.com"));
+                errorMessageMap.put(errorcount, MessageFormat.format(RecapConstants.DATADUMP_DAYS_LIMIT_EXCEEDED_ERROR_MSG, incrementalDateLimit, propertyUtil.getPropertyByImsLocationAndKey(imsLocationCode, "las.email.assist.to")));
                 errorcount++;
             }
         }
@@ -426,13 +426,13 @@ public class DataDumpExportService {
 
     private Integer checkToRestrictFullDumpViaIncremental(Map<Integer, String> errorMessageMap, Integer errorcount, String dataDumpRequestDateString, String initialDataLoadDateString, String institutionCode, String imsLocationCode) {
         if(StringUtils.isBlank(initialDataLoadDateString)) {
-            errorMessageMap.put(errorcount, MessageFormat.format(RecapConstants.INITIAL_DATA_LOAD_DATE_MISSING_ERR_MSG, institutionCode, "harikrishnan.v@htcindia.com"));
+            errorMessageMap.put(errorcount, MessageFormat.format(RecapConstants.INITIAL_DATA_LOAD_DATE_MISSING_ERR_MSG, institutionCode, propertyUtil.getPropertyByImsLocationAndKey(imsLocationCode, "las.email.assist.to")));
             errorcount++;
         } else {
             Date dataDumpRequestDate = getFormattedDate(RecapConstants.DATE_FORMAT_YYYYMMDD, dataDumpRequestDateString);
             Date initialDataLoadDate = getFormattedDate(RecapConstants.DATE_FORMAT_YYYYMMDD, initialDataLoadDateString);
             if(initialDataLoadDate.after(dataDumpRequestDate) || initialDataLoadDate.equals(dataDumpRequestDate)) {
-                errorMessageMap.put(errorcount, MessageFormat.format(RecapConstants.RESTRICT_FULLDUMP_VIA_INCREMENTAL_ERROR_MSG, institutionCode, "harikrishnan.v@htcindia.com"));
+                errorMessageMap.put(errorcount, MessageFormat.format(RecapConstants.RESTRICT_FULLDUMP_VIA_INCREMENTAL_ERROR_MSG, institutionCode, propertyUtil.getPropertyByImsLocationAndKey(imsLocationCode, "las.email.assist.to")));
                 errorcount++;
             }
         }
