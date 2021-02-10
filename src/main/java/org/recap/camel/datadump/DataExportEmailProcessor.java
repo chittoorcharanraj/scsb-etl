@@ -231,8 +231,6 @@ public class DataExportEmailProcessor implements Processor {
     }
 
     private void updateStatusInDB() {
-//        ExportStatusEntity inProgressStatusEntity = exportStatusDetailsRepository.findByExportStatusCode(RecapConstants.IN_PROGRESS);
-//        ETLRequestLogEntity inProgressExportLog = etlRequestLogDetailsRepository.findByEtlStatusId(inProgressStatusEntity.getId());
         Optional<ETLRequestLogEntity> inProgressExportLog = etlRequestLogDetailsRepository.findById(eltRequestId);
         if(inProgressExportLog.isPresent()){
             ETLRequestLogEntity inProgressRequestLogEntity = inProgressExportLog.get();
