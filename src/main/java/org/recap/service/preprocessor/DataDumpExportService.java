@@ -7,16 +7,20 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
+import org.recap.camel.dynamicrouter.DynamicRouteBuilder;
 import org.recap.model.ILSConfigProperties;
 import org.recap.model.export.DataDumpRequest;
 import org.recap.model.jpa.CollectionGroupEntity;
 import org.recap.model.jpa.ImsLocationEntity;
 import org.recap.repository.CollectionGroupDetailsRepository;
+import org.recap.repository.ETLRequestLogDetailsRepository;
 import org.recap.repository.ImsLocationDetailsRepository;
 import org.recap.repository.InstitutionDetailsRepository;
 import org.recap.service.email.datadump.DataDumpEmailService;
 import org.recap.service.executor.datadump.DataDumpExecutorService;
+import org.recap.util.DateUtil;
 import org.recap.util.PropertyUtil;
+import org.recap.util.datadump.DataDumpUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,6 +85,9 @@ public class DataDumpExportService {
     @Value("${etl.data.dump.incremental.date.limit}")
     private String incrementalDateLimit;
 
+    @Value("${scsb.email.assist.to}")
+    private String scsbEmailAssistTo;
+
     @Autowired
     PropertyUtil propertyUtil;
 
@@ -89,6 +96,15 @@ public class DataDumpExportService {
 
     @Autowired
     ImsLocationDetailsRepository imsLocationDetailsRepository;
+
+    @Autowired
+    DataDumpUtil dataDumpUtil;
+
+    @Autowired
+    ETLRequestLogDetailsRepository etlRequestLogDetailsRepository;
+
+    @Autowired
+    private DynamicRouteBuilder dynamicRouteBuilder;
 
     /**
      * Start the data dump process.
@@ -119,15 +135,7 @@ public class DataDumpExportService {
             }else{
                 outputString = getMessageFromIsRecordAvailableQ();
                 if(!outputString.equals(RecapConstants.DATADUMP_RECORDS_AVAILABLE_FOR_PROCESS)){
-                    dataDumpEmailService.sendEmail(dataDumpRequest.getInstitutionCodes(),
-                            Integer.valueOf(0),
-                            Integer.valueOf(0),
-                            dataDumpRequest.getTransmissionType(),
-                            null,
-                            dataDumpRequest.getToEmailAddress(),
-                            RecapConstants.DATADUMP_NO_DATA_AVAILABLE,
-                            Integer.valueOf(0),
-                            dataDumpRequest.getFetchType(), dataDumpRequest.getRequestingInstitutionCode(),dataDumpRequest.getImsDepositoryCodes());
+                    sendEmailForDataAvailable(dataDumpRequest);
                     if (RecapConstants.EXPORT_SCHEDULER_CALL) {
                         producerTemplate.sendBody(RecapConstants.DATA_DUMP_COMPLETION_FROM, dataDumpRequest.getRequestingInstitutionCode());
                     }
@@ -143,6 +151,19 @@ public class DataDumpExportService {
         }
         return responseMessage;
     }
+
+    private void sendEmailForDataAvailable(DataDumpRequest dataDumpRequest) {
+        dataDumpEmailService.sendEmail(dataDumpRequest.getInstitutionCodes(),
+                Integer.valueOf(0),
+                Integer.valueOf(0),
+                dataDumpRequest.getTransmissionType(),
+                null,
+                dataDumpRequest.getToEmailAddress(),
+                RecapConstants.DATADUMP_NO_DATA_AVAILABLE,
+                Integer.valueOf(0),
+                dataDumpRequest.getFetchType(), dataDumpRequest.getRequestingInstitutionCode(), dataDumpRequest.getImsDepositoryCodes());
+    }
+
 
     /**
      * Gets the message from HTTP queue for the status of the data dump process.
@@ -255,7 +276,7 @@ public class DataDumpExportService {
             dataDumpRequest.setOutputFileFormat(outputFormat);
         }
 
-        dataDumpRequest.setDateTimeString(getDateTimeString());
+        dataDumpRequest.setDateTimeString(DateUtil.getDateTimeString());
 
         dataDumpRequest.setRequestId(new SimpleDateFormat(RecapCommonConstants.DATE_FORMAT_YYYYMMDDHHMM).format(new Date())+
                 "-"+dataDumpRequest.getInstitutionCodes()+"-"+dataDumpRequest.getRequestingInstitutionCode()+"-"+dataDumpRequest.getFetchType());
@@ -329,7 +350,7 @@ public class DataDumpExportService {
                         if(isValidDate) {
                         for (String institutionCode : institutionCodes) {
                             ILSConfigProperties ilsConfigProperties = propertyUtil.getILSConfigProperties(institutionCode);
-                                errorcount = checkToRestrictFullDumpViaIncremental(errorMessageMap, errorcount, dataDumpRequestDateString, ilsConfigProperties.getEtlInitialDataLoadedDate(), institutionCode, imsLocationCode);
+                                errorcount = checkToRestrictFullDumpViaIncremental(errorMessageMap, errorcount, dataDumpRequestDateString, propertyUtil.getPropertyByImsLocationAndKey(imsLocationCode, "las.email.assist.to"), institutionCode, imsLocationCode);
                             }
 
                         errorcount = checkForIncrementalDateLimit(currentDate, errorMessageMap, errorcount, dataDumpRequestDateString, imsLocationCode);
@@ -357,7 +378,7 @@ public class DataDumpExportService {
             }
         }
 
-        if(RecapConstants.DATADUMP_TYPES.contains(dataDumpRequest.getFetchType())&& dataDumpRequest.getTransmissionType().equals(RecapConstants.DATADUMP_TRANSMISSION_TYPE_FTP)) {
+        if(RecapConstants.DATADUMP_TYPES.contains(dataDumpRequest.getFetchType())&& dataDumpRequest.getTransmissionType().equals(RecapConstants.DATADUMP_TRANSMISSION_TYPE_FTP) && !dataDumpRequest.isRequestFromSwagger()) {
             String dataExportStatus = getDataExportCurrentStatus();
             String status = Optional.ofNullable(dataExportStatus).orElse("No file created");
             logger.info("Validating datadump status file for requested Dump-Type {} by {} . Status : {}",dataDumpRequest.getFetchType(),dataDumpRequest.getRequestingInstitutionCode(),status);
@@ -520,26 +541,29 @@ public class DataDumpExportService {
         HttpHeaders responseHeaders = new HttpHeaders();
         String date = new Date().toString();
         if (dataDumpRequest.getTransmissionType().equals(RecapConstants.DATADUMP_TRANSMISSION_TYPE_FTP)) {
-            if (outputString.equals(RecapConstants.DATADUMP_RECORDS_AVAILABLE_FOR_PROCESS)) {
+            if (outputString.equals(RecapConstants.DATADUMP_RECORDS_AVAILABLE_FOR_PROCESS)||outputString.equals(RecapConstants.DATADUMP_PROCESS_STARTED)) {
                 logger.info("Writing to data-dump status file as 'In Progress' on Dump-Type:{} Requesting Inst : {}",dataDumpRequest.getFetchType(),dataDumpRequest.getRequestingInstitutionCode());
-                setDataExportCurrentStatus();
-                outputString = RecapConstants.DATADUMP_PROCESS_STARTED;
+                if(!dataDumpRequest.isRequestFromSwagger()){
+                    setDataExportCurrentStatus();
+                }
+                else{
+                    dataDumpUtil.updateStatusInETLRequestLog(dataDumpRequest,RecapConstants.IN_PROGRESS);
+                }
+                    outputString = RecapConstants.DATADUMP_PROCESS_STARTED;
             }
             responseHeaders.add(RecapCommonConstants.RESPONSE_DATE, date);
             return outputString;
         }else if (dataDumpRequest.getTransmissionType().equals(RecapConstants.DATADUMP_TRANSMISSION_TYPE_HTTP) && outputString != null) {
             responseHeaders.add(RecapCommonConstants.RESPONSE_DATE, date);
+            if(dataDumpRequest.isRequestFromSwagger()){
+            dataDumpUtil.updateStatusInETLRequestLog(dataDumpRequest,outputString.contains("100")?outputString:RecapConstants.COMPLETED);}
             return outputString;
         } else {
+            if(dataDumpRequest.isRequestFromSwagger()){
+            dataDumpUtil.updateStatusInETLRequestLog(dataDumpRequest,RecapConstants.DATADUMP_EXPORT_FAILURE);}
             responseHeaders.add(RecapCommonConstants.RESPONSE_DATE, date);
             return RecapConstants.DATADUMP_EXPORT_FAILURE;
         }
-    }
-
-    private String getDateTimeString() {
-        Date date = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat(RecapConstants.DATE_FORMAT_DDMMMYYYYHHMM);
-        return sdf.format(date);
     }
 
     public String getMessageFrom(ConsumerTemplate consumerTemplate, String queue)
@@ -555,4 +579,25 @@ public class DataDumpExportService {
         return outputString;
     }
 
+    public String validateIfExportProcessExistAndStart(DataDumpRequest dataDumpRequest, String responseMessage) {
+        if(responseMessage !=null) {
+            return responseMessage;
+        }
+        else if (!dataDumpUtil.checkIfExportProcessIsRunning(dataDumpRequest)) {
+            dataDumpUtil.saveETlRequestToDB(dataDumpRequest,RecapConstants.AWAITING);
+            return "Can't run export now as another process is in progress. We have saved your request.We will initiate and notify once the exiting process completes";
+        }
+        else if(!dataDumpUtil.checkIfAnyExportProcessIsAwaiting(dataDumpRequest)){
+            dataDumpUtil.saveETlRequestToDB(dataDumpRequest,RecapConstants.AWAITING);
+            DataDumpRequest dataDumpRequestToTrigger = dataDumpUtil.prepareRequestForExistinAwaiting();
+            dynamicRouteBuilder.addDataDumpExportRoutes();
+            startDataDumpProcess(dataDumpRequestToTrigger);
+            return "Can't run export now as another process is in progress. We have saved your request.We will initiate and notify once the exiting process completes";
+        }
+        else{
+            dynamicRouteBuilder.addDataDumpExportRoutes();
+            dataDumpUtil.saveETlRequestToDB(dataDumpRequest,RecapConstants.INITIATED);
+            return  startDataDumpProcess(dataDumpRequest);
+        }
+    }
 }

@@ -17,7 +17,6 @@ import org.recap.model.jaxb.marc.LeaderFieldType;
 import org.recap.model.jaxb.marc.RecordType;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.HoldingsEntity;
-import org.recap.model.jpa.ImsLocationEntity;
 import org.recap.model.jpa.ItemEntity;
 import org.recap.model.jpa.XmlRecordEntity;
 import org.recap.model.jparw.ReportDataEntity;
@@ -25,6 +24,8 @@ import org.recap.model.jparw.ReportEntity;
 import org.recap.repository.ImsLocationDetailsRepository;
 import org.recap.util.DBReportUtil;
 import org.recap.util.MarcUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
@@ -44,6 +45,8 @@ import java.util.concurrent.Callable;
 @Getter
 @Setter
 public class BibPersisterCallable implements Callable {
+
+    private static final Logger logger = LoggerFactory.getLogger(BibPersisterCallable.class);
 
     private MarcUtil marcUtil;
     private BibRecord bibRecord;
@@ -74,6 +77,7 @@ public class BibPersisterCallable implements Callable {
         Date currentDate = new Date();
         Map<String, Object> bibMap = processAndValidateBibliographicEntity(owningInstitutionId,currentDate);
         BibliographicEntity bibliographicEntity = (BibliographicEntity) bibMap.get(RecapConstants.BIBLIOGRAPHIC_ENTITY_NAME);
+        logger.info("Processing ETL load - owningInstitutionBibId : {}",bibliographicEntity.getOwningInstitutionBibId());
         ReportEntity bibReportEntity = (ReportEntity) bibMap.get("bibReportEntity");
         if (bibReportEntity != null) {
             reportEntities.add(bibReportEntity);

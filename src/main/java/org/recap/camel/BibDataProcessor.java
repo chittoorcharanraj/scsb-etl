@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.PersistenceException;
 import java.util.ArrayList;
@@ -198,6 +199,7 @@ public class BibDataProcessor {
      * @param bibliographicEntity
      * @return
      */
+    @Transactional
     public ReportEntity processBibHoldingsItems(DBReportUtil dbReportUtil, BibliographicEntity bibliographicEntity) {
         ReportEntity reportEntity = new ReportEntity();
 

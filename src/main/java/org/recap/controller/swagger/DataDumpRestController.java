@@ -6,9 +6,9 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.recap.RecapConstants;
-import org.recap.camel.dynamicrouter.DynamicRouteBuilder;
 import org.recap.model.export.DataDumpRequest;
 import org.recap.service.preprocessor.DataDumpExportService;
+import org.recap.util.datadump.DataDumpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,25 +29,8 @@ public class DataDumpRestController {
     private DataDumpExportService dataDumpExportService;
 
     @Autowired
-    private DynamicRouteBuilder dynamicRouteBuilder;
+    DataDumpUtil dataDumpUtil;
 
-    /**
-     * Gets data dump export service.
-     *
-     * @return the data dump export service
-     */
-    public DataDumpExportService getDataDumpExportService() {
-        return dataDumpExportService;
-    }
-
-    /**
-     * Gets dynamic route builder.
-     *
-     * @return the dynamic route builder
-     */
-    public DynamicRouteBuilder getDynamicRouteBuilder() {
-        return dynamicRouteBuilder;
-    }
 
     /**
      * API to initiate the data dump export.
@@ -81,13 +64,11 @@ public class DataDumpRestController {
     ){
         RecapConstants.EXPORT_SCHEDULER_CALL = false;
         DataDumpRequest dataDumpRequest = new DataDumpRequest();
-        getDataDumpExportService().setDataDumpRequest(dataDumpRequest,fetchType,institutionCodes,date, toDate, collectionGroupIds,transmissionType,requestingInstitutionCode,emailToAddress,outputFormat,imsDepositoryCodes);
-        String responseMessage = getDataDumpExportService().validateIncomingRequest(dataDumpRequest);
-        if(responseMessage!=null) {
-            return responseMessage;
-        }
-        getDynamicRouteBuilder().addDataDumpExportRoutes();
-        responseMessage = getDataDumpExportService().startDataDumpProcess(dataDumpRequest);
-        return responseMessage;
+        dataDumpRequest.setRequestFromSwagger(true);
+        dataDumpExportService.setDataDumpRequest(dataDumpRequest,fetchType,institutionCodes,date, toDate, collectionGroupIds,transmissionType,requestingInstitutionCode,emailToAddress,outputFormat,imsDepositoryCodes);
+        String responseMessage = dataDumpExportService.validateIncomingRequest(dataDumpRequest);
+        return dataDumpExportService.validateIfExportProcessExistAndStart(dataDumpRequest, responseMessage);
     }
+
+
 }

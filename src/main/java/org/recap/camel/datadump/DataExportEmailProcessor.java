@@ -8,12 +8,19 @@ import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.csv.DataDumpFailureReport;
 import org.recap.model.csv.DataDumpSuccessReport;
+import org.recap.model.export.DataDumpRequest;
+import org.recap.model.jpa.ETLRequestLogEntity;
+import org.recap.model.jpa.ExportStatusEntity;
 import org.recap.model.jparw.ReportDataEntity;
 import org.recap.model.jparw.ReportEntity;
 import org.recap.report.S3DataDumpFailureReportGenerator;
 import org.recap.report.S3DataDumpSuccessReportGenerator;
+import org.recap.repository.ETLRequestLogDetailsRepository;
+import org.recap.repository.ExportStatusDetailsRepository;
 import org.recap.repositoryrw.ReportDetailRepository;
 import org.recap.service.email.datadump.DataDumpEmailService;
+import org.recap.service.preprocessor.DataDumpExportService;
+import org.recap.util.datadump.DataDumpUtil;
 import org.recap.util.datadump.DataExportHeaderUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,8 +32,10 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by peris on 11/5/16.
@@ -41,11 +50,17 @@ public class DataExportEmailProcessor implements Processor {
     @Autowired
     DataDumpEmailService dataDumpEmailService;
 
+    @Autowired
+    DataDumpExportService dataDumpExportService;
+
     /**
      * The Report detail repository.
      */
     @Autowired
     ReportDetailRepository reportDetailRepository;
+
+    @Autowired
+    DataDumpUtil dataDumpUtil;
 
     /**
      * The Data export header util.
@@ -80,6 +95,12 @@ public class DataExportEmailProcessor implements Processor {
     @Autowired
     ProducerTemplate producerTemplate;
 
+    @Autowired
+    ETLRequestLogDetailsRepository etlRequestLogDetailsRepository;
+
+    @Autowired
+    ExportStatusDetailsRepository exportStatusDetailsRepository;
+
     private String transmissionType;
     private List<String> institutionCodes;
     private List<String> imsDepositoryCodes;
@@ -89,6 +110,9 @@ public class DataExportEmailProcessor implements Processor {
     private String toEmailId;
     private String requestId;
     private String fetchType;
+    private Integer eltRequestId;
+
+    private boolean isRequestFromSwagger;
 
     /**
      * This method is invoked by route to send batch export report to FTP and send email to the configured email id.
@@ -140,7 +164,7 @@ public class DataExportEmailProcessor implements Processor {
             logger.info("Sending email for deleted dump");
             processEmail(totalRecordCount,failedBibs,exportedItemCount,fetchType,requestingInstitutionCode);
         }
-        writeDumpStatusToFile();
+        updateDataDumpStatus();
     }
 
     private void setReportFileName(ReportEntity reportEntity){
@@ -185,14 +209,44 @@ public class DataExportEmailProcessor implements Processor {
      *
      * @throws IOException
      */
-    private void writeDumpStatusToFile() throws IOException {
-        logger.info("Writing 'Completed' status to data-dump status file...");
+    private void updateDataDumpStatus() throws IOException {
+        logger.info("Changing status to completed");
+        //TODo change the status to complete based on etl request id
+        if(isRequestFromSwagger){
+            updateStatusInDB();
+        }
+        else{
+            updateStatusInFile();
+        }
+    }
+
+    private void updateStatusInFile() {
         File file = new File(dataDumpStatusFileName);
         try (FileWriter fileWriter = new FileWriter(file, false)) {
             fileWriter.append(RecapConstants.COMPLETED);
             fileWriter.flush();
         } catch (IOException e) {
             logger.error(RecapConstants.EXCEPTION, e);
+        }
+    }
+
+    private void updateStatusInDB() {
+//        ExportStatusEntity inProgressStatusEntity = exportStatusDetailsRepository.findByExportStatusCode(RecapConstants.IN_PROGRESS);
+//        ETLRequestLogEntity inProgressExportLog = etlRequestLogDetailsRepository.findByEtlStatusId(inProgressStatusEntity.getId());
+        Optional<ETLRequestLogEntity> inProgressExportLog = etlRequestLogDetailsRepository.findById(eltRequestId);
+        if(inProgressExportLog.isPresent()){
+            ETLRequestLogEntity inProgressRequestLogEntity = inProgressExportLog.get();
+            ExportStatusEntity exportStatusEntity = exportStatusDetailsRepository.findByExportStatusCode(RecapConstants.COMPLETED);
+            inProgressRequestLogEntity.setEtlStatusId(exportStatusEntity.getId());
+            inProgressRequestLogEntity.setExportStatusEntity(exportStatusEntity);
+            inProgressRequestLogEntity.setCompleteTime(new Date());
+            etlRequestLogDetailsRepository.saveAndFlush(inProgressRequestLogEntity);
+            ExportStatusEntity awaitingStatusEntity = exportStatusDetailsRepository.findByExportStatusCode(RecapConstants.AWAITING);
+            List<ETLRequestLogEntity> etlRequestsAwaitingForExport = etlRequestLogDetailsRepository.findAllByEtlStatusIdOrderByRequestedTime(awaitingStatusEntity.getId());
+            if(!etlRequestsAwaitingForExport.isEmpty()){
+                DataDumpRequest dataDumpRequest = dataDumpUtil.prepareRequestForExistinAwaiting();
+                dataDumpExportService.startDataDumpProcess(dataDumpRequest);
+            }
         }
     }
 
@@ -367,5 +421,21 @@ public class DataExportEmailProcessor implements Processor {
 
     public void setImsDepositoryCodes(List<String> imsDepositoryCodes) {
         this.imsDepositoryCodes = imsDepositoryCodes;
+    }
+
+    public void setRequestFromSwagger(boolean requestFromSwagger) {
+        this.isRequestFromSwagger = requestFromSwagger;
+    }
+
+    public boolean getRequestFromSwagger() {
+        return isRequestFromSwagger;
+    }
+
+    public Integer getEltRequestId() {
+        return eltRequestId;
+    }
+
+    public void setEltRequestId(Integer eltRequestId) {
+        this.eltRequestId = eltRequestId;
     }
 }

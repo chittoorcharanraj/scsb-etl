@@ -90,4 +90,10 @@ public class DateUtil {
         }
         return dateString;
     }
+
+    public static String getDateTimeString() {
+        Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat(RecapConstants.DATE_FORMAT_DDMMMYYYYHHMM);
+        return sdf.format(date);
+    }
 }

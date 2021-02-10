@@ -142,13 +142,6 @@ public class DataExportRouteBuilder {
                 public void configure() throws Exception {
                     from(RecapConstants.DATA_DUMP_COMPLETION_FROM)
                             .routeId(RecapConstants.DATA_DUMP_COMPLETION_ROUTE_ID)
-                            .process(new Processor() {
-                                @Override
-                                public void process(Exchange exchange) throws Exception {
-                                    logger.info("test");
-                                    logger.info("exchange");
-                                }
-                            })
                             .process(dataDumpSequenceProcessor)
                             .onCompletion().log(RecapConstants.DATA_DUMP_COMPLETION_LOG);
                 }
