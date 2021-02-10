@@ -10,6 +10,8 @@ import java.util.List;
 @Data
 public class DataDumpRequest {
 
+    private Integer etlRequestId;
+
     private String fetchType;
     private String date;
     private String toDate;
@@ -19,9 +21,11 @@ public class DataDumpRequest {
     private String outputFileFormat;
     private String dateTimeString;
     private String requestId;
+    private String userName;
 
     private boolean isRecordsAvailable;
     private boolean isIncrementalSequence;
+    private boolean isRequestFromSwagger;
 
     private List<Integer> collectionGroupIds;
     private List<String> institutionCodes;

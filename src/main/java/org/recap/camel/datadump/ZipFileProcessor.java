@@ -71,7 +71,6 @@ public class ZipFileProcessor implements Processor {
     public void process(Exchange exchange) throws Exception {
         String batchHeaders = (String) exchange.getIn().getHeader("batchHeaders");
         String folderName = getValueFor(batchHeaders, "folderName");
-
         dataExportEmailProcessor.setInstitutionCodes(getTokenizedCodes(getValueFor(batchHeaders, "institutionCodes")));
         dataExportEmailProcessor.setTransmissionType(getValueFor(batchHeaders, "transmissionType"));
         dataExportEmailProcessor.setFolderName(folderName);
@@ -80,6 +79,11 @@ public class ZipFileProcessor implements Processor {
         dataExportEmailProcessor.setRequestId(getValueFor(batchHeaders, "requestId"));
         dataExportEmailProcessor.setFetchType(getValueFor(batchHeaders, "fetchType"));
         dataExportEmailProcessor.setImsDepositoryCodes(getTokenizedCodes(getValueFor(batchHeaders, "imsDepositoryCodes")));
+        boolean isRequestFromSwagger = Boolean.parseBoolean(getValueFor(batchHeaders, "isRequestFromSwagger"));
+        dataExportEmailProcessor.setRequestFromSwagger(isRequestFromSwagger);
+        if(isRequestFromSwagger){
+             dataExportEmailProcessor.setEltRequestId(Integer.valueOf(getValueFor(batchHeaders, "etlRequestId")));
+        }
 
         Route ftpRoute = exchange.getContext().getRoute(RecapConstants.FTP_ROUTE);
         if (null != ftpRoute) {

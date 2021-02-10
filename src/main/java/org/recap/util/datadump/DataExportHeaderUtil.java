@@ -104,7 +104,15 @@ public class DataExportHeaderUtil {
                 .append(";")
                 .append("requestId")
                 .append("#")
-                .append(dataDumpRequest.getRequestId());
+                .append(dataDumpRequest.getRequestId())
+                .append(";")
+                .append("etlRequestId")
+                .append("#")
+                .append(dataDumpRequest.getEtlRequestId())
+                .append(";")
+                .append("isRequestFromSwagger")
+                .append("#")
+                .append(dataDumpRequest.isRequestFromSwagger());
 
         return headerString.toString();
     }

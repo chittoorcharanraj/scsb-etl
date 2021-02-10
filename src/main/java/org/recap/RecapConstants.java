@@ -130,20 +130,21 @@ public class RecapConstants {
     public static final String DATADUMP_TRANSMISSION_TYPE_HTTP = "1";
     public static final String DATADUMP_TRANSMISSION_TYPE_FILESYSTEM = "2";
 
+    public static final Integer DATADUMP_CGD_SHARED = 1;
+    public static final Integer DATADUMP_CGD_OPEN = 2;
+    public static final Integer DATADUMP_CGD_PRIVATE = 3;
+
     public static final String DATADUMP_XML_FORMAT_MARC = "0";
     public static final String DATADUMP_XML_FORMAT_SCSB = "1";
     public static final String DATADUMP_DELETED_JSON_FORMAT = "2";
-    public static final Integer IS_NOT_DELETED=0;
     public static final String DATADUMP_SUCCESSLIST = "successList";
-    public static final String DATADUMP_FAILURELIST = "failureList";
-    public static final String DATADUMP_FORMATTEDSTRING = "formattedString";
     public static final String DATADUMP_FORMATERROR = "formatError";
     public static final String DATADUMP_EMAILBODY_FOR = "emailBodyFor";
     public static final String DATADUMP_DATA_AVAILABLE = "dataAvailable";
     public static final String DATADUMP_EXPORT_NOTIFICATION = "dataExportNotification";
     public static final String DATADUMP_NO_DATA_AVAILABLE = "dataNotAvailable";
-    public static final String COMPLETED = "Completed";
-    public static final String IN_PROGRESS = "InProgress";
+    public static final String COMPLETED = "COMPLETED";
+    public static final String IN_PROGRESS = "IN_PROGRESS";
     public static final String FULLDUMP_INPROGRESS_ERR_MSG = "Can't run data export now, already full data export in progress, wait until it completes.";
     public static final String INCREMENTAL_INPROGRESS_ERR_MSG = "Can't run data export now, already Incremental data export in progress, wait until it completes.";
     public static final String DELETED_INPROGRESS_ERR_MSG = "Can't run data export now, already Deleted data export in progress, wait until it completes.";
@@ -223,9 +224,13 @@ public class RecapConstants {
     public static final String DATADUMP_FAILURE_REPORT_SFTP_Q = "direct://datadumpFailureReportSftpQ";
     public static final String DATADUMP_FAILURE_REPORT_SFTP_ID = "datadumpFailureReportSftpQId";
     public static final String DATA_DUMP_COMPLETION_TOPIC_ROUTE_ID = "DataDumpCompletionTopicRouteId";
-    public static final String ETL_REPORT_Q = "scsbactivemq:queue:reportQ";
+    public static final String ETL_REPORT_Q = "scsbactivemq:queue:etlReportQ";
     public static final String IMS_DEPOSITORY_RECAP = "RECAP";
     public static final String IMS_DEPOSITORY_UNKNOWN = "UN";
+    public static final String INITIATED = "INTIATED";
+    public static final String AWAITING = "AWAITING";
+    public static final String INVALID = "INVALID";
+    public static final String SWAGGER = "SWAGGER";
 
     public class MarcFields {
         public static final String CF_001 = "001";
