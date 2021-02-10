@@ -114,14 +114,19 @@ public class DataDumpUtil {
     @Transactional
     public void updateStatusInETLRequestLog(DataDumpRequest dataDumpRequest, String outputString) {
         logger.info("ETL Request ID to update: {}",dataDumpRequest.getEtlRequestId());
-        logger.info("OutputString : {}",outputString);
         Optional<ETLRequestLogEntity> etlRequestLogEntity = etlRequestLogDetailsRepository.findById(dataDumpRequest.getEtlRequestId());
         etlRequestLogEntity.ifPresent(exportLog ->{
-            if(outputString.contains(RecapConstants.DATADUMP_EXPORT_FAILURE) || outputString.contains("100")){
+            if(outputString.contains(RecapConstants.DATADUMP_EXPORT_FAILURE) ){
                 ExportStatusEntity exportStatusEntity = exportStatusDetailsRepository.findByExportStatusCode(RecapConstants.INVALID);
                 exportLog.setEtlStatusId(exportStatusEntity.getId());
                 exportLog.setExportStatusEntity(exportStatusEntity);
                 exportLog.setMessage(outputString);
+            }
+            else if(outputString.contains("100")){
+                ExportStatusEntity exportStatusEntity = exportStatusDetailsRepository.findByExportStatusCode(RecapConstants.COMPLETED);
+                exportLog.setEtlStatusId(exportStatusEntity.getId());
+                exportLog.setExportStatusEntity(exportStatusEntity);
+                exportLog.setMessage("Diplayed the result in the response");
             }
             else{
                 ExportStatusEntity exportStatusEntity = exportStatusDetailsRepository.findByExportStatusCode(outputString);
