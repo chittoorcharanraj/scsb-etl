@@ -9,6 +9,8 @@ import org.recap.repository.CollectionGroupDetailsRepository;
 import org.recap.repository.ETLRequestLogDetailsRepository;
 import org.recap.repository.ExportStatusDetailsRepository;
 import org.recap.util.DateUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +23,9 @@ import java.util.stream.Collectors;
 
 @Component
 public class DataDumpUtil {
+
+    private static final Logger logger = LoggerFactory.getLogger(DataDumpUtil.class);
+
 
     @Autowired
     CollectionGroupDetailsRepository collectionGroupDetailsRepository;
@@ -103,10 +108,12 @@ public class DataDumpUtil {
         etlRequestLogEntity.setProvidedDate(dataDumpRequest.getDate()!=null?DateUtil.getDateFromString(dataDumpRequest.getDate(),RecapCommonConstants.DATE_FORMAT_YYYYMMDDHHMM):null);
         ETLRequestLogEntity savedEtlRequestLog = etlRequestLogDetailsRepository.saveAndFlush(etlRequestLogEntity);
         dataDumpRequest.setEtlRequestId(savedEtlRequestLog.getId());
+        logger.info("ETL Request ID - created : {}",savedEtlRequestLog.getId());
     }
 
     @Transactional
     public void updateStatusInETLRequestLog(DataDumpRequest dataDumpRequest, String outputString) {
+        logger.info("ETL Request ID to update: {}",dataDumpRequest.getEtlRequestId());
         Optional<ETLRequestLogEntity> etlRequestLogEntity = etlRequestLogDetailsRepository.findById(dataDumpRequest.getEtlRequestId());
         etlRequestLogEntity.ifPresent(exportLog ->{
             if(outputString.contains(RecapConstants.DATADUMP_EXPORT_FAILURE)){
