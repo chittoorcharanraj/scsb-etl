@@ -2,7 +2,7 @@ package org.recap.camel.datadump.callable;
 
 import org.junit.Test;
 import org.mockito.Mock;
-import org.recap.BaseTestCase;
+import org.recap.BaseTestCaseUT;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.service.formatter.datadump.DeletedJsonFormatterService;
 
@@ -11,16 +11,17 @@ import java.util.Map;
 
 import static org.junit.Assert.assertTrue;
 
-public class DeletedRecordPreparerCallableUT extends BaseTestCase {
+public class DeletedRecordPreparerCallableUT extends BaseTestCaseUT {
     @Mock
     DeletedJsonFormatterService deletedJsonFormatterService;// = new DeletedJsonFormatterService();
 
     BibliographicEntity bibliographicEntity;
 
     List<BibliographicEntity> bibliographicEntities;
-    DeletedRecordPreparerCallable deletedRecordPreparerCallable = new DeletedRecordPreparerCallable(bibliographicEntities,deletedJsonFormatterService);
+    DeletedRecordPreparerCallable deletedRecordPreparerCallable = new DeletedRecordPreparerCallable(bibliographicEntities, deletedJsonFormatterService);
+
     @Test
-    public void testCall(){
+    public void testCall() {
         Map<String, Object> map = deletedJsonFormatterService.prepareDeletedRecords(bibliographicEntities);
         assertTrue(true);
 

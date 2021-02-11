@@ -3,11 +3,13 @@ package org.recap.service.executor.datadump;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.recap.BaseTestCaseUT;
 import org.recap.RecapConstants;
 import org.recap.model.export.DataDumpRequest;
 import org.recap.model.search.SearchRecordsRequest;
+import org.recap.spring.SwaggerAPIProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,21 +32,37 @@ public class DeletedDataDumpExecutorServiceUT extends BaseTestCaseUT {
     @InjectMocks
     DeletedDataDumpExecutorService mockedDeletedDataDumpExecutorService;
 
+    @Mock
+    SwaggerAPIProvider swaggerAPIProvider;
+
     @Value("${etl.data.dump.deleted.type.onlyorphan.institution}")
-    private String deletedOnlyOrphanInstitution;
+    private final String deletedOnlyOrphanInstitution = "PUL";
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        ReflectionTestUtils.setField(mockedDeletedDataDumpExecutorService,"deletedOnlyOrphanInstitution",deletedOnlyOrphanInstitution);
+        ReflectionTestUtils.setField(mockedDeletedDataDumpExecutorService, "deletedOnlyOrphanInstitution", deletedOnlyOrphanInstitution);
     }
 
     @Test
     public void testpopulateSearchRequest() {
-        String[] requestingInstitutionCodes={"CUL","NYPL"};
-        for (String requestingInstitutionCode:
-        requestingInstitutionCodes) {
+        String[] requestingInstitutionCodes = {"CUL", "NYPL"};
+        for (String requestingInstitutionCode :
+                requestingInstitutionCodes) {
             SearchRecordsRequest searchRecordsRequest = new SearchRecordsRequest();
+            mockedDeletedDataDumpExecutorService.populateSearchRequest(searchRecordsRequest, getDataDumpRequest(requestingInstitutionCode));
+            boolean status = mockedDeletedDataDumpExecutorService.isInterested(RecapConstants.DATADUMP_FETCHTYPE_DELETED);
+            assertTrue(status);
+        }
+    }
+
+    @Test
+    public void testpopulateSearchRequestSameInstituionCode() {
+        String[] requestingInstitutionCodes = {"CUL", "NYPL"};
+        for (String requestingInstitutionCode :
+                requestingInstitutionCodes) {
+            SearchRecordsRequest searchRecordsRequest = new SearchRecordsRequest();
+            ReflectionTestUtils.setField(mockedDeletedDataDumpExecutorService, "deletedOnlyOrphanInstitution", "CUL");
             mockedDeletedDataDumpExecutorService.populateSearchRequest(searchRecordsRequest, getDataDumpRequest(requestingInstitutionCode));
             boolean status = mockedDeletedDataDumpExecutorService.isInterested(RecapConstants.DATADUMP_FETCHTYPE_DELETED);
             assertTrue(status);

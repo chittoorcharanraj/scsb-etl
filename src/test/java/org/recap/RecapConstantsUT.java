@@ -4,12 +4,13 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
 
-public class RecapConstantsUT extends BaseTestCase{
+public class RecapConstantsUT extends BaseTestCaseUT {
     RecapConstants outerObject = new RecapConstants();
     RecapConstants.MarcFields innerObject = outerObject.new MarcFields();
+
     @Test
     public void testConstants() {
-        String CF_001= innerObject.CF_001;
+        String CF_001 = RecapConstants.MarcFields.CF_001;
 
         String DATA_DUMP_FILE_NAME = RecapConstants.DATA_DUMP_FILE_NAME;
         String FILENAME = RecapConstants.FILENAME;
@@ -211,7 +212,7 @@ public class RecapConstantsUT extends BaseTestCase{
         String EXPORTED_DATE = "exportedDate";
 
 
-        boolean  EXPORT_SCHEDULER_CALL =RecapConstants.EXPORT_SCHEDULER_CALL;
+        boolean EXPORT_SCHEDULER_CALL = RecapConstants.EXPORT_SCHEDULER_CALL;
         String EXPORT_DATE_SCHEDULER = RecapConstants.EXPORT_DATE_SCHEDULER;
         String EXPORT_FETCH_TYPE_INSTITUTION = RecapConstants.EXPORT_FETCH_TYPE_INSTITUTION;
 

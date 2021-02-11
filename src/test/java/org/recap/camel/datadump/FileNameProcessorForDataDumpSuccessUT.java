@@ -1,18 +1,23 @@
 package org.recap.camel.datadump;
 
-import org.apache.camel.*;
-import org.apache.camel.impl.*;
-import org.apache.camel.support.*;
-import org.junit.*;
-import org.recap.*;
-import org.recap.model.csv.*;
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.support.DefaultExchange;
+import org.junit.Before;
+import org.junit.Test;
+import org.recap.BaseTestCaseUT;
+import org.recap.model.csv.DataDumpSuccessReport;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
-public class FileNameProcessorForDataDumpSuccessUT extends BaseTestCase {
+public class FileNameProcessorForDataDumpSuccessUT extends BaseTestCaseUT {
     FileNameProcessorForDataDumpSuccess fileNameProcessorForDataDumpSuccess;
+
     @Before
     public void setUpBefore() {
         fileNameProcessorForDataDumpSuccess = new FileNameProcessorForDataDumpSuccess();

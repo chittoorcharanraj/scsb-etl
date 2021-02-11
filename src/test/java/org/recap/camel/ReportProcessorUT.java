@@ -7,10 +7,12 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.Before;
 import org.junit.Test;
-import org.recap.BaseTestCase;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.recap.BaseTestCaseUT;
 import org.recap.RecapCommonConstants;
 import org.recap.model.jparw.ReportEntity;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.recap.repositoryrw.ReportDetailRepository;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -18,11 +20,14 @@ import java.util.Map;
 
 import static org.junit.Assert.assertTrue;
 
-public class ReportProcessorUT extends BaseTestCase {
-    @Autowired
+public class ReportProcessorUT extends BaseTestCaseUT {
+    @InjectMocks
     ReportProcessor reportProcessor;
 
     ReportEntity reportEntity;
+
+    @Mock
+    ReportDetailRepository reportDetailRepository;
 
     @Before
     public void setUpBefore() {

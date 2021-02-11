@@ -1,7 +1,7 @@
 package org.recap.model.csv;
 
 import org.junit.Test;
-import org.recap.BaseTestCase;
+import org.recap.BaseTestCaseUT;
 
 import java.util.Date;
 
@@ -10,10 +10,10 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Created by hemalathas on 18/4/17.
  */
-public class DataDumpFailureReportUT extends BaseTestCase{
+public class DataDumpFailureReportUT extends BaseTestCaseUT {
 
     @Test
-    public void testDataDumpFailureReport(){
+    public void testDataDumpFailureReport() {
         DataDumpFailureReport dataDumpFailureReport = new DataDumpFailureReport();
         dataDumpFailureReport.setInstitutionCodes("PUL");
         dataDumpFailureReport.setRequestingInstitution("CUL");
@@ -21,6 +21,7 @@ public class DataDumpFailureReportUT extends BaseTestCase{
         dataDumpFailureReport.setExportFromDate(new Date().toString());
         dataDumpFailureReport.setCollectionGroupIds("Open");
         dataDumpFailureReport.setTransmissionType("1");
+        dataDumpFailureReport.setImsDepositoryCodes("IMDC");
         dataDumpFailureReport.setExportFormat("1");
         dataDumpFailureReport.setToEmailId("hemalatha.s@htcindia.com");
         dataDumpFailureReport.setFailedBibs("test");
@@ -35,6 +36,7 @@ public class DataDumpFailureReportUT extends BaseTestCase{
         assertNotNull(dataDumpFailureReport.getExportFormat());
         assertNotNull(dataDumpFailureReport.getToEmailId());
         assertNotNull(dataDumpFailureReport.getFailedBibs());
+        assertNotNull(dataDumpFailureReport.getImsDepositoryCodes());
         assertNotNull(dataDumpFailureReport.getFailureCause());
 
 

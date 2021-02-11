@@ -7,15 +7,17 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.Before;
 import org.junit.Test;
-import org.recap.BaseTestCase;
+import org.mockito.InjectMocks;
+import org.recap.BaseTestCaseUT;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertTrue;
 
-public class DataExportPredicateUT extends BaseTestCase {
+public class DataExportPredicateUT extends BaseTestCaseUT {
 
+    @InjectMocks
     DataExportPredicate dataExportPredicate;
 
     @Before

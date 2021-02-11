@@ -1,17 +1,17 @@
 package org.recap.model.csv;
 
 import org.junit.Test;
-import org.recap.BaseTestCase;
+import org.recap.BaseTestCaseUT;
 
 import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by hemalathas on 18/4/17.
  */
-public class SuccessReportReCAPCSVRecordUT extends BaseTestCase{
+public class SuccessReportReCAPCSVRecordUT extends BaseTestCaseUT {
 
     @Test
-    public void testSuccessReportReCAPCSVRecord(){
+    public void testSuccessReportReCAPCSVRecord() {
         SuccessReportReCAPCSVRecord successReportReCAPCSVRecord = new SuccessReportReCAPCSVRecord();
         successReportReCAPCSVRecord.setFileName("test");
         successReportReCAPCSVRecord.setTotalRecordsInFile("test");

@@ -23,25 +23,25 @@ public class FullDataDumpExecutorServiceUT extends BaseTestCaseUT {
     FullDataDumpExecutorService fullDataDumpExecutorService;
 
     @Value("${etl.data.dump.fetchtype.full}")
-    private String fetchTypeFull;
+    private final String fetchTypeFull = "full";
 
     @Before
     public void setUp() throws Exception {
-        ReflectionTestUtils.setField(fullDataDumpExecutorService,"fetchTypeFull",fetchTypeFull);
+        ReflectionTestUtils.setField(fullDataDumpExecutorService, "fetchTypeFull", fetchTypeFull);
         MockitoAnnotations.initMocks(this);
     }
 
     @Test
-    public void isInterested()throws Exception{
-        boolean fetchType=fullDataDumpExecutorService.isInterested(fetchTypeFull);
+    public void isInterested() throws Exception {
+        boolean fetchType = fullDataDumpExecutorService.isInterested(fetchTypeFull);
         assertTrue(fetchType);
     }
 
     @Test
-    public void populateSearchRequest()throws Exception{
-        SearchRecordsRequest searchRecordsRequest=new SearchRecordsRequest();
-        DataDumpRequest dataDumpRequest=new DataDumpRequest();
-        fullDataDumpExecutorService.populateSearchRequest(searchRecordsRequest,dataDumpRequest);
+    public void populateSearchRequest() throws Exception {
+        SearchRecordsRequest searchRecordsRequest = new SearchRecordsRequest();
+        DataDumpRequest dataDumpRequest = new DataDumpRequest();
+        fullDataDumpExecutorService.populateSearchRequest(searchRecordsRequest, dataDumpRequest);
         assertTrue(true);
     }
 }

@@ -1,17 +1,17 @@
 package org.recap.model.jpa;
 
 import org.junit.Test;
-import org.recap.BaseTestCase;
+import org.recap.BaseTestCaseUT;
 
 import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by hemalathas on 20/4/17.
  */
-public class MatchingBibInfoDetailUT extends BaseTestCase{
+public class MatchingBibInfoDetailUT extends BaseTestCaseUT {
 
     @Test
-    public void testMatchingBibInfoDetail(){
+    public void testMatchingBibInfoDetail() {
         MatchingBibInfoDetail matchingBibInfoDetail = new MatchingBibInfoDetail();
         matchingBibInfoDetail.setId(1);
         matchingBibInfoDetail.setBibId("1");

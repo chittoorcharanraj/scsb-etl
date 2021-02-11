@@ -2,7 +2,7 @@ package org.recap.camel.datadump;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.recap.BaseTestCase;
+import org.recap.BaseTestCaseUT;
 import org.recap.camel.datadump.callable.BibEntityPreparerCallable;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.ItemEntity;
@@ -13,7 +13,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertNotNull;
 
-public class BibEntityPreparerCallableUT extends BaseTestCase {
+public class BibEntityPreparerCallableUT extends BaseTestCaseUT {
 
     BibEntityPreparerCallable bibEntityPreparerCallable;
 

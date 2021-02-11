@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.recap.BaseTestCase;
+import org.recap.BaseTestCaseUT;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.service.formatter.datadump.SCSBXmlFormatterService;
 
@@ -16,7 +16,7 @@ import java.util.Map;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-public class BibRecordPreparerCallableUT extends BaseTestCase {
+public class BibRecordPreparerCallableUT extends BaseTestCaseUT {
     @Mock
     BibRecordPreparerCallable bibRecordPreparerCallable;
 
@@ -35,7 +35,7 @@ public class BibRecordPreparerCallableUT extends BaseTestCase {
 
     @Test
     public void testbibRecordPreparerCallable() throws Exception {
-        List<BibliographicEntity> bibliographicEntities= new ArrayList<>();
+        List<BibliographicEntity> bibliographicEntities = new ArrayList<>();
         bibliographicEntities.add(bibliographicEntity);
         bibRecordPreparerCallable = new BibRecordPreparerCallable(bibliographicEntities, scsbXmlFormatterService);
         assertTrue(true);

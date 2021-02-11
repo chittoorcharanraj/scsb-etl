@@ -6,16 +6,16 @@ import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.Test;
-import org.recap.BaseTestCase;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.InjectMocks;
+import org.recap.BaseTestCaseUT;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertTrue;
 
-public class XMLFileLoadExceptionReportProcessorUT extends BaseTestCase {
-    @Autowired
+public class XMLFileLoadExceptionReportProcessorUT extends BaseTestCaseUT {
+    @InjectMocks
     XMLFileLoadExceptionReportProcessor XMLFileLoadExceptionReportProcessor;
 
     @Test
