@@ -65,7 +65,7 @@ public class ETLRequestLogEntity extends AbstractEntity<Integer> {
     private Date completeTime;
 
     @Column(name="EXPORT_STATUS_ID")
-    private Integer etlStatusId;
+    private Integer exportStatusId;
 
     @ManyToOne(cascade = {CascadeType.ALL})
     @JoinColumn(

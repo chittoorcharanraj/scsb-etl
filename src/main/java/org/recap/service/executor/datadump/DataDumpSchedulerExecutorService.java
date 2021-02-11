@@ -4,8 +4,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.recap.RecapConstants;
 import org.recap.model.ILSConfigProperties;
 import org.recap.model.export.DataDumpRequest;
+import org.recap.service.DataExportValidateService;
 import org.recap.service.preprocessor.DataDumpExportService;
 import org.recap.util.PropertyUtil;
+import org.recap.util.datadump.DataDumpUtil;
 import org.recap.util.datadump.JobDataParameterUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,23 +24,11 @@ public class DataDumpSchedulerExecutorService {
 
     private static final Logger logger = LoggerFactory.getLogger(DataDumpSchedulerExecutorService.class);
 
-    @Autowired
-    private DataDumpExportService dataDumpExportService;
-
-    @Autowired
-    private JobDataParameterUtil jobDataParameterUtil;
-
-    @Autowired
-    PropertyUtil propertyUtil;
-
-    /**
-     * Gets data dump export service.
-     *
-     * @return the data dump export service
-     */
-    public DataDumpExportService getDataDumpExportService() {
-        return dataDumpExportService;
-    }
+    @Autowired private DataDumpExportService dataDumpExportService;
+    @Autowired private JobDataParameterUtil jobDataParameterUtil;
+    @Autowired DataExportValidateService dataExportValidateService;
+    @Autowired DataDumpUtil dataDumpUtil;
+    @Autowired PropertyUtil propertyUtil;
 
     /**
      * Gets job data parameter util
@@ -65,15 +55,15 @@ public class DataDumpSchedulerExecutorService {
         if (StringUtils.isBlank(fetchType)) {
             fetchType = requestParameterMap.get(RecapConstants.FETCH_TYPE);
         }
-        getDataDumpExportService().setDataDumpRequest(dataDumpRequest, fetchType, requestParameterMap.get(RecapConstants.INSTITUTION_CODES), date, null, requestParameterMap.get(RecapConstants.COLLECTION_GROUP_IDS), requestParameterMap.get(RecapConstants.TRANSMISSION_TYPE), requestingInstitutionCode, getToEmailAddress(requestingInstitutionCode), requestParameterMap.get("outputFormat"),requestParameterMap.get("imsDepositoryCodes"));
-        String responseMessage = getDataDumpExportService().validateIncomingRequest(dataDumpRequest);
+        dataDumpUtil.setDataDumpRequest(dataDumpRequest, fetchType, requestParameterMap.get(RecapConstants.INSTITUTION_CODES), date, null, requestParameterMap.get(RecapConstants.COLLECTION_GROUP_IDS), requestParameterMap.get(RecapConstants.TRANSMISSION_TYPE), requestingInstitutionCode, getToEmailAddress(requestingInstitutionCode), requestParameterMap.get("outputFormat"),requestParameterMap.get("imsDepositoryCodes"));
+        String responseMessage = dataExportValidateService.validateIncomingRequest(dataDumpRequest);
         if (responseMessage != null) {
             RecapConstants.EXPORT_SCHEDULER_CALL = false;
             RecapConstants.EXPORT_DATE_SCHEDULER = "";
             RecapConstants.EXPORT_FETCH_TYPE_INSTITUTION = "";
             return responseMessage;
         }
-        responseMessage = getDataDumpExportService().startDataDumpProcess(dataDumpRequest);
+        responseMessage = dataDumpExportService.startDataDumpProcess(dataDumpRequest);
         return responseMessage;
     }
 

@@ -1,8 +1,6 @@
 package org.recap.camel.datadump.routebuilder;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.recap.RecapConstants;
 import org.recap.camel.datadump.DataDumpSequenceProcessor;
@@ -129,7 +127,7 @@ public class DataExportRouteBuilder {
                     from(RecapConstants.DATADUMP_STAGING_Q)
                             .routeId(RecapConstants.DATADUMP_STAGING_ROUTE_ID)
                             .choice()
-                            .when(header("transmissionType").isEqualTo(RecapConstants.DATADUMP_TRANSMISSION_TYPE_FTP))
+                            .when(header("transmissionType").isEqualTo(RecapConstants.DATADUMP_TRANSMISSION_TYPE_S3))
                             .to(RecapConstants.DATADUMP_ZIPFILE_FTP_Q)
                             .when(header("transmissionType").isEqualTo(RecapConstants.DATADUMP_TRANSMISSION_TYPE_HTTP))
                             .to(RecapConstants.DATADUMP_HTTP_Q);

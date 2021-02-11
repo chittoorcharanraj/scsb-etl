@@ -235,11 +235,11 @@ public class DataExportEmailProcessor implements Processor {
         if(inProgressExportLog.isPresent()){
             ETLRequestLogEntity inProgressRequestLogEntity = inProgressExportLog.get();
             ExportStatusEntity exportStatusEntity = exportStatusDetailsRepository.findByExportStatusCode(RecapConstants.COMPLETED);
-            inProgressRequestLogEntity.setEtlStatusId(exportStatusEntity.getId());
+            inProgressRequestLogEntity.setExportStatusId(exportStatusEntity.getId());
             inProgressRequestLogEntity.setExportStatusEntity(exportStatusEntity);
             inProgressRequestLogEntity.setCompleteTime(new Date());
             etlRequestLogDetailsRepository.saveAndFlush(inProgressRequestLogEntity);
-            DataDumpRequest dataDumpRequest = dataDumpUtil.verifyAndPrepareAwaitingReqIfAny();
+            DataDumpRequest dataDumpRequest = dataDumpUtil.checkAndPrepareAwaitingReqIfAny();
             if(dataDumpRequest!=null){
                 dataDumpExportService.startDataDumpProcess(dataDumpRequest);
             }
@@ -255,7 +255,7 @@ public class DataExportEmailProcessor implements Processor {
      * @param exportedItemCount
      */
     private void processEmail(String totalRecordCount, String failedBibs, String exportedItemCount,String fetchType,String requestingInstitutionCode){
-        if (transmissionType.equals(RecapConstants.DATADUMP_TRANSMISSION_TYPE_FTP)
+        if (transmissionType.equals(RecapConstants.DATADUMP_TRANSMISSION_TYPE_S3)
                 ||transmissionType.equals(RecapConstants.DATADUMP_TRANSMISSION_TYPE_FILESYSTEM)) {
             dataDumpEmailService.sendEmail(institutionCodes,
                     Integer.valueOf(totalRecordCount),

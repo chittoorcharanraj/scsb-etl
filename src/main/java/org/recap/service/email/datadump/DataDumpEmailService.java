@@ -122,7 +122,7 @@ public class DataDumpEmailService {
 
     }
 
-    public void sendEmailForDumpNotification(DataDumpRequest dataDumpRequest) {
+    public void sendEmailNotification(DataDumpRequest dataDumpRequest) {
         Boolean isIncrementalSequence = Optional.ofNullable(dataDumpRequest.isIncrementalSequence()).orElse(false);
         if(!isIncrementalSequence) {
             String fetchType = dataDumpUtil.getFetchType(dataDumpRequest.getFetchType());

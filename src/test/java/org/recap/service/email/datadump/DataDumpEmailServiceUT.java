@@ -84,12 +84,12 @@ public class DataDumpEmailServiceUT extends BaseTestCaseUT {
 
     @Test
     public void sendEmailForDumpNotification() {
-        DataDumpRequest[] dataDumpRequests={getDataDumpRequest(RecapConstants.DATADUMP_FETCHTYPE_FULL, RecapConstants.DATADUMP_XML_FORMAT_MARC, RecapConstants.DATADUMP_TRANSMISSION_TYPE_FTP),getDataDumpRequest(RecapConstants.DATADUMP_FETCHTYPE_INCREMENTAL, RecapConstants.DATADUMP_XML_FORMAT_SCSB, RecapConstants.DATADUMP_TRANSMISSION_TYPE_HTTP),getDataDumpRequest(RecapConstants.DATADUMP_FETCHTYPE_DELETED, RecapConstants.DATADUMP_DELETED_JSON_FORMAT, RecapConstants.DATADUMP_TRANSMISSION_TYPE_FILESYSTEM),getDataDumpRequest("Export", RecapConstants.DATADUMP_DELETED_JSON_FORMAT, RecapConstants.DATADUMP_TRANSMISSION_TYPE_FILESYSTEM)};
+        DataDumpRequest[] dataDumpRequests={getDataDumpRequest(RecapConstants.DATADUMP_FETCHTYPE_FULL, RecapConstants.DATADUMP_XML_FORMAT_MARC, RecapConstants.DATADUMP_TRANSMISSION_TYPE_S3),getDataDumpRequest(RecapConstants.DATADUMP_FETCHTYPE_INCREMENTAL, RecapConstants.DATADUMP_XML_FORMAT_SCSB, RecapConstants.DATADUMP_TRANSMISSION_TYPE_HTTP),getDataDumpRequest(RecapConstants.DATADUMP_FETCHTYPE_DELETED, RecapConstants.DATADUMP_DELETED_JSON_FORMAT, RecapConstants.DATADUMP_TRANSMISSION_TYPE_FILESYSTEM),getDataDumpRequest("Export", RecapConstants.DATADUMP_DELETED_JSON_FORMAT, RecapConstants.DATADUMP_TRANSMISSION_TYPE_FILESYSTEM)};
         for (DataDumpRequest dataDumpRequest:dataDumpRequests) {
             Mockito.when(dataDumpUtil.getFetchType(Mockito.anyString())).thenCallRealMethod();
             Mockito.when(dataDumpUtil.getOutputformat(Mockito.anyString())).thenCallRealMethod();
             Mockito.when(dataDumpUtil.getTransmissionType(Mockito.anyString())).thenCallRealMethod();
-            dataDumpEmailService.sendEmailForDumpNotification(dataDumpRequest);
+            dataDumpEmailService.sendEmailNotification(dataDumpRequest);
             assertTrue(true);
         }
     }

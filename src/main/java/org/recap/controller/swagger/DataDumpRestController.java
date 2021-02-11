@@ -7,6 +7,8 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.recap.RecapConstants;
 import org.recap.model.export.DataDumpRequest;
+import org.recap.service.DataExportHelperService;
+import org.recap.service.DataExportValidateService;
 import org.recap.service.preprocessor.DataDumpExportService;
 import org.recap.util.datadump.DataDumpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,12 +26,10 @@ import org.springframework.web.bind.annotation.RestController;
 @Api(value="dataDump", description="Export data dump", position = 1)
 public class DataDumpRestController {
 
-
-    @Autowired
-    private DataDumpExportService dataDumpExportService;
-
-    @Autowired
-    DataDumpUtil dataDumpUtil;
+    @Autowired private DataDumpExportService dataDumpExportService;
+    @Autowired private DataExportValidateService dataExportValidateService;
+    @Autowired DataExportHelperService dataExportHelperService;
+    @Autowired DataDumpUtil dataDumpUtil;
 
 
     /**
@@ -65,9 +65,12 @@ public class DataDumpRestController {
         RecapConstants.EXPORT_SCHEDULER_CALL = false;
         DataDumpRequest dataDumpRequest = new DataDumpRequest();
         dataDumpRequest.setRequestFromSwagger(true);
-        dataDumpExportService.setDataDumpRequest(dataDumpRequest,fetchType,institutionCodes,date, toDate, collectionGroupIds,transmissionType,requestingInstitutionCode,emailToAddress,outputFormat,imsDepositoryCodes);
-        String responseMessage = dataDumpExportService.validateIncomingRequest(dataDumpRequest);
-        return dataDumpExportService.validateIfExportProcessExistAndStart(dataDumpRequest, responseMessage);
+        dataDumpUtil.setDataDumpRequest(dataDumpRequest,fetchType,institutionCodes,date, toDate, collectionGroupIds,transmissionType,requestingInstitutionCode,emailToAddress,outputFormat,imsDepositoryCodes);
+        String responseMessage = dataExportValidateService.validateIncomingRequest(dataDumpRequest);
+        if(responseMessage !=null) {
+            return responseMessage;
+        }
+        return dataExportHelperService.checkForExistingRequestAndStart(dataDumpRequest);
     }
 
 
