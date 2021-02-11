@@ -5,7 +5,11 @@ import org.marc4j.MarcReader;
 import org.marc4j.MarcWriter;
 import org.marc4j.MarcXmlReader;
 import org.marc4j.MarcXmlWriter;
-import org.marc4j.marc.*;
+import org.marc4j.marc.ControlField;
+import org.marc4j.marc.DataField;
+import org.marc4j.marc.MarcFactory;
+import org.marc4j.marc.Record;
+import org.marc4j.marc.Subfield;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.ILSConfigProperties;
@@ -114,7 +118,7 @@ public class MarcXmlFormatterService implements DataDumpFormatterInterface {
      * @param tagList
      */
     private void stripTagsFromBib(Record record,List<String> tagList){
-        for(Iterator<DataField> dataFieldIterator = record.getDataFields().iterator();dataFieldIterator.hasNext();) {
+        for(Iterator<DataField> dataFieldIterator = record.getDataFields().iterator(); dataFieldIterator.hasNext();) {
             DataField dataField = dataFieldIterator.next();
             for (String tag : tagList) {
                 if (tag.equals(dataField.getTag())) {

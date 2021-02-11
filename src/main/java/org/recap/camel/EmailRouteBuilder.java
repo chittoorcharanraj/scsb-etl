@@ -51,7 +51,7 @@ public class EmailRouteBuilder {
     @Autowired
     public EmailRouteBuilder(CamelContext context, @Value("${email.smtp.server.data.dump.username}") String username, @Value("${email.smtp.server.data.dump.password.file}") String passwordDirectory,
                              @Value("${email.data.dump.from}") String from, @Value("${email.data.dump.subject}") String subject,@Value("${email.data.dump.nodata.subject}") String noDataSubject,
-                             @Value("${email.smtp.server}") String smtpServer) {
+                             @Value("${email.smtp.server}") String smtpServer,@Value("${email.data.dump.cc}") String emailCC) {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
@@ -80,6 +80,7 @@ public class EmailRouteBuilder {
                                         .setBody(simple(emailBody))
                                         .setHeader("from", simple(from))
                                         .setHeader("to", simple(EMAIL_PAYLOAD_TO))
+                                        .setHeader("cc", simple(emailCC))
                                         .log("Sending email for data available")
                                         .to(SMTPS + smtpServer + USERNAME + username + PASSWORD + emailPassword)
                                     .when(header(EMAIL_BODY_FOR).isEqualTo(RecapConstants.DATADUMP_NO_DATA_AVAILABLE))

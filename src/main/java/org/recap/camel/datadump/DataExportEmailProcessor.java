@@ -231,24 +231,22 @@ public class DataExportEmailProcessor implements Processor {
     }
 
     private void updateStatusInDB() {
-//        ExportStatusEntity inProgressStatusEntity = exportStatusDetailsRepository.findByExportStatusCode(RecapConstants.IN_PROGRESS);
-//        ETLRequestLogEntity inProgressExportLog = etlRequestLogDetailsRepository.findByEtlStatusId(inProgressStatusEntity.getId());
         Optional<ETLRequestLogEntity> inProgressExportLog = etlRequestLogDetailsRepository.findById(eltRequestId);
         if(inProgressExportLog.isPresent()){
             ETLRequestLogEntity inProgressRequestLogEntity = inProgressExportLog.get();
             ExportStatusEntity exportStatusEntity = exportStatusDetailsRepository.findByExportStatusCode(RecapConstants.COMPLETED);
-            inProgressRequestLogEntity.setEtlStatusId(exportStatusEntity.getId());
+            inProgressRequestLogEntity.setExportStatusId(exportStatusEntity.getId());
             inProgressRequestLogEntity.setExportStatusEntity(exportStatusEntity);
             inProgressRequestLogEntity.setCompleteTime(new Date());
             etlRequestLogDetailsRepository.saveAndFlush(inProgressRequestLogEntity);
-            ExportStatusEntity awaitingStatusEntity = exportStatusDetailsRepository.findByExportStatusCode(RecapConstants.AWAITING);
-            List<ETLRequestLogEntity> etlRequestsAwaitingForExport = etlRequestLogDetailsRepository.findAllByEtlStatusIdOrderByRequestedTime(awaitingStatusEntity.getId());
-            if(!etlRequestsAwaitingForExport.isEmpty()){
-                DataDumpRequest dataDumpRequest = dataDumpUtil.prepareRequestForExistinAwaiting();
+            DataDumpRequest dataDumpRequest = dataDumpUtil.checkAndPrepareAwaitingReqIfAny();
+            if(dataDumpRequest!=null){
                 dataDumpExportService.startDataDumpProcess(dataDumpRequest);
             }
         }
     }
+
+
 
     /**
      * To send an email for data dump export process.
@@ -257,7 +255,7 @@ public class DataExportEmailProcessor implements Processor {
      * @param exportedItemCount
      */
     private void processEmail(String totalRecordCount, String failedBibs, String exportedItemCount,String fetchType,String requestingInstitutionCode){
-        if (transmissionType.equals(RecapConstants.DATADUMP_TRANSMISSION_TYPE_FTP)
+        if (transmissionType.equals(RecapConstants.DATADUMP_TRANSMISSION_TYPE_S3)
                 ||transmissionType.equals(RecapConstants.DATADUMP_TRANSMISSION_TYPE_FILESYSTEM)) {
             dataDumpEmailService.sendEmail(institutionCodes,
                     Integer.valueOf(totalRecordCount),

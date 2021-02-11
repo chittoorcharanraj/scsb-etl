@@ -4,28 +4,16 @@ import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
-import org.recap.camel.dynamicrouter.DynamicRouteBuilder;
-import org.recap.model.ILSConfigProperties;
 import org.recap.model.export.DataDumpRequest;
-import org.recap.model.jpa.CollectionGroupEntity;
-import org.recap.model.jpa.ImsLocationEntity;
-import org.recap.repository.CollectionGroupDetailsRepository;
-import org.recap.repository.ETLRequestLogDetailsRepository;
-import org.recap.repository.ImsLocationDetailsRepository;
-import org.recap.repository.InstitutionDetailsRepository;
 import org.recap.service.email.datadump.DataDumpEmailService;
 import org.recap.service.executor.datadump.DataDumpExecutorService;
-import org.recap.util.DateUtil;
-import org.recap.util.PropertyUtil;
 import org.recap.util.datadump.DataDumpUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 
@@ -33,19 +21,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.text.MessageFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by premkb on 27/9/16.
@@ -55,56 +31,13 @@ public class DataDumpExportService {
 
     private static final Logger logger = LoggerFactory.getLogger(DataDumpExportService.class);
 
-    /**
-     * The App context.
-     */
-    @Autowired
-    ApplicationContext appContext;
+    @Value("${etl.data.dump.status.file.name}") private String dataDumpStatusFileName;
 
-    @Autowired
-    private CollectionGroupDetailsRepository collectionGroupDetailsRepository;
-
-    @Autowired
-    private DataDumpExecutorService dataDumpExecutorService;
-
-    @Autowired
-    private DataDumpEmailService dataDumpEmailService;
-
-    @Autowired
-    private ConsumerTemplate consumerTemplate;
-
-    @Autowired
-    private ProducerTemplate producerTemplate;
-
-    @Value("${etl.data.dump.status.file.name}")
-    private String dataDumpStatusFileName;
-
-    @Value("${etl.data.dump.fetchtype.full}")
-    private String fetchTypeFull;
-
-    @Value("${etl.data.dump.incremental.date.limit}")
-    private String incrementalDateLimit;
-
-    @Value("${scsb.email.assist.to}")
-    private String scsbEmailAssistTo;
-
-    @Autowired
-    PropertyUtil propertyUtil;
-
-    @Autowired
-    InstitutionDetailsRepository institutionDetailsRepository;
-
-    @Autowired
-    ImsLocationDetailsRepository imsLocationDetailsRepository;
-
-    @Autowired
-    DataDumpUtil dataDumpUtil;
-
-    @Autowired
-    ETLRequestLogDetailsRepository etlRequestLogDetailsRepository;
-
-    @Autowired
-    private DynamicRouteBuilder dynamicRouteBuilder;
+    @Autowired private DataDumpExecutorService dataDumpExecutorService;
+    @Autowired private DataDumpEmailService dataDumpEmailService;
+    @Autowired private ConsumerTemplate consumerTemplate;
+    @Autowired private ProducerTemplate producerTemplate;
+    @Autowired DataDumpUtil dataDumpUtil;
 
     /**
      * Start the data dump process.
@@ -124,26 +57,7 @@ public class DataDumpExportService {
                 }
             }).start();
 
-            if(dataDumpRequest.getTransmissionType().equals(RecapConstants.DATADUMP_TRANSMISSION_TYPE_HTTP)){
-                String message = getMessageFromIsRecordAvailableQ();
-                if (message.equals(RecapConstants.DATADUMP_RECORDS_AVAILABLE_FOR_PROCESS)) {
-                    outputString = getMessageFromHttpQ();
-                    dataDumpEmailService.sendEmailForDumpNotification(dataDumpRequest);
-                } else{
-                    outputString = message;
-                }
-            }else{
-                outputString = getMessageFromIsRecordAvailableQ();
-                if(!outputString.equals(RecapConstants.DATADUMP_RECORDS_AVAILABLE_FOR_PROCESS)){
-                    sendEmailForDataAvailable(dataDumpRequest);
-                    if (RecapConstants.EXPORT_SCHEDULER_CALL) {
-                        producerTemplate.sendBody(RecapConstants.DATA_DUMP_COMPLETION_FROM, dataDumpRequest.getRequestingInstitutionCode());
-                    }
-                }
-                else {
-                    dataDumpEmailService.sendEmailForDumpNotification(dataDumpRequest);
-                }
-            }
+            outputString = sendEmailAndGetResponse(dataDumpRequest);
             responseMessage = getResponseMessage(outputString, dataDumpRequest);
         } catch (Exception e) {
             logger.error(RecapConstants.ERROR,e);
@@ -152,7 +66,36 @@ public class DataDumpExportService {
         return responseMessage;
     }
 
-    private void sendEmailForDataAvailable(DataDumpRequest dataDumpRequest) {
+    private String sendEmailAndGetResponse(DataDumpRequest dataDumpRequest) {
+        String outputString;
+        if(dataDumpRequest.getTransmissionType().equals(RecapConstants.DATADUMP_TRANSMISSION_TYPE_HTTP)){
+            String message = getMessageFromIsRecordAvailableQ();
+            if (message.equals(RecapConstants.DATADUMP_RECORDS_AVAILABLE_FOR_PROCESS)) {
+                outputString = getMessageFromHttpQ();
+                dataDumpEmailService.sendEmailNotification(dataDumpRequest);
+            } else{
+                outputString = message;
+            }
+        }else{
+            outputString = getMessageFromIsRecordAvailableQ();
+            sendEmailForS3FetchType(dataDumpRequest, outputString);
+        }
+        return outputString;
+    }
+
+    private void sendEmailForS3FetchType(DataDumpRequest dataDumpRequest, String outputString) {
+        if(!outputString.equals(RecapConstants.DATADUMP_RECORDS_AVAILABLE_FOR_PROCESS)){
+            sendEmailForNoDataAvailable(dataDumpRequest);
+            if (RecapConstants.EXPORT_SCHEDULER_CALL) {
+                producerTemplate.sendBody(RecapConstants.DATA_DUMP_COMPLETION_FROM, dataDumpRequest.getRequestingInstitutionCode());
+            }
+        }
+        else {
+            dataDumpEmailService.sendEmailNotification(dataDumpRequest);
+        }
+    }
+
+    private void sendEmailForNoDataAvailable(DataDumpRequest dataDumpRequest) {
         dataDumpEmailService.sendEmail(dataDumpRequest.getInstitutionCodes(),
                 Integer.valueOf(0),
                 Integer.valueOf(0),
@@ -163,7 +106,6 @@ public class DataDumpExportService {
                 Integer.valueOf(0),
                 dataDumpRequest.getFetchType(), dataDumpRequest.getRequestingInstitutionCode(), dataDumpRequest.getImsDepositoryCodes());
     }
-
 
     /**
      * Gets the message from HTTP queue for the status of the data dump process.
@@ -181,293 +123,7 @@ public class DataDumpExportService {
         return getMessageFrom(consumerTemplate, RecapConstants.DATADUMP_IS_RECORD_AVAILABLE_Q);
     }
 
-    /**
-     * Splits the given string by comma and prepares a list.
-     * @param inputString
-     * @return
-     */
-    private List<String> splitStringAndGetList(String inputString) {
-        String[] splittedString = inputString.split(",");
-        return Arrays.asList(splittedString);
-    }
-
-    /**
-     * Convert string type list to integer type list.
-     * @param stringList
-     * @return
-     */
-    private List<Integer> getIntegerListFromStringList(List<String> stringList) {
-        List<Integer> integerList = new ArrayList<>();
-        for (String stringValue : stringList) {
-            integerList.add(Integer.parseInt(stringValue));
-        }
-        return integerList;
-    }
-
-    /**
-     * Splits the string by comma and gets integer type list from string type list.
-     * @param inputString
-     * @return
-     */
-    private List<Integer> splitStringAndGetIntegerList(String inputString) {
-        return getIntegerListFromStringList(splitStringAndGetList(inputString));
-    }
-
-    /**
-     * Sets the request values to data dump request object.
-     *
-     * @param dataDumpRequest           the data dump request
-     * @param fetchType                 the fetch type
-     * @param institutionCodes          the institution codes
-     * @param date                      the date
-     * @param collectionGroupIds        the collection group ids
-     * @param transmissionType          the transmission type
-     * @param requestingInstitutionCode the requesting institution code
-     * @param toEmailAddress            the to email address
-     * @param outputFormat              the output format
-     */
-    public void setDataDumpRequest(DataDumpRequest dataDumpRequest, String fetchType, String institutionCodes, String date, String toDate, String collectionGroupIds,
-                                   String transmissionType, String requestingInstitutionCode, String toEmailAddress, String outputFormat,String imsDepositoryCodes) {
-        if (fetchType != null) {
-            dataDumpRequest.setFetchType(fetchType);
-        }
-        if (institutionCodes != null) {
-            List<String> institutionCodeList = splitStringAndGetList(institutionCodes);
-            dataDumpRequest.setInstitutionCodes(institutionCodeList);
-        }
-        if (imsDepositoryCodes != null && !"".equals(imsDepositoryCodes)) {
-            List<String> imsDepositoryCodesList = splitStringAndGetList(imsDepositoryCodes);
-            dataDumpRequest.setImsDepositoryCodes(imsDepositoryCodesList);
-        }
-        else {
-            ImsLocationEntity imsLocationEntity = imsLocationDetailsRepository.findByImsLocationCode(RecapConstants.IMS_DEPOSITORY_RECAP);
-            dataDumpRequest.setImsDepositoryCodes(Arrays.asList(imsLocationEntity.getImsLocationCode()));
-        }
-        if (date != null && !"".equals(date)) {
-            dataDumpRequest.setDate(date);
-        }
-        if (toDate != null && !"".equals(toDate)) {
-            dataDumpRequest.setToDate(toDate);
-        }
-        if (collectionGroupIds != null && !"".equals(collectionGroupIds)) {
-            List<Integer> collectionGroupIdList = splitStringAndGetIntegerList(collectionGroupIds);
-            dataDumpRequest.setCollectionGroupIds(collectionGroupIdList);
-        } else {
-            List<Integer> collectionGroupIdList = new ArrayList<>();
-            CollectionGroupEntity collectionGroupEntityShared = collectionGroupDetailsRepository.findByCollectionGroupCode(RecapConstants.COLLECTION_GROUP_SHARED);
-            collectionGroupIdList.add(collectionGroupEntityShared.getId());
-            CollectionGroupEntity collectionGroupEntityOpen = collectionGroupDetailsRepository.findByCollectionGroupCode(RecapConstants.COLLECTION_GROUP_OPEN);
-            collectionGroupIdList.add(collectionGroupEntityOpen.getId());
-            dataDumpRequest.setCollectionGroupIds(collectionGroupIdList);
-        }
-        if (transmissionType != null && !"".equals(transmissionType)) {
-            dataDumpRequest.setTransmissionType(transmissionType);
-        } else {
-            dataDumpRequest.setTransmissionType(RecapConstants.DATADUMP_TRANSMISSION_TYPE_FTP);
-        }
-        if (requestingInstitutionCode != null) {
-            dataDumpRequest.setRequestingInstitutionCode(requestingInstitutionCode);
-        }
-        if (!StringUtils.isEmpty(toEmailAddress)) {
-            dataDumpRequest.setToEmailAddress(toEmailAddress);
-        }
-
-        if (!StringUtils.isEmpty(outputFormat)) {
-            dataDumpRequest.setOutputFileFormat(outputFormat);
-        }
-
-        dataDumpRequest.setDateTimeString(DateUtil.getDateTimeString());
-
-        dataDumpRequest.setRequestId(new SimpleDateFormat(RecapCommonConstants.DATE_FORMAT_YYYYMMDDHHMM).format(new Date())+
-                "-"+dataDumpRequest.getInstitutionCodes()+"-"+dataDumpRequest.getRequestingInstitutionCode()+"-"+dataDumpRequest.getFetchType());
-    }
-
-    /**
-     * Validate incoming data dump request.
-     *
-     * @param dataDumpRequest the data dump request
-     * @return the string
-     */
-    public String validateIncomingRequest(DataDumpRequest dataDumpRequest) {
-        String validationMessage = null;
-        Date currentDate = new Date();
-        Map<Integer, String> errorMessageMap = new HashMap<>();
-        Integer errorcount = 1;
-        List<String> allInstitutionCodeExceptHTC = institutionDetailsRepository.findAllInstitutionCodeExceptHTC();
-        if (!dataDumpRequest.getInstitutionCodes().isEmpty()) {
-            for (String institutionCode : dataDumpRequest.getInstitutionCodes()) {
-                if(!allInstitutionCodeExceptHTC.contains(institutionCode)){
-                    errorMessageMap.put(errorcount, RecapConstants.DATADUMP_VALID_INST_CODES_ERR_MSG+" : "+propertyUtil.getAllInstitutions().toString());
-                    errorcount++;
-                }
-            }
-            if(dataDumpRequest.getInstitutionCodes().size() != 1 && dataDumpRequest.getFetchType().equals(fetchTypeFull)) {
-                errorMessageMap.put(errorcount, RecapConstants.DATADUMP_MULTIPLE_INST_CODES_ERR_MSG+ " : "+propertyUtil.getAllInstitutions().toString());
-                errorcount++;
-            }
-        }
-        if(dataDumpRequest.getRequestingInstitutionCode() != null && !allInstitutionCodeExceptHTC.contains(dataDumpRequest.getRequestingInstitutionCode())){
-            errorMessageMap.put(errorcount, RecapConstants.DATADUMP_VALID_REQ_INST_CODE_ERR_MSG+" : "+propertyUtil.getAllInstitutions().toString());
-            errorcount++;
-        }
-
-        List<String> imsLocationCodes = imsLocationDetailsRepository.findAllImsLocationCode();
-        for (String imsDepositoryCode : dataDumpRequest.getImsDepositoryCodes()){
-            if(!imsLocationCodes.contains(imsDepositoryCode)){
-                errorMessageMap.put(errorcount, RecapConstants.DATADUMP_VALID_IMS_DEPOSITORY_CODE_ERR_MSG);
-                errorcount++;
-                break;
-            }
-        }
-
-        if (!dataDumpRequest.getFetchType().equals(fetchTypeFull) &&
-                !dataDumpRequest.getFetchType().equals(RecapConstants.DATADUMP_FETCHTYPE_INCREMENTAL)
-                && !dataDumpRequest.getFetchType().equals(RecapConstants.DATADUMP_FETCHTYPE_DELETED)) {
-            errorMessageMap.put(errorcount, RecapConstants.DATADUMP_VALID_FETCHTYPE_ERR_MSG);
-            errorcount++;
-        }
-        if (!dataDumpRequest.getTransmissionType().equals(RecapConstants.DATADUMP_TRANSMISSION_TYPE_FTP)
-                && !dataDumpRequest.getTransmissionType().equals(RecapConstants.DATADUMP_TRANSMISSION_TYPE_HTTP)
-                ) {
-            errorMessageMap.put(errorcount, RecapConstants.DATADUMP_TRANS_TYPE_ERR_MSG);
-            errorcount++;
-        }
-        if (dataDumpRequest.getFetchType().equals(fetchTypeFull) && dataDumpRequest.getInstitutionCodes() == null) {
-                errorMessageMap.put(errorcount, RecapConstants.DATADUMP_INSTITUTIONCODE_ERR_MSG);
-                errorcount++;
-        }
-        if (dataDumpRequest.getFetchType().equals(RecapConstants.DATADUMP_FETCHTYPE_INCREMENTAL) && dataDumpRequest.getDate() == null || "".equals(dataDumpRequest.getDate())) {
-                errorMessageMap.put(errorcount, RecapConstants.DATADUMP_DATE_ERR_MSG);
-                errorcount++;
-        }
-        if(dataDumpRequest.getFetchType().equals(RecapConstants.DATADUMP_FETCHTYPE_INCREMENTAL) || dataDumpRequest.getFetchType().equals(RecapConstants.DATADUMP_FETCHTYPE_DELETED)) {
-            String dataDumpRequestDateString = dataDumpRequest.getDate();
-            List<String> institutionCodes = dataDumpRequest.getInstitutionCodes();
-            if(StringUtils.isNotBlank(dataDumpRequestDateString)) {
-                try {
-                    boolean isValidDate = validateDate(dataDumpRequestDateString);
-                    for(String imsLocationCode : imsLocationCodes) {
-                        if(isValidDate) {
-                        for (String institutionCode : institutionCodes) {
-                            ILSConfigProperties ilsConfigProperties = propertyUtil.getILSConfigProperties(institutionCode);
-                                errorcount = checkToRestrictFullDumpViaIncremental(errorMessageMap, errorcount, dataDumpRequestDateString, propertyUtil.getPropertyByImsLocationAndKey(imsLocationCode, "las.email.assist.to"), institutionCode, imsLocationCode);
-                            }
-
-                        errorcount = checkForIncrementalDateLimit(currentDate, errorMessageMap, errorcount, dataDumpRequestDateString, imsLocationCode);
-                        } else {
-                            errorMessageMap.put(errorcount, MessageFormat.format(RecapConstants.INVALID_DATE_FORMAT, RecapCommonConstants.DATE_FORMAT_YYYYMMDDHHMM));
-                            errorcount++;
-                        }
-                    }
-
-                } catch (Exception e) {
-                    logger.error("Exception : ", e);
-                }
-            }
-        }
-        if (dataDumpRequest.getTransmissionType().equals(RecapConstants.DATADUMP_TRANSMISSION_TYPE_FTP)) {
-            if (StringUtils.isEmpty(dataDumpRequest.getToEmailAddress())) {
-                errorMessageMap.put(errorcount, RecapConstants.DATADUMP_EMAIL_TO_ADDRESS_REQUIRED);
-                errorcount++;
-            } else {
-                boolean isValid = validateEmailAddress(dataDumpRequest.getToEmailAddress());
-                if (!isValid) {
-                    errorMessageMap.put(errorcount, RecapConstants.INVALID_EMAIL_ADDRESS);
-                    errorcount++;
-                }
-            }
-        }
-
-        if(RecapConstants.DATADUMP_TYPES.contains(dataDumpRequest.getFetchType())&& dataDumpRequest.getTransmissionType().equals(RecapConstants.DATADUMP_TRANSMISSION_TYPE_FTP) && !dataDumpRequest.isRequestFromSwagger()) {
-            String dataExportStatus = getDataExportCurrentStatus();
-            String status = Optional.ofNullable(dataExportStatus).orElse("No file created");
-            logger.info("Validating datadump status file for requested Dump-Type {} by {} . Status : {}",dataDumpRequest.getFetchType(),dataDumpRequest.getRequestingInstitutionCode(),status);
-            if(dataExportStatus != null && dataExportStatus.contains(RecapConstants.IN_PROGRESS)){
-                errorMessageMap.put(errorcount, RecapConstants.INPROGRESS_ERR_MSG);
-                errorcount++;
-            }
-        }
-
-        if (errorMessageMap.size() > 0) {
-            validationMessage = buildErrorMessage(errorMessageMap);
-        }
-        return validationMessage;
-    }
-
-    private boolean validateDate(String dataDumpRequestDateString) {
-        String[] dateStringArray = dataDumpRequestDateString.split(" ");
-        if(dateStringArray.length == 1) {
-            return false;
-        } else {
-            Date formattedDate = getFormattedDate(RecapCommonConstants.DATE_FORMAT_YYYYMMDDHHMM, dataDumpRequestDateString);
-            if(formattedDate == null) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private Integer checkForIncrementalDateLimit(Date currentDate, Map<Integer, String> errorMessageMap, Integer errorcount, String dataDumpRequestDateString, String imsLocationCode) {
-        Date dataDumpRequestDateTime = getFormattedDate(RecapCommonConstants.DATE_FORMAT_YYYYMMDDHHMM, dataDumpRequestDateString);
-        long dateDifference = currentDate.getTime() - dataDumpRequestDateTime.getTime();
-        long days = TimeUnit.DAYS.convert(dateDifference, TimeUnit.MILLISECONDS);
-
-        if(StringUtils.isBlank(incrementalDateLimit)) {
-            errorMessageMap.put(errorcount, MessageFormat.format(RecapConstants.INCREMENTAL_DATE_LIMIT_EMPTY_ERR_MSG, propertyUtil.getPropertyByImsLocationAndKey(imsLocationCode, "las.email.assist.to")));
-            errorcount++;
-        } else {
-            if(Math.toIntExact(days) > Integer.valueOf(incrementalDateLimit)) {
-                errorMessageMap.put(errorcount, MessageFormat.format(RecapConstants.DATADUMP_DAYS_LIMIT_EXCEEDED_ERROR_MSG, incrementalDateLimit, propertyUtil.getPropertyByImsLocationAndKey(imsLocationCode, "las.email.assist.to")));
-                errorcount++;
-            }
-        }
-        return errorcount;
-    }
-
-    private Integer checkToRestrictFullDumpViaIncremental(Map<Integer, String> errorMessageMap, Integer errorcount, String dataDumpRequestDateString, String initialDataLoadDateString, String institutionCode, String imsLocationCode) {
-        if(StringUtils.isBlank(initialDataLoadDateString)) {
-            errorMessageMap.put(errorcount, MessageFormat.format(RecapConstants.INITIAL_DATA_LOAD_DATE_MISSING_ERR_MSG, institutionCode, propertyUtil.getPropertyByImsLocationAndKey(imsLocationCode, "las.email.assist.to")));
-            errorcount++;
-        } else {
-            Date dataDumpRequestDate = getFormattedDate(RecapConstants.DATE_FORMAT_YYYYMMDD, dataDumpRequestDateString);
-            Date initialDataLoadDate = getFormattedDate(RecapConstants.DATE_FORMAT_YYYYMMDD, initialDataLoadDateString);
-            if(initialDataLoadDate.after(dataDumpRequestDate) || initialDataLoadDate.equals(dataDumpRequestDate)) {
-                errorMessageMap.put(errorcount, MessageFormat.format(RecapConstants.RESTRICT_FULLDUMP_VIA_INCREMENTAL_ERROR_MSG, institutionCode, propertyUtil.getPropertyByImsLocationAndKey(imsLocationCode, "las.email.assist.to")));
-                errorcount++;
-            }
-        }
-        return errorcount;
-    }
-
-    private Date getFormattedDate(String dateFormat, String dateString) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
-        try {
-            return simpleDateFormat.parse(dateString);
-        } catch (ParseException e) {
-            logger.error("Exception while Parsing Date : ", e);
-        }
-        return null;
-    }
-
-    /**
-     * Gets the data dump export status reading from status file.
-     * @return
-     */
-    private String getDataExportCurrentStatus(){
-        File file = new File(dataDumpStatusFileName);
-        String dataDumpStatus = null;
-        try {
-            if (file.exists()) {
-                dataDumpStatus = FileUtils.readFileToString(file, Charset.defaultCharset());
-            }
-        } catch (IOException e) {
-            logger.error(RecapConstants.ERROR,e);
-            logger.error("Exception while creating or updating the file : " + e.getMessage());
-        }
-        return dataDumpStatus;
-    }
-
-    /**
+  /**
      * Sets the data dump export status to a file.
      */
     private void setDataExportCurrentStatus(){
@@ -508,29 +164,6 @@ public class DataDumpExportService {
     }
 
     /**
-     * Builds error message string from map.
-     * @param erroMessageMap
-     * @return
-     */
-    private String buildErrorMessage(Map<Integer, String> erroMessageMap) {
-        StringBuilder errorMessageBuilder = new StringBuilder();
-        erroMessageMap.forEach((key, value) -> errorMessageBuilder.append(key).append(". ").append(value).append("\n"));
-        return errorMessageBuilder.toString();
-    }
-
-    /**
-     * Validates email address.
-     * @param toEmailAddress
-     * @return
-     */
-    private boolean validateEmailAddress(String toEmailAddress) {
-        String regex = RecapCommonConstants.REGEX_FOR_EMAIL_ADDRESS;
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(toEmailAddress);
-        return matcher.matches();
-    }
-
-    /**
      * Gets response message for the data dump process.
      * @param outputString
      * @param dataDumpRequest
@@ -540,7 +173,7 @@ public class DataDumpExportService {
     private String getResponseMessage(String outputString, DataDumpRequest dataDumpRequest) throws Exception {
         HttpHeaders responseHeaders = new HttpHeaders();
         String date = new Date().toString();
-        if (dataDumpRequest.getTransmissionType().equals(RecapConstants.DATADUMP_TRANSMISSION_TYPE_FTP)) {
+        if (dataDumpRequest.getTransmissionType().equals(RecapConstants.DATADUMP_TRANSMISSION_TYPE_S3)) {
             if (outputString.equals(RecapConstants.DATADUMP_RECORDS_AVAILABLE_FOR_PROCESS)||outputString.equals(RecapConstants.DATADUMP_PROCESS_STARTED)) {
                 logger.info("Writing to data-dump status file as 'In Progress' on Dump-Type:{} Requesting Inst : {}",dataDumpRequest.getFetchType(),dataDumpRequest.getRequestingInstitutionCode());
                 if(!dataDumpRequest.isRequestFromSwagger()){
@@ -579,25 +212,4 @@ public class DataDumpExportService {
         return outputString;
     }
 
-    public String validateIfExportProcessExistAndStart(DataDumpRequest dataDumpRequest, String responseMessage) {
-        if(responseMessage !=null) {
-            return responseMessage;
-        }
-        else if (!dataDumpUtil.checkIfExportProcessIsRunning(dataDumpRequest)) {
-            dataDumpUtil.saveETlRequestToDB(dataDumpRequest,RecapConstants.AWAITING);
-            return "Can't run export now as another process is in progress. We have saved your request.We will initiate and notify once the exiting process completes";
-        }
-        else if(!dataDumpUtil.checkIfAnyExportProcessIsAwaiting(dataDumpRequest)){
-            dataDumpUtil.saveETlRequestToDB(dataDumpRequest,RecapConstants.AWAITING);
-            DataDumpRequest dataDumpRequestToTrigger = dataDumpUtil.prepareRequestForExistinAwaiting();
-            dynamicRouteBuilder.addDataDumpExportRoutes();
-            startDataDumpProcess(dataDumpRequestToTrigger);
-            return "Can't run export now as another process is in progress. We have saved your request.We will initiate and notify once the exiting process completes";
-        }
-        else{
-            dynamicRouteBuilder.addDataDumpExportRoutes();
-            dataDumpUtil.saveETlRequestToDB(dataDumpRequest,RecapConstants.INITIATED);
-            return  startDataDumpProcess(dataDumpRequest);
-        }
-    }
 }

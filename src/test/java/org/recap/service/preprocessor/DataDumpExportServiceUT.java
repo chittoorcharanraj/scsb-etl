@@ -101,7 +101,7 @@ public class DataDumpExportServiceUT extends BaseTestCaseUT {
     @Test
     public void startDataDumpProcessForFTP() {
         DataDumpRequest dataDumpRequest=new DataDumpRequest();
-        dataDumpRequest.setTransmissionType(RecapConstants.DATADUMP_TRANSMISSION_TYPE_FTP);
+        dataDumpRequest.setTransmissionType(RecapConstants.DATADUMP_TRANSMISSION_TYPE_S3);
         Mockito.when(consumerTemplate.receive(Mockito.anyString())).thenReturn(receive);
         Mockito.when(receive.getIn()).thenReturn(value);
         Mockito.when(value.getBody()).thenReturn(RecapConstants.DATADUMP_RECORDS_AVAILABLE_FOR_PROCESS);
@@ -125,7 +125,7 @@ public class DataDumpExportServiceUT extends BaseTestCaseUT {
     @Test
     public void startDataDumpProcessForFTPNoDataAvailable() {
         DataDumpRequest dataDumpRequest=new DataDumpRequest();
-        dataDumpRequest.setTransmissionType(RecapConstants.DATADUMP_TRANSMISSION_TYPE_FTP);
+        dataDumpRequest.setTransmissionType(RecapConstants.DATADUMP_TRANSMISSION_TYPE_S3);
         Mockito.when(consumerTemplate.receive(Mockito.anyString())).thenReturn(receive);
         Mockito.when(receive.getIn()).thenReturn(value);
         Mockito.when(value.getBody()).thenReturn(RecapConstants.DATADUMP_NO_DATA_AVAILABLE);
@@ -164,7 +164,7 @@ public class DataDumpExportServiceUT extends BaseTestCaseUT {
 
     @Test
     public void validateIncomingRequestFull() {
-        DataDumpRequest dataDumpRequest=getDataDumpRequest(Arrays.asList("PUL"),"PUL",Arrays.asList("RECAP"),RecapConstants.DATADUMP_FETCHTYPE_FULL,RecapConstants.DATADUMP_TRANSMISSION_TYPE_FTP,RecapCommonConstants.DATE_FORMAT_YYYYMMDDHHMM);
+        DataDumpRequest dataDumpRequest=getDataDumpRequest(Arrays.asList("PUL"),"PUL",Arrays.asList("RECAP"),RecapConstants.DATADUMP_FETCHTYPE_FULL,RecapConstants.DATADUMP_TRANSMISSION_TYPE_S3,RecapCommonConstants.DATE_FORMAT_YYYYMMDDHHMM);
         Mockito.when(institutionDetailsRepository.findAllInstitutionCodeExceptHTC()).thenReturn(Arrays.asList("PUL","CUL","NYPL","HUL"));
         Mockito.when(imsLocationDetailsRepository.findAllImsLocationCode()).thenReturn(Arrays.asList("RECAP","HD"));
         String dataDumpStatusFileName = this.getClass().getResource("dataExportStatus.txt").getPath();
@@ -175,7 +175,7 @@ public class DataDumpExportServiceUT extends BaseTestCaseUT {
 
     @Test
     public void validateIncomingRequestFetchTypeError() {
-        DataDumpRequest dataDumpRequest=getDataDumpRequest(Arrays.asList("PUL"),"PUL",Arrays.asList("RECAP")," ",RecapConstants.DATADUMP_TRANSMISSION_TYPE_FTP,RecapCommonConstants.DATE_FORMAT_YYYYMMDDHHMM);
+        DataDumpRequest dataDumpRequest=getDataDumpRequest(Arrays.asList("PUL"),"PUL",Arrays.asList("RECAP")," ",RecapConstants.DATADUMP_TRANSMISSION_TYPE_S3,RecapCommonConstants.DATE_FORMAT_YYYYMMDDHHMM);
         Mockito.when(institutionDetailsRepository.findAllInstitutionCodeExceptHTC()).thenReturn(Arrays.asList("PUL","CUL","NYPL","HUL"));
         Mockito.when(imsLocationDetailsRepository.findAllImsLocationCode()).thenReturn(Arrays.asList("RECAP","HD"));
         String dataDumpStatusFileName = this.getClass().getResource("dataExportStatus.txt").getPath();
@@ -189,7 +189,7 @@ public class DataDumpExportServiceUT extends BaseTestCaseUT {
     @Test
     public void validateIncomingRequestIncrementalFailure() {
         ReflectionTestUtils.setField(dataDumpExportService, "incrementalDateLimit", "");
-        DataDumpRequest dataDumpRequest=getDataDumpRequest(Arrays.asList("PUL"),"PUL",Arrays.asList("RECAP"),RecapConstants.DATADUMP_FETCHTYPE_INCREMENTAL,RecapConstants.DATADUMP_TRANSMISSION_TYPE_FTP,RecapCommonConstants.DATE_FORMAT_YYYYMMDDHHMM);
+        DataDumpRequest dataDumpRequest=getDataDumpRequest(Arrays.asList("PUL"),"PUL",Arrays.asList("RECAP"),RecapConstants.DATADUMP_FETCHTYPE_INCREMENTAL,RecapConstants.DATADUMP_TRANSMISSION_TYPE_S3,RecapCommonConstants.DATE_FORMAT_YYYYMMDDHHMM);
         dataDumpRequest.setToEmailAddress("");
         Mockito.when(institutionDetailsRepository.findAllInstitutionCodeExceptHTC()).thenReturn(Arrays.asList("PUL","CUL","NYPL","HUL"));
         Mockito.when(imsLocationDetailsRepository.findAllImsLocationCode()).thenReturn(Arrays.asList("RECAP","HD"));
@@ -206,7 +206,7 @@ public class DataDumpExportServiceUT extends BaseTestCaseUT {
     @Test
     public void validateIncomingRequestIncrementalFailureInvalidDate() {
         ReflectionTestUtils.setField(dataDumpExportService, "incrementalDateLimit", "");
-        DataDumpRequest dataDumpRequest=getDataDumpRequest(Arrays.asList("PUL"),"PUL",Arrays.asList("RECAP"),RecapConstants.DATADUMP_FETCHTYPE_INCREMENTAL,RecapConstants.DATADUMP_TRANSMISSION_TYPE_FTP,"1");
+        DataDumpRequest dataDumpRequest=getDataDumpRequest(Arrays.asList("PUL"),"PUL",Arrays.asList("RECAP"),RecapConstants.DATADUMP_FETCHTYPE_INCREMENTAL,RecapConstants.DATADUMP_TRANSMISSION_TYPE_S3,"1");
         dataDumpRequest.setToEmailAddress("");
         Mockito.when(institutionDetailsRepository.findAllInstitutionCodeExceptHTC()).thenReturn(Arrays.asList("PUL","CUL","NYPL","HUL"));
         Mockito.when(imsLocationDetailsRepository.findAllImsLocationCode()).thenReturn(Arrays.asList("RECAP","HD"));
@@ -222,7 +222,7 @@ public class DataDumpExportServiceUT extends BaseTestCaseUT {
     @Test
     public void validateIncomingRequestIncrementalFailureinitialDataLoadDateString() {
         ReflectionTestUtils.setField(dataDumpExportService, "incrementalDateLimit", "");
-        DataDumpRequest dataDumpRequest=getDataDumpRequest(Arrays.asList("PUL"),"PUL",Arrays.asList("RECAP"),RecapConstants.DATADUMP_FETCHTYPE_INCREMENTAL,RecapConstants.DATADUMP_TRANSMISSION_TYPE_FTP,RecapCommonConstants.DATE_FORMAT_YYYYMMDDHHMM);
+        DataDumpRequest dataDumpRequest=getDataDumpRequest(Arrays.asList("PUL"),"PUL",Arrays.asList("RECAP"),RecapConstants.DATADUMP_FETCHTYPE_INCREMENTAL,RecapConstants.DATADUMP_TRANSMISSION_TYPE_S3,RecapCommonConstants.DATE_FORMAT_YYYYMMDDHHMM);
         dataDumpRequest.setToEmailAddress("");
         Mockito.when(institutionDetailsRepository.findAllInstitutionCodeExceptHTC()).thenReturn(Arrays.asList("PUL","CUL","NYPL","HUL"));
         Mockito.when(imsLocationDetailsRepository.findAllImsLocationCode()).thenReturn(Arrays.asList("RECAP","HD"));
@@ -241,7 +241,7 @@ public class DataDumpExportServiceUT extends BaseTestCaseUT {
     public void validateIncomingRequestException() {
         ReflectionTestUtils.setField(dataDumpExportService, "incrementalDateLimit", "");
         ReflectionTestUtils.setField(dataDumpExportService, "propertyUtil", null);
-        DataDumpRequest dataDumpRequest=getDataDumpRequest(Arrays.asList("PUL"),"PUL",Arrays.asList("RECAP"),RecapConstants.DATADUMP_FETCHTYPE_INCREMENTAL,RecapConstants.DATADUMP_TRANSMISSION_TYPE_FTP,RecapCommonConstants.DATE_FORMAT_YYYYMMDDHHMM);
+        DataDumpRequest dataDumpRequest=getDataDumpRequest(Arrays.asList("PUL"),"PUL",Arrays.asList("RECAP"),RecapConstants.DATADUMP_FETCHTYPE_INCREMENTAL,RecapConstants.DATADUMP_TRANSMISSION_TYPE_S3,RecapCommonConstants.DATE_FORMAT_YYYYMMDDHHMM);
         dataDumpRequest.setToEmailAddress("");
         Mockito.when(institutionDetailsRepository.findAllInstitutionCodeExceptHTC()).thenReturn(Arrays.asList("PUL","CUL","NYPL","HUL"));
         Mockito.when(imsLocationDetailsRepository.findAllImsLocationCode()).thenReturn(Arrays.asList("RECAP","HD"));
@@ -255,7 +255,7 @@ public class DataDumpExportServiceUT extends BaseTestCaseUT {
     @Test
     public void validateIncomingRequestDateFailure() {
         ReflectionTestUtils.setField(dataDumpExportService, "incrementalDateLimit", "5");
-        DataDumpRequest dataDumpRequest=getDataDumpRequest(Arrays.asList("PUL"),"PUL",Arrays.asList("RECAP"),RecapConstants.DATADUMP_FETCHTYPE_INCREMENTAL,RecapConstants.DATADUMP_TRANSMISSION_TYPE_FTP,RecapCommonConstants.DATE_FORMAT_YYYYMMDDHHMM);
+        DataDumpRequest dataDumpRequest=getDataDumpRequest(Arrays.asList("PUL"),"PUL",Arrays.asList("RECAP"),RecapConstants.DATADUMP_FETCHTYPE_INCREMENTAL,RecapConstants.DATADUMP_TRANSMISSION_TYPE_S3,RecapCommonConstants.DATE_FORMAT_YYYYMMDDHHMM);
         dataDumpRequest.setToEmailAddress("");
         dataDumpRequest.setDate(new SimpleDateFormat(RecapCommonConstants.DATE_FORMAT_YYYYMMDDHHMM).format(new DateTime(new Date()).minusDays(7).toDate()));
         Mockito.when(institutionDetailsRepository.findAllInstitutionCodeExceptHTC()).thenReturn(Arrays.asList("PUL","CUL","NYPL","HUL"));
@@ -272,7 +272,7 @@ public class DataDumpExportServiceUT extends BaseTestCaseUT {
     @Test
     public void validateIncomingRequestDateFailureincrementalDateLimitBlank() {
         ReflectionTestUtils.setField(dataDumpExportService, "incrementalDateLimit", "");
-        DataDumpRequest dataDumpRequest=getDataDumpRequest(Arrays.asList("PUL"),"PUL",Arrays.asList("RECAP"),RecapConstants.DATADUMP_FETCHTYPE_INCREMENTAL,RecapConstants.DATADUMP_TRANSMISSION_TYPE_FTP,RecapCommonConstants.DATE_FORMAT_YYYYMMDDHHMM);
+        DataDumpRequest dataDumpRequest=getDataDumpRequest(Arrays.asList("PUL"),"PUL",Arrays.asList("RECAP"),RecapConstants.DATADUMP_FETCHTYPE_INCREMENTAL,RecapConstants.DATADUMP_TRANSMISSION_TYPE_S3,RecapCommonConstants.DATE_FORMAT_YYYYMMDDHHMM);
         dataDumpRequest.setToEmailAddress("");
         dataDumpRequest.setDate(new SimpleDateFormat(RecapCommonConstants.DATE_FORMAT_YYYYMMDDHHMM).format(new DateTime(new Date()).minusDays(7).toDate()));
         Mockito.when(institutionDetailsRepository.findAllInstitutionCodeExceptHTC()).thenReturn(Arrays.asList("PUL","CUL","NYPL","HUL"));
@@ -290,7 +290,7 @@ public class DataDumpExportServiceUT extends BaseTestCaseUT {
     @Test
     public void validateIncomingRequestEmailFailure() {
         ReflectionTestUtils.setField(dataDumpExportService, "incrementalDateLimit", "");
-        DataDumpRequest dataDumpRequest=getDataDumpRequest(Arrays.asList("PUL"),"PUL",Arrays.asList("RECAP"),RecapConstants.DATADUMP_FETCHTYPE_INCREMENTAL,RecapConstants.DATADUMP_TRANSMISSION_TYPE_FTP,RecapCommonConstants.DATE_FORMAT_YYYYMMDDHHMM);
+        DataDumpRequest dataDumpRequest=getDataDumpRequest(Arrays.asList("PUL"),"PUL",Arrays.asList("RECAP"),RecapConstants.DATADUMP_FETCHTYPE_INCREMENTAL,RecapConstants.DATADUMP_TRANSMISSION_TYPE_S3,RecapCommonConstants.DATE_FORMAT_YYYYMMDDHHMM);
         dataDumpRequest.setToEmailAddress("5");
         dataDumpRequest.setDate(null);
         Mockito.when(institutionDetailsRepository.findAllInstitutionCodeExceptHTC()).thenReturn(Arrays.asList("PUL","CUL","NYPL","HUL"));

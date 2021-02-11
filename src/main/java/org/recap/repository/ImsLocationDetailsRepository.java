@@ -11,4 +11,7 @@ public interface ImsLocationDetailsRepository extends BaseRepository<ImsLocation
 
     @Query(value = "select ims_location_code from ims_location_t",nativeQuery = true)
     List<String> findAllImsLocationCode();
+
+    @Query(value = "select ims_location_code from ims_location_t where ims_location_code NOT IN ('UN');",nativeQuery = true)
+    List<String> findAllImsLocationCodeExceptUnknown();
 }

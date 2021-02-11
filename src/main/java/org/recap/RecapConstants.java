@@ -126,7 +126,7 @@ public class RecapConstants {
     public static final String DATADUMP_FETCHTYPE_DELETED = "2";
     public static final List<String> DATADUMP_TYPES = Collections.unmodifiableList(Arrays.asList(RecapConstants.DATADUMP_FETCHTYPE_INCREMENTAL,RecapConstants.DATADUMP_FETCHTYPE_DELETED,RecapConstants.DATADUMP_FETCHTYPE_FULL));
 
-    public static final String DATADUMP_TRANSMISSION_TYPE_FTP = "0";
+    public static final String DATADUMP_TRANSMISSION_TYPE_S3 = "0";
     public static final String DATADUMP_TRANSMISSION_TYPE_HTTP = "1";
     public static final String DATADUMP_TRANSMISSION_TYPE_FILESYSTEM = "2";
 
@@ -145,9 +145,6 @@ public class RecapConstants {
     public static final String DATADUMP_NO_DATA_AVAILABLE = "dataNotAvailable";
     public static final String COMPLETED = "COMPLETED";
     public static final String IN_PROGRESS = "IN_PROGRESS";
-    public static final String FULLDUMP_INPROGRESS_ERR_MSG = "Can't run data export now, already full data export in progress, wait until it completes.";
-    public static final String INCREMENTAL_INPROGRESS_ERR_MSG = "Can't run data export now, already Incremental data export in progress, wait until it completes.";
-    public static final String DELETED_INPROGRESS_ERR_MSG = "Can't run data export now, already Deleted data export in progress, wait until it completes.";
     public static final String INPROGRESS_ERR_MSG = "Can't run data export now, already data export in progress, wait until it completes.";
     public static final String INCREMENTAL_DATE_LIMIT_EMPTY_ERR_MSG = "The incremental Date limit is missing. Please contact HTC Support {0} for assistance.";
     public static final String INITIAL_DATA_LOAD_DATE_MISSING_ERR_MSG = "The initial data load Date is missing for the institution {0}. Please contact HTC Support {1} for assistance.";
@@ -231,6 +228,7 @@ public class RecapConstants {
     public static final String AWAITING = "AWAITING";
     public static final String INVALID = "INVALID";
     public static final String SWAGGER = "SWAGGER";
+    public static final String EXPORT_MESSAGE = "Can't run export now as another process is in progress. We have saved your request.We will initiate and notify once the exiting process completes";
 
     public class MarcFields {
         public static final String CF_001 = "001";
