@@ -8,35 +8,28 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.test.util.ReflectionTestUtils;
 
-import java.io.IOException;
-
-import static org.junit.Assert.assertNotNull;
-
-public class CustomStackTraceJsonProviderUT {
-
+public class CustomStackTraceJsonProviderUT extends BaseTestCaseUT{
 
     @InjectMocks
     CustomStackTraceJsonProvider customStackTraceJsonProvider;
 
     @Mock
-    JsonGenerator generator;
+    JsonGenerator jsonGenerator;
 
     @Mock
     ILoggingEvent event;
 
     @Mock
-    IThrowableProxy throwableProxy;
+    IThrowableProxy iThrowableProxy;
 
     @Mock
-    ThrowableHandlingConverter throwableConverter;
+    ThrowableHandlingConverter converter;
 
     @Test
-    public void scsbRequest() throws IOException {
-        Mockito.when(event.getThrowableProxy()).thenReturn(throwableProxy);
-        ReflectionTestUtils.setField(customStackTraceJsonProvider,"throwableConverter",throwableConverter);
-        Mockito.when(throwableConverter.convert(event)).thenReturn("Tested");
-        customStackTraceJsonProvider.writeTo(generator,event);
+    public void writeTo() throws Exception {
+        Mockito.when(event.getThrowableProxy()).thenReturn(iThrowableProxy);
+        Mockito.when(converter.convert(event)).thenReturn("message");
+        customStackTraceJsonProvider.writeTo(jsonGenerator, event);
     }
 }
