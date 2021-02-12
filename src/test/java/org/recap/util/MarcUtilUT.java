@@ -15,6 +15,7 @@ import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -36,6 +37,17 @@ public class MarcUtilUT {
         assertNotNull(controlFieldValue);
     }
 
+    @Test
+    public void controlField000() throws Exception {
+        BibRecord bibRecord = getBibRecord();
+
+        assertNotNull(bibRecord);
+
+        MarcUtil marcUtil = new MarcUtil();
+        RecordType marcRecord = bibRecord.getBib().getContent().getCollection().getRecord().get(0);
+        String controlFieldValue = marcUtil.getControlFieldValue(marcRecord, "000");
+        assertNull(controlFieldValue);
+    }
 
     @Test
     public void dataField245() throws Exception {
@@ -86,6 +98,53 @@ public class MarcUtilUT {
             e.printStackTrace();
         }
         return bibRecord;
+    }
+    @Test
+    public void isSubFieldExists(){
+        MarcUtil marcUtil = new MarcUtil();
+        RecordType recordType = getRecordType();
+        boolean result = marcUtil.isSubFieldExists(recordType,"001");
+        assertNotNull(result);
+        assertTrue(result);
+    }
+    @Test
+    public void isSubFieldExistsFalse(){
+        MarcUtil marcUtil = new MarcUtil();
+        RecordType recordType = getRecordType();
+        boolean result = marcUtil.isSubFieldExists(recordType,"002");
+        assertNotNull(result);
+        assertFalse(result);
+    }
+    @Test
+    public void isSubFieldExistsWithoutSubDataFieldData(){
+        MarcUtil marcUtil = new MarcUtil();
+        RecordType recordType = getRecordType();
+        recordType.getDatafield().get(0).setSubfield(Arrays.asList(new SubfieldatafieldType()));
+        boolean result = marcUtil.isSubFieldExists(recordType,"001");
+        assertNotNull(result);
+        assertFalse(result);
+    }
+
+    private RecordType getRecordType() {
+        RecordType recordType = new RecordType();
+        recordType.setId("1");
+        LeaderFieldType leaderFieldType = new LeaderFieldType();
+        leaderFieldType.setId("1");
+        leaderFieldType.setValue("Test Leader Field");
+        DataFieldType dataFieldType = new DataFieldType();
+        dataFieldType.setId("1");
+        dataFieldType.setTag("001");
+        dataFieldType.setInd1("001");
+        dataFieldType.setInd2("002");
+        SubfieldatafieldType subfieldatafieldType = new SubfieldatafieldType();
+        subfieldatafieldType.setId("1");
+        subfieldatafieldType.setValue("Test Value");
+        subfieldatafieldType.setCode("Test code");
+        dataFieldType.setSubfield(Arrays.asList(subfieldatafieldType));
+        recordType.setDatafield(Arrays.asList(dataFieldType));
+        recordType.setLeader(leaderFieldType);
+        recordType.setType(RecordTypeType.fromValue("Bibliographic"));
+        return recordType;
     }
 
     @Test

@@ -1,25 +1,21 @@
 package org.recap.service.transmission.datadump;
 
-import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.mockito.Mockito;
-import org.mockito.Spy;
-import org.recap.BaseTestCase;
+import org.mockito.InjectMocks;
+import org.recap.BaseTestCaseUT;
 import org.recap.RecapConstants;
 import org.recap.model.export.DataDumpRequest;
-import org.springframework.beans.factory.annotation.*;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by premkb on 2/10/16.
  */
 
-public class DataDumpS3TransmissionServiceUT extends BaseTestCase {
+public class DataDumpS3TransmissionServiceUT extends BaseTestCaseUT {
 
     /*private static final Logger logger = LoggerFactory.getLogger(DataDumpS3TransmissionServiceUT.class);
 
@@ -92,7 +88,7 @@ public class DataDumpS3TransmissionServiceUT extends BaseTestCase {
 */
     String requestingInstitutionCode = "NYPL";
     String dateTimeString = null;
-    @Autowired
+    @InjectMocks
     DataDumpS3TransmissionService DataDumpS3TransmissionService;
 
     @Test

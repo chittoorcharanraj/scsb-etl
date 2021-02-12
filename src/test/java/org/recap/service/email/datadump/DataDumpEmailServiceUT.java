@@ -6,7 +6,6 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.recap.BaseTestCaseUT;
 import org.recap.RecapConstants;
 import org.recap.model.ILSConfigProperties;
@@ -43,19 +42,19 @@ public class DataDumpEmailServiceUT extends BaseTestCaseUT {
     private String ftpDataDumpDirectory;
 
     @Value("${etl.data.dump.fetchtype.full}")
-    private String dataDumpFetchType;
+    private final String dataDumpFetchType = "10";
 
     @Before
-    public void setup() throws Exception {
+    public void setup() {
         ReflectionTestUtils.setField(dataDumpEmailService, "fileSystemDataDumpDirectory", fileSystemDataDumpDirectory);
         ReflectionTestUtils.setField(dataDumpEmailService, "ftpDataDumpDirectory", "/");
         ReflectionTestUtils.setField(dataDumpEmailService, "dataDumpFetchType", dataDumpFetchType);
-        MockitoAnnotations.initMocks(this);
+
     }
 
     @Test
     public void testsendEmailForFull() {
-        dataDumpEmailService.sendEmail(institutionCodes(), 1, 0, "2", "2016-09-02 12:00", "peri.subrahmanya@gmail.com", "dataNotAvailable", 0, "10", "NYPL",Arrays.asList("RECAP"));
+        dataDumpEmailService.sendEmail(institutionCodes(), 1, 0, "2", "2016-09-02 12:00", "peri.subrahmanya@gmail.com", "dataNotAvailable", 0, "10", "NYPL", Arrays.asList("RECAP"));
         assertTrue(true);
     }
 
@@ -70,22 +69,23 @@ public class DataDumpEmailServiceUT extends BaseTestCaseUT {
     public void testsendEmailCae() {
         ReflectionTestUtils.setField(dataDumpEmailService, "ftpDataDumpDirectory", " ");
         Mockito.when(propertyUtil.getILSConfigProperties(Mockito.anyString())).thenReturn(getIlsConfigProperties());
-        Mockito.doNothing().when(producer).sendBodyAndHeader(Mockito.any(),Mockito.anyString(),Mockito.any());
-        dataDumpEmailService.sendEmail(institutionCodes(), 1, 0, "0", "2016-09-02 12:00", "peri.subrahmanya@gmail.com", "dataNotAvailable", 0, "2", "NYPL",Arrays.asList("RECAP"));
+        Mockito.doNothing().when(producer).sendBodyAndHeader(Mockito.any(), Mockito.anyString(), Mockito.any());
+        dataDumpEmailService.sendEmail(institutionCodes(), 1, 0, "0", "2016-09-02 12:00", "peri.subrahmanya@gmail.com", "dataNotAvailable", 0, "2", "NYPL", Arrays.asList("RECAP"));
         assertTrue(true);
     }
+
     @Test
     public void testsendEmailForIncremental() {
         ILSConfigProperties ilsConfigProperties = getIlsConfigProperties();
         Mockito.when(propertyUtil.getILSConfigProperties(Mockito.anyString())).thenReturn(ilsConfigProperties);
-        dataDumpEmailService.sendEmail(institutionCodes(), 1, 0, "2", "2016-09-02 12:00", "peri.subrahmanya@gmail.com", "dataNotAvailable", 0, "1", "NYPL",Arrays.asList("RECAP"));
+        dataDumpEmailService.sendEmail(institutionCodes(), 1, 0, "2", "2016-09-02 12:00", "peri.subrahmanya@gmail.com", "dataNotAvailable", 0, "1", "NYPL", Arrays.asList("RECAP"));
         assertTrue(true);
     }
 
     @Test
     public void sendEmailForDumpNotification() {
-        DataDumpRequest[] dataDumpRequests={getDataDumpRequest(RecapConstants.DATADUMP_FETCHTYPE_FULL, RecapConstants.DATADUMP_XML_FORMAT_MARC, RecapConstants.DATADUMP_TRANSMISSION_TYPE_S3),getDataDumpRequest(RecapConstants.DATADUMP_FETCHTYPE_INCREMENTAL, RecapConstants.DATADUMP_XML_FORMAT_SCSB, RecapConstants.DATADUMP_TRANSMISSION_TYPE_HTTP),getDataDumpRequest(RecapConstants.DATADUMP_FETCHTYPE_DELETED, RecapConstants.DATADUMP_DELETED_JSON_FORMAT, RecapConstants.DATADUMP_TRANSMISSION_TYPE_FILESYSTEM),getDataDumpRequest("Export", RecapConstants.DATADUMP_DELETED_JSON_FORMAT, RecapConstants.DATADUMP_TRANSMISSION_TYPE_FILESYSTEM)};
-        for (DataDumpRequest dataDumpRequest:dataDumpRequests) {
+        DataDumpRequest[] dataDumpRequests = {getDataDumpRequest(RecapConstants.DATADUMP_FETCHTYPE_FULL, RecapConstants.DATADUMP_XML_FORMAT_MARC, RecapConstants.DATADUMP_TRANSMISSION_TYPE_S3), getDataDumpRequest(RecapConstants.DATADUMP_FETCHTYPE_INCREMENTAL, RecapConstants.DATADUMP_XML_FORMAT_SCSB, RecapConstants.DATADUMP_TRANSMISSION_TYPE_HTTP), getDataDumpRequest(RecapConstants.DATADUMP_FETCHTYPE_DELETED, RecapConstants.DATADUMP_DELETED_JSON_FORMAT, RecapConstants.DATADUMP_TRANSMISSION_TYPE_FILESYSTEM), getDataDumpRequest("Export", RecapConstants.DATADUMP_DELETED_JSON_FORMAT, RecapConstants.DATADUMP_TRANSMISSION_TYPE_FILESYSTEM)};
+        for (DataDumpRequest dataDumpRequest : dataDumpRequests) {
             Mockito.when(dataDumpUtil.getFetchType(Mockito.anyString())).thenCallRealMethod();
             Mockito.when(dataDumpUtil.getOutputformat(Mockito.anyString())).thenCallRealMethod();
             Mockito.when(dataDumpUtil.getTransmissionType(Mockito.anyString())).thenCallRealMethod();

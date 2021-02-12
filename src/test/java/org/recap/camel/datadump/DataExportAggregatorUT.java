@@ -7,7 +7,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.recap.BaseTestCase;
+import org.recap.BaseTestCaseUT;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,7 +16,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertNotNull;
 
-public class DataExportAggregatorUT extends BaseTestCase {
+public class DataExportAggregatorUT extends BaseTestCaseUT {
 
     DataExportAggregator dataExportAggregator;
     @Mock

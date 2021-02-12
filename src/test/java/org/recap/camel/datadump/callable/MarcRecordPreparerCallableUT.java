@@ -2,7 +2,7 @@ package org.recap.camel.datadump.callable;
 
 import org.junit.Test;
 import org.mockito.Mock;
-import org.recap.BaseTestCase;
+import org.recap.BaseTestCaseUT;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.service.formatter.datadump.MarcXmlFormatterService;
 
@@ -11,7 +11,8 @@ import java.util.Map;
 
 import static org.junit.Assert.assertTrue;
 
-public class MarcRecordPreparerCallableUT extends BaseTestCase {
+public class MarcRecordPreparerCallableUT extends BaseTestCaseUT {
+
     @Mock
     MarcXmlFormatterService marcXmlFormatterService;// = new DeletedJsonFormatterService();
     @Mock
@@ -20,8 +21,8 @@ public class MarcRecordPreparerCallableUT extends BaseTestCase {
     List<BibliographicEntity> bibliographicEntities;
 
     @Test
-    public void testCall(){
-        MarcRecordPreparerCallable deletedRecordPreparerCallable = new MarcRecordPreparerCallable(bibliographicEntities,marcXmlFormatterService);
+    public void testCall() {
+        MarcRecordPreparerCallable deletedRecordPreparerCallable = new MarcRecordPreparerCallable(bibliographicEntities, marcXmlFormatterService);
         Map<String, Object> map = marcXmlFormatterService.prepareMarcRecords(bibliographicEntities);
         assertTrue(true);
 

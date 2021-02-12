@@ -7,17 +7,23 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.internal.invocation.*;
-import org.recap.BaseTestCase;
-import org.recap.model.export.*;
+import org.mockito.InjectMocks;
+import org.recap.BaseTestCaseUT;
+import org.recap.model.export.Bib;
+import org.recap.model.export.DeletedRecord;
+import org.recap.model.export.Item;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.ItemEntity;
 import org.recap.service.formatter.datadump.DeletedJsonFormatterService;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-public class DeletedJsonFormatActiveMQConsumerUT extends BaseTestCase {
+public class DeletedJsonFormatActiveMQConsumerUT extends BaseTestCaseUT {
 
+    @InjectMocks
     DeletedJsonFormatActiveMQConsumer deletedJsonFormatActiveMQConsumer;
 
     @Before
@@ -25,17 +31,18 @@ public class DeletedJsonFormatActiveMQConsumerUT extends BaseTestCase {
         DeletedJsonFormatterService deletedJsonFormatterService = new DeletedJsonFormatterService();
         deletedJsonFormatActiveMQConsumer = new DeletedJsonFormatActiveMQConsumer(deletedJsonFormatterService);
     }
+
     @Test
-    public void testprocessDeleteJsonString(){
+    public void testprocessDeleteJsonString() {
         BibliographicEntity bibliographicEntity = new BibliographicEntity();
-        ItemEntity itemEntity =new ItemEntity();
+        ItemEntity itemEntity = new ItemEntity();
         itemEntity.setBarcode("1234");
         itemEntity.setId(1);
         itemEntity.setCustomerCode("1234");
         itemEntity.setCallNumber("1234");
         itemEntity.setCallNumberType("land");
         itemEntity.setItemAvailabilityStatusId(123);
-        List<ItemEntity> itemEntities=new ArrayList<>();
+        List<ItemEntity> itemEntities = new ArrayList<>();
         itemEntities.add(itemEntity);
         bibliographicEntity.setItemEntities(itemEntities);
         DeletedRecord deletedRecord = new DeletedRecord();
@@ -44,7 +51,7 @@ public class DeletedJsonFormatActiveMQConsumerUT extends BaseTestCase {
         bib.setBibId("1");
         bib.setOwningInstitutionBibId("1");
         bib.setOwningInstitutionCode("CUL");
-        if(bibliographicEntity.isDeleted()) {
+        if (bibliographicEntity.isDeleted()) {
             bib.setDeleteAllItems(true);
         } else {
             List<Item> items = new ArrayList<>();
@@ -66,12 +73,12 @@ public class DeletedJsonFormatActiveMQConsumerUT extends BaseTestCase {
         Message in = ex.getIn();
         in.setBody(deletedRecordList);
         ex.setIn(in);
-        Map<String,Object> mapData = new HashMap<>();
-        mapData.put("batchHeaders",";requestId#1");
+        Map<String, Object> mapData = new HashMap<>();
+        mapData.put("batchHeaders", ";requestId#1");
         in.setHeaders(mapData);
         try {
             deletedJsonFormatActiveMQConsumer.processDeleteJsonString(ex);
-        }catch(Exception e){
+        } catch (Exception e) {
         }
     }
 }

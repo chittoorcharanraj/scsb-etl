@@ -1,34 +1,41 @@
 package org.recap.camel.datadump.consumer;
 
-import org.apache.camel.*;
-import org.apache.camel.impl.*;
-import org.apache.camel.support.*;
-import org.junit.*;
-import org.mockito.*;
-import org.recap.*;
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.support.DefaultExchange;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.recap.BaseTestCaseUT;
 import org.recap.model.jaxb.*;
-import org.recap.model.jaxb.marc.*;
-import org.recap.service.formatter.datadump.*;
-import org.recap.util.*;
+import org.recap.model.jaxb.marc.ContentType;
+import org.recap.service.formatter.datadump.SCSBXmlFormatterService;
+import org.recap.util.XmlFormatter;
 
-import javax.persistence.*;
 import java.util.*;
 
-public class SCSBXMLFormatActiveMQConsumerUT extends BaseTestCase {
+public class SCSBXMLFormatActiveMQConsumerUT extends BaseTestCaseUT {
 
+    @InjectMocks
     SCSBXMLFormatActiveMQConsumer scsbXMLFormatActiveMQConsumer;
     @Mock
     SCSBXmlFormatterService scsbXmlFormatterService;
     @Mock
     XmlFormatter xmlFormatter;
+
     @Before
-    public void testBefore(){
+    public void testBefore() {
         scsbXmlFormatterService = Mockito.mock(SCSBXmlFormatterService.class);
         xmlFormatter = Mockito.mock(XmlFormatter.class);
     }
+
     @Test
-    public void testProcessSCSBXmlString(){
-        scsbXMLFormatActiveMQConsumer = new SCSBXMLFormatActiveMQConsumer(scsbXmlFormatterService,xmlFormatter);
+    public void testProcessSCSBXmlString() {
+        scsbXMLFormatActiveMQConsumer = new SCSBXMLFormatActiveMQConsumer(scsbXmlFormatterService, xmlFormatter);
         List<BibRecord> records = new ArrayList<>();
         Bib bib = new Bib();
         bib.setOwningInstitutionId("101");
@@ -45,15 +52,15 @@ public class SCSBXMLFormatActiveMQConsumerUT extends BaseTestCase {
         Holding holding2 = new Holding();
         holding2.setOwningInstitutionHoldingsId("h-102");
         holdings.setHolding(Arrays.asList(holding1, holding2));
-        String dataHeader=";requestId#1";
+        String dataHeader = ";requestId#1";
         CamelContext ctx = new DefaultCamelContext();
         Exchange ex = new DefaultExchange(ctx);
         Message in = ex.getIn();
         ex.setMessage(in);
         in.setBody(records);
         ex.setIn(in);
-        Map<String,Object> mapdata = new HashMap<>();
-        mapdata.put("batchHeaders",dataHeader);
+        Map<String, Object> mapdata = new HashMap<>();
+        mapdata.put("batchHeaders", dataHeader);
         in.setHeaders(mapdata);
         try {
             scsbXMLFormatActiveMQConsumer.processSCSBXmlString(ex);

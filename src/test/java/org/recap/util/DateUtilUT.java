@@ -1,7 +1,7 @@
 package org.recap.util;
 
 import org.junit.Test;
-import org.recap.BaseTestCase;
+import org.recap.BaseTestCaseUT;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 
@@ -10,14 +10,12 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Created by premkb on 20/8/16.
  */
-public class DateUtilUT extends BaseTestCase {
+public class DateUtilUT extends BaseTestCaseUT {
 
     @Test
     public void getDateFromString() {
@@ -53,13 +51,13 @@ public class DateUtilUT extends BaseTestCase {
         Date inputDate = cal.getTime();
         DateFormat df = new SimpleDateFormat(RecapCommonConstants.DATE_FORMAT_YYYYMMDDHHMM);
         String inputDateString = df.format(inputDate);
-        String dateString=DateUtil.getFormattedDateString(inputDateString,inputDateString);
+        String dateString = DateUtil.getFormattedDateString(inputDateString, inputDateString);
         assertNotNull(dateString);
     }
 
     @Test
     public void getFormattedDateStringException() {
-        String dateString=DateUtil.getFormattedDateString(new Date().toString(),new Date().toString());
+        String dateString = DateUtil.getFormattedDateString(new Date().toString(), new Date().toString());
         assertNull(dateString);
     }
 }

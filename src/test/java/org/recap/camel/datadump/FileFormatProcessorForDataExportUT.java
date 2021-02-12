@@ -1,16 +1,22 @@
 package org.recap.camel.datadump;
 
-import org.apache.camel.*;
-import org.apache.camel.impl.*;
-import org.apache.camel.support.*;
-import org.junit.*;
-import org.recap.*;
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.support.DefaultExchange;
+import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.recap.BaseTestCaseUT;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
-public class FileFormatProcessorForDataExportUT extends BaseTestCase {
+public class FileFormatProcessorForDataExportUT extends BaseTestCaseUT {
+
+    @InjectMocks
     FileFormatProcessorForDataExport fileFormatProcessorForDataExport;
 
     @Test

@@ -1,37 +1,45 @@
 package org.recap.util.datadump;
 
-import org.junit.Before;
 import org.junit.Test;
-import org.recap.BaseTestCase;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.recap.BaseTestCaseUT;
+import org.recap.model.jpa.JobParamDataEntity;
+import org.recap.model.jpa.JobParamEntity;
 import org.recap.repository.JobParamDetailRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
 
-public class JobDataParameterUtilUT extends BaseTestCase {
-    @Autowired
+public class JobDataParameterUtilUT extends BaseTestCaseUT {
+    @InjectMocks
     JobDataParameterUtil jobDataParameterUtil;
 
-    @Autowired
+    @Mock
     JobParamDetailRepository jobParamDetailRepository;
 
-    @Before
-    public void testData() {
-        jobDataParameterUtil = new JobDataParameterUtil();
-    }
     @Test
     public void testbuildJobRequestParameterMap() {
         Map<String, String> map = new HashMap<>();
-        try {
-             map= jobDataParameterUtil.buildJobRequestParameterMap("Test");
-        }catch (Exception e){
-
-        }
-
+        JobParamEntity jobParamEntity = getJobParamEntity();
+        Mockito.when(jobParamDetailRepository.findByJobName(any())).thenReturn(jobParamEntity);
+        map = jobDataParameterUtil.buildJobRequestParameterMap("Test");
         assertNotNull(map);
+    }
 
+    private JobParamEntity getJobParamEntity() {
+        JobParamEntity jobParamEntity = new JobParamEntity();
+        JobParamDataEntity jobParamDataEntity = new JobParamDataEntity();
+        jobParamDataEntity.setId(1);
+        jobParamDataEntity.setParamName("test");
+        jobParamDataEntity.setParamValue("234");
+        jobParamDataEntity.setRecordNum("356");
+        jobParamEntity.setJobParamDataEntities(Arrays.asList(jobParamDataEntity));
+        return jobParamEntity;
     }
 }

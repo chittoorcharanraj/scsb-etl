@@ -1,17 +1,20 @@
 package org.recap.model.jpa;
 
 import org.junit.Test;
-import org.recap.BaseTestCase;
+import org.recap.BaseTestCaseUT;
 
-import static org.junit.Assert.assertTrue;
+import java.util.Arrays;
 
-public class HoldingsEntityUT extends BaseTestCase {
+import static org.junit.Assert.assertNotNull;
 
-    HoldingsEntity holdingsEntity;
+public class HoldingsEntityUT extends BaseTestCaseUT {
 
     @Test
     public void testHoldingsEntity() {
-        holdingsEntity = new HoldingsEntity();
+        HoldingsEntity holdingsEntity = new HoldingsEntity();
+        holdingsEntity.setBibliographicEntities(Arrays.asList(new BibliographicEntity()));
+        holdingsEntity.setItemEntities(Arrays.asList(new ItemEntity()));
+        holdingsEntity.setInstitutionEntity(new InstitutionEntity());
         String data = "Test data";
         try {
             holdingsEntity.equals(data);
@@ -19,6 +22,9 @@ public class HoldingsEntityUT extends BaseTestCase {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        assertTrue(true);
+        assertNotNull(holdingsEntity.getItemEntities());
+        assertNotNull(holdingsEntity.getBibliographicEntities());
+        assertNotNull(holdingsEntity.getInstitutionEntity());
+
     }
 }

@@ -1,13 +1,13 @@
 package org.recap.service.executor.datadump;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.export.DataDumpRequest;
 import org.recap.model.jpa.CollectionGroupEntity;
@@ -17,18 +17,8 @@ import org.recap.service.DataDumpSolrService;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.lang.reflect.InvocationTargetException;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-
-import static org.junit.Assert.assertNotNull;
+import java.util.*;
 
 
 public class AbstractDataDumpExecutorServiceUT extends BaseTestCaseUT {
@@ -47,7 +37,9 @@ public class AbstractDataDumpExecutorServiceUT extends BaseTestCaseUT {
 
     @Before
     public void setUp() {
-        SearchRecordsRequest searchRecordsRequest;searchRecordsRequest =  new SearchRecordsRequest();
+        CamelContext ctx = new DefaultCamelContext();
+        SearchRecordsRequest searchRecordsRequest;
+        searchRecordsRequest = new SearchRecordsRequest();
         List<String> institutionCodes = new ArrayList<>();
         institutionCodes.add("PUL");
         institutionCodes.add("CUL");
@@ -59,7 +51,7 @@ public class AbstractDataDumpExecutorServiceUT extends BaseTestCaseUT {
         MockitoAnnotations.initMocks(this);
         Map results = new HashMap();
         results.put("totalPageCount", 2);
-        results.put("totalRecordsCount",1);
+        results.put("totalRecordsCount", 1);
         ReflectionTestUtils.setField(abstractDataDumpExecutorService, "collectionGroupDetailsRepository", mockCollectionGroupDetailsRepository);
         ReflectionTestUtils.setField(abstractDataDumpExecutorService, "dataDumpBatchSize", "2");
         ReflectionTestUtils.setField(abstractDataDumpExecutorService, "dataDumpSolrService", mockDataDumpSolrService);
@@ -85,28 +77,29 @@ public class AbstractDataDumpExecutorServiceUT extends BaseTestCaseUT {
         ReflectionTestUtils.setField(abstractDataDumpExecutorService, "httpResonseRecordLimit", "1");
         ReflectionTestUtils.invokeMethod(abstractDataDumpExecutorService, "canProcessRecords", 3, "1");
 
-        ReflectionTestUtils.invokeMethod(abstractDataDumpExecutorService, "getFullOrIncrementalDirectory","1");ReflectionTestUtils.invokeMethod(abstractDataDumpExecutorService, "getFullOrIncrementalDirectory","3");
-        ReflectionTestUtils.invokeMethod(abstractDataDumpExecutorService, "getFolderName",dataDumpRequest);
-        ReflectionTestUtils.invokeMethod(abstractDataDumpExecutorService, "getOutputFormat",dataDumpRequest);
+        ReflectionTestUtils.invokeMethod(abstractDataDumpExecutorService, "getFullOrIncrementalDirectory", "1");
+        ReflectionTestUtils.invokeMethod(abstractDataDumpExecutorService, "getFullOrIncrementalDirectory", "3");
+        ReflectionTestUtils.invokeMethod(abstractDataDumpExecutorService, "getFolderName", dataDumpRequest);
+        ReflectionTestUtils.invokeMethod(abstractDataDumpExecutorService, "getOutputFormat", dataDumpRequest);
         dataDumpRequest.setOutputFileFormat("0");
-        ReflectionTestUtils.invokeMethod(abstractDataDumpExecutorService, "getOutputFormat",dataDumpRequest);
+        ReflectionTestUtils.invokeMethod(abstractDataDumpExecutorService, "getOutputFormat", dataDumpRequest);
         dataDumpRequest.setOutputFileFormat("1");
-        ReflectionTestUtils.invokeMethod(abstractDataDumpExecutorService, "getOutputFormat",dataDumpRequest);
+        ReflectionTestUtils.invokeMethod(abstractDataDumpExecutorService, "getOutputFormat", dataDumpRequest);
         dataDumpRequest.setOutputFileFormat("4");
-        ReflectionTestUtils.invokeMethod(abstractDataDumpExecutorService, "getOutputFormat",dataDumpRequest);
-        ReflectionTestUtils.invokeMethod(abstractDataDumpExecutorService, "getFileName",dataDumpRequest,1);
+        ReflectionTestUtils.invokeMethod(abstractDataDumpExecutorService, "getOutputFormat", dataDumpRequest);
+        ReflectionTestUtils.invokeMethod(abstractDataDumpExecutorService, "getFileName", dataDumpRequest, 1);
         Map results = new HashMap();
         results.put("totalPageCount", 2);
         results.put("totalRecordsCount", "1");
-        List<HashMap> dataDumpSearchResults=new ArrayList<>();
-        HashMap hashMap=new HashMap();
-        hashMap.put("bibId",1);
+        List<HashMap> dataDumpSearchResults = new ArrayList<>();
+        HashMap hashMap = new HashMap();
+        hashMap.put("bibId", 1);
         hashMap.put("itemIds", Arrays.asList(1));
         dataDumpSearchResults.add(hashMap);
         results.put("dataDumpSearchResults", dataDumpSearchResults);
         Mockito.when(mockDataDumpSolrService.getResults(Mockito.any())).thenReturn(results);
-        List<CollectionGroupEntity> collectionGroupEntityList=new ArrayList<>();
-        CollectionGroupEntity collectionGroupEntity=new CollectionGroupEntity();
+        List<CollectionGroupEntity> collectionGroupEntityList = new ArrayList<>();
+        CollectionGroupEntity collectionGroupEntity = new CollectionGroupEntity();
         collectionGroupEntity.setId(1);
         collectionGroupEntity.setCollectionGroupCode("Shared");
         collectionGroupEntityList.add(collectionGroupEntity);
@@ -114,7 +107,7 @@ public class AbstractDataDumpExecutorServiceUT extends BaseTestCaseUT {
         HashMap map = new HashMap();
         Map resultsNew = new HashMap();
         resultsNew.put("dataDumpSearchResults", Arrays.asList(map));
-        ReflectionTestUtils.invokeMethod(abstractDataDumpExecutorService, "bibHasItems",resultsNew);
+        ReflectionTestUtils.invokeMethod(abstractDataDumpExecutorService, "bibHasItems", resultsNew);
 
         dataDumpRequest.setCollectionGroupIds(cgIds);
         try {
