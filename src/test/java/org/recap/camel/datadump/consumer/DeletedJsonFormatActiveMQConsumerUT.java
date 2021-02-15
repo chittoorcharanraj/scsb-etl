@@ -5,9 +5,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.recap.BaseTestCaseUT;
 import org.recap.model.export.Bib;
 import org.recap.model.export.DeletedRecord;
@@ -21,27 +23,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.mockito.ArgumentMatchers.any;
+
 public class DeletedJsonFormatActiveMQConsumerUT extends BaseTestCaseUT {
 
     @InjectMocks
+    @Spy
     DeletedJsonFormatActiveMQConsumer deletedJsonFormatActiveMQConsumer;
 
-    @Before
-    public void before() {
-        DeletedJsonFormatterService deletedJsonFormatterService = new DeletedJsonFormatterService();
-        deletedJsonFormatActiveMQConsumer = new DeletedJsonFormatActiveMQConsumer(deletedJsonFormatterService);
-    }
+    @Mock
+    DeletedJsonFormatterService deletedJsonFormatterService;
 
     @Test
-    public void testprocessDeleteJsonString() {
+    public void testprocessDeleteJsonString() throws Exception {
         BibliographicEntity bibliographicEntity = new BibliographicEntity();
-        ItemEntity itemEntity = new ItemEntity();
-        itemEntity.setBarcode("1234");
-        itemEntity.setId(1);
-        itemEntity.setCustomerCode("1234");
-        itemEntity.setCallNumber("1234");
-        itemEntity.setCallNumberType("land");
-        itemEntity.setItemAvailabilityStatusId(123);
+        ItemEntity itemEntity = getItemEntity();
         List<ItemEntity> itemEntities = new ArrayList<>();
         itemEntities.add(itemEntity);
         bibliographicEntity.setItemEntities(itemEntities);
@@ -76,9 +72,27 @@ public class DeletedJsonFormatActiveMQConsumerUT extends BaseTestCaseUT {
         Map<String, Object> mapData = new HashMap<>();
         mapData.put("batchHeaders", ";requestId#1");
         in.setHeaders(mapData);
+        Mockito.when(deletedJsonFormatterService.getJsonForDeletedRecords(deletedRecordList)).thenReturn("test");
+        Mockito.doNothing().when(deletedJsonFormatActiveMQConsumer).processSuccessReport(any(), any(), any(), any(), any());
         try {
             deletedJsonFormatActiveMQConsumer.processDeleteJsonString(ex);
         } catch (Exception e) {
         }
+        Mockito.doThrow(new NullPointerException()).when(deletedJsonFormatterService).getJsonForDeletedRecords(any());
+        try {
+            deletedJsonFormatActiveMQConsumer.processDeleteJsonString(ex);
+        } catch (Exception e) {
+        }
+    }
+
+    private ItemEntity getItemEntity() {
+        ItemEntity itemEntity = new ItemEntity();
+        itemEntity.setBarcode("1234");
+        itemEntity.setId(1);
+        itemEntity.setCustomerCode("1234");
+        itemEntity.setCallNumber("1234");
+        itemEntity.setCallNumberType("land");
+        itemEntity.setItemAvailabilityStatusId(123);
+        return itemEntity;
     }
 }
