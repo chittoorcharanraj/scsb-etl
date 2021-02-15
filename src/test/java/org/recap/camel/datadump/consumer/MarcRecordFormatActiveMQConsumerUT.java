@@ -8,16 +8,25 @@ import org.apache.camel.support.DefaultExchange;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.recap.BaseTestCaseUT;
+import org.recap.RecapCommonConstants;
+import org.recap.RecapConstants;
+import org.recap.model.export.Bib;
+import org.recap.model.export.DeletedRecord;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.service.formatter.datadump.MarcXmlFormatterService;
 import org.recap.util.datadump.DataExportHeaderUtil;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.*;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 
 public class MarcRecordFormatActiveMQConsumerUT extends BaseTestCaseUT {
 
@@ -25,6 +34,7 @@ public class MarcRecordFormatActiveMQConsumerUT extends BaseTestCaseUT {
     MarcXmlFormatterService marcXmlFormatterService;
 
     @InjectMocks
+    @Spy
     MarcRecordFormatActiveMQConsumer marcRecordFormatActiveMQConsumer = new MarcRecordFormatActiveMQConsumer(marcXmlFormatterService);
 
     @Mock
@@ -34,22 +44,25 @@ public class MarcRecordFormatActiveMQConsumerUT extends BaseTestCaseUT {
     ExecutorService executorService;
 
     @Mock
-    Exchange exchange;
+    Future future;
 
-    @Mock
-    Message message;
-
-    @Mock
-    CamelContext context;
 
     @Test
     public void testgetDataExportHeaderUtil() {
+        ReflectionTestUtils.setField(marcRecordFormatActiveMQConsumer,"dataExportHeaderUtil",null);
         marcRecordFormatActiveMQConsumer.getDataExportHeaderUtil();
         assertNotNull(dataExportHeaderUtil);
     }
 
     @Test
     public void testgetExecutorService() {
+        Mockito.when(executorService.isShutdown()).thenReturn(Boolean.TRUE);
+        executorService = marcRecordFormatActiveMQConsumer.getExecutorService();
+        assertNotNull(executorService);
+    }
+    @Test
+    public void testgetExecutorServiceNULL() {
+        ReflectionTestUtils.setField(marcRecordFormatActiveMQConsumer,"executorService",null);
         executorService = marcRecordFormatActiveMQConsumer.getExecutorService();
         assertNotNull(executorService);
     }
@@ -77,6 +90,15 @@ public class MarcRecordFormatActiveMQConsumerUT extends BaseTestCaseUT {
         Map<String, Object> mapdata = new HashMap<>();
         mapdata.put("batchHeaders", dataHeader);
         in.setHeaders(mapdata);
+        List<Future<Object>> futureList = new ArrayList<>();
+        futureList.add(future);
+        Map<String, Object> results = new HashMap<>();
+        results.put(RecapCommonConstants.SUCCESS,Arrays.asList(getDeletedRecord()));
+        results.put(RecapCommonConstants.FAILURE,Arrays.asList("FailureRecords",getDeletedRecord()));
+        results.put(RecapConstants.ITEM_EXPORTED_COUNT,10);
+        Mockito.when(executorService.invokeAll(any())).thenReturn(futureList);
+        Mockito.when(future.get()).thenReturn(results);
+        Mockito.doNothing().when(marcRecordFormatActiveMQConsumer).processRecordFailures(any(),any(),any(),any(),any());
         try {
             marcRecordFormatActiveMQConsumer.processRecords(ex);
         } catch (Exception e) {
@@ -100,6 +122,16 @@ public class MarcRecordFormatActiveMQConsumerUT extends BaseTestCaseUT {
     public void testsetDataExportHeaderUtil() {
         marcRecordFormatActiveMQConsumer.setDataExportHeaderUtil(dataExportHeaderUtil);
         assertTrue(true);
+    }
+
+    private DeletedRecord getDeletedRecord() {
+        DeletedRecord deletedRecord = new DeletedRecord();
+        Bib bib = new Bib();
+        bib.setBibId("1");
+        bib.setOwningInstitutionBibId("1");
+        bib.setOwningInstitutionCode("CUL");
+        deletedRecord.setBib(bib);
+        return deletedRecord;
     }
 
 }

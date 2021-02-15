@@ -15,6 +15,7 @@ public class HoldingsEntityUT extends BaseTestCaseUT {
         holdingsEntity.setBibliographicEntities(Arrays.asList(new BibliographicEntity()));
         holdingsEntity.setItemEntities(Arrays.asList(new ItemEntity()));
         holdingsEntity.setInstitutionEntity(new InstitutionEntity());
+        holdingsEntity.equals(holdingsEntity);
         String data = "Test data";
         try {
             holdingsEntity.equals(data);
