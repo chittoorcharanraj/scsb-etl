@@ -123,20 +123,10 @@ public class DataDumpExportServiceUT extends BaseTestCaseUT {
         assertEquals(RecapConstants.DATADUMP_EXPORT_FAILURE, responseMessage);
     }
 
-   /* @Test
-    public void setDataDumpRequest() {
-        dataDumpExportService.setDataDumpRequest(new DataDumpRequest(),"10","PUL",new Date().toString(),new Date().toString(),"1","0","PUL","test@htcindia.com","0","RECAP");
-        assertTrue(true);
-    }*/
-
-    /*@Test
-    public void setDataDumpRequestWithBlankimslocation() {
-        Mockito.when(imsLocationDetailsRepository.findByImsLocationCode(Mockito.anyString())).thenReturn(TestUtil.getImsLocationEntity(1,"RECAP","RECAP_LAS"));
-        Mockito.when(collectionGroupDetailsRepository.findByCollectionGroupCode(RecapConstants.COLLECTION_GROUP_SHARED)).thenReturn(TestUtil.getCollectionGroupEntities(1,RecapConstants.COLLECTION_GROUP_SHARED,RecapConstants.COLLECTION_GROUP_OPEN));
-        Mockito.when(collectionGroupDetailsRepository.findByCollectionGroupCode(RecapConstants.COLLECTION_GROUP_OPEN)).thenReturn(TestUtil.getCollectionGroupEntities(2,RecapConstants.COLLECTION_GROUP_OPEN,RecapConstants.COLLECTION_GROUP_OPEN));
-        dataDumpExportService.setDataDumpRequest(new DataDumpRequest(),"10","PUL",new Date().toString(),new Date().toString(),"","","PUL","test@htcindia.com","0","");
-        assertTrue(true);
-    }*/
-
+    @Test
+    public void setDataExportCurrentStatus() {
+        ReflectionTestUtils.setField(dataDumpExportService, "dataDumpStatusFileName", "src/test/resources/org/recap/service/formatter/datadump/princeton.xml");
+        ReflectionTestUtils.invokeMethod(dataDumpExportService, "setDataExportCurrentStatus");
+    }
 
 }

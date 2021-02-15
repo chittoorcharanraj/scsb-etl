@@ -12,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -51,7 +52,7 @@ public class ZipFileProcessorUT extends BaseTestCaseUT {
         String data = ";institutionCodes#institutionCodes*CUL*PUL*NYPL";
         String data1 = ";imsDepositoryCodes#imsDepositoryCodes*HD*PU*CU";
         String data2 = ";isRequestFromSwagger#Boolean.TRUE";
-        headers.put("batchHeaders", Arrays.asList(data,data1,data2).toString());
+        headers.put("batchHeaders", Arrays.asList(data, data1, data2).toString());
         in.setHeaders(headers);
         in.setBody("CUL");
         ex.setIn(in);
@@ -62,6 +63,7 @@ public class ZipFileProcessorUT extends BaseTestCaseUT {
         }
         assertTrue(true);
     }
+
     @Test
     public void testProcessorToremoveRoute() {
         String data = ";institutionCodes#institutionCodes*CUL*PUL*NYPL";
@@ -79,24 +81,32 @@ public class ZipFileProcessorUT extends BaseTestCaseUT {
 
     @Test
     public void testftpOnCompletion() {
-        String[] fetchTypes={";fetchType#1",";fetchType#2",";fetchType#3"};
-        for (String dataN: fetchTypes) {
-         CamelContext ctx = new DefaultCamelContext();
-        Exchange ex = new DefaultExchange(ctx);
-        Message in = ex.getIn();
-        Map<String, Object> headers = new HashMap<>();
-        String data = ";requestingInstitutionCode#1";
-        headers.put("batchHeaders", dataN);
-        in.setHeaders(headers);
-        in.setBody("CUL");
-        ex.setIn(in);
-        try {
-            ZipFileProcessor zipFileProcessorn = new ZipFileProcessor(producerTemplate, ex);
-            zipFileProcessorn.ftpOnCompletion();
-        } catch (Exception e) {
-            e.printStackTrace();
+        String[] fetchTypes = {";fetchType#1", ";fetchType#2", ";fetchType#3"};
+        for (String dataN : fetchTypes) {
+            CamelContext ctx = new DefaultCamelContext();
+            Exchange ex = new DefaultExchange(ctx);
+            Message in = ex.getIn();
+            Map<String, Object> headers = new HashMap<>();
+            String data = ";requestingInstitutionCode#1";
+            headers.put("batchHeaders", dataN);
+            in.setHeaders(headers);
+            in.setBody("CUL");
+            ex.setIn(in);
+            try {
+                ZipFileProcessor zipFileProcessorn = new ZipFileProcessor(producerTemplate, ex);
+                zipFileProcessorn.ftpOnCompletion();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            assertTrue(true);
         }
-        assertTrue(true);
     }
+
+    @Test
+    public void buildJsonResponseForTopics() {
+        String batchHeaders = ";fileName#home/data/file1";
+        String requestingInstitutionCode = "1";
+        String dataDumpTypeCompletionMessage = "DeletedDataDump-1";
+        ReflectionTestUtils.invokeMethod(zipFileProcessor, "buildJsonResponseForTopics", batchHeaders, requestingInstitutionCode, dataDumpTypeCompletionMessage);
     }
 }
