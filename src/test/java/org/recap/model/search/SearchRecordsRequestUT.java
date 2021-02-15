@@ -6,7 +6,7 @@ import org.recap.BaseTestCaseUT;
 import java.util.Arrays;
 import java.util.Date;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 /**
  * Created by hemalathas on 18/4/17.
@@ -23,6 +23,8 @@ public class SearchRecordsRequestUT extends BaseTestCaseUT {
         searchRecordsRequest.setFieldValue("test");
         searchRecordsRequest.setFieldName("test");
         searchRecordsRequest.setOwningInstitutions(Arrays.asList("PUL"));
+        searchRecordsRequest.setRequestingInstitution("PUL");
+        searchRecordsRequest.setImsDepositoryCodes(Arrays.asList("HD"));
         searchRecordsRequest.setCollectionGroupDesignations(Arrays.asList("Open"));
         searchRecordsRequest.setAvailability(Arrays.asList("Available"));
         searchRecordsRequest.setMaterialTypes(Arrays.asList("Monograph"));
@@ -52,24 +54,26 @@ public class SearchRecordsRequestUT extends BaseTestCaseUT {
         assertNotNull(searchRecordsRequest.getSearchResultRows());
         assertNotNull(searchRecordsRequest.getTotalPageCount());
         assertNotNull(searchRecordsRequest.getPageNumber());
+        assertNotNull(searchRecordsRequest.getRequestingInstitution());
+        assertNotNull(searchRecordsRequest.getImsDepositoryCodes());
         assertNotNull(searchRecordsRequest.getPageSize());
         assertNotNull(searchRecordsRequest.getTotalBibRecordsCount());
         assertNotNull(searchRecordsRequest.getTotalItemRecordsCount());
         assertNotNull(searchRecordsRequest.getTotalRecordsCount());
-        assertNotNull(searchRecordsRequest.isShowResults());
-        assertNotNull(searchRecordsRequest.isSelectAll());
-        assertNotNull(searchRecordsRequest.isSelectAllFacets());
-        assertNotNull(searchRecordsRequest.isShowTotalCount());
+        assertTrue(searchRecordsRequest.isShowResults());
+        assertTrue(searchRecordsRequest.isSelectAll());
+        assertTrue(searchRecordsRequest.isSelectAllFacets());
+        assertTrue(searchRecordsRequest.isShowTotalCount());
         assertNotNull(searchRecordsRequest.getIndex());
         assertNotNull(searchRecordsRequest.getErrorMessage());
-        assertNotNull(searchRecordsRequest.isDeleted());
+        assertFalse(searchRecordsRequest.isDeleted());
         assertNotNull(searchItemResultRow.getCallNumber());
         assertNotNull(searchItemResultRow.getChronologyAndEnum());
         assertNotNull(searchItemResultRow.getCustomerCode());
         assertNotNull(searchItemResultRow.getBarcode());
         assertNotNull(searchItemResultRow.getUseRestriction());
         assertNotNull(searchItemResultRow.getAvailability());
-        assertNotNull(searchItemResultRow.isSelectedItem());
+        assertTrue(searchItemResultRow.isSelectedItem());
         assertNotNull(searchItemResultRow.getCollectionGroupDesignation());
         assertNotNull(searchResultRow.getBibId());
         assertNotNull(searchResultRow.getTitle());
@@ -84,9 +88,8 @@ public class SearchRecordsRequestUT extends BaseTestCaseUT {
         assertNotNull(searchResultRow.getSummaryHoldings());
         assertNotNull(searchResultRow.getAvailability());
         assertNotNull(searchResultRow.getLeaderMaterialType());
-        assertNotNull(searchResultRow.isSelected());
-        assertNotNull(searchResultRow.isShowItems());
-        assertNotNull(searchResultRow.getSearchItemResultRows());
+        assertFalse(searchResultRow.isSelected());
+        assertTrue(searchResultRow.isShowItems());
         assertNotNull(searchResultRow.getSearchItemResultRows());
         searchRecordsRequest.reset();
     }

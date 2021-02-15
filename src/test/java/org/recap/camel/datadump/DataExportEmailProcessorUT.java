@@ -109,8 +109,11 @@ public class DataExportEmailProcessorUT extends BaseTestCaseUT {
 
     private ReportDataEntity getReportDataEntity(String headerName, String headerValue) {
         ReportDataEntity reportDataEntity = new ReportDataEntity();
+        reportDataEntity.setId(1);
         reportDataEntity.setHeaderName(headerName);
         reportDataEntity.setHeaderValue(headerValue);
+        reportDataEntity.setRecordNum("223");
+        assertNotNull(reportDataEntity.getRecordNum());
         return reportDataEntity;
     }
 

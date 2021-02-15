@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,6 +21,7 @@ import static org.junit.Assert.assertTrue;
 
 public class ZipFileProcessorUT extends BaseTestCaseUT {
 
+    @Mock
     ProducerTemplate producerTemplate;
 
     @InjectMocks
@@ -47,12 +49,13 @@ public class ZipFileProcessorUT extends BaseTestCaseUT {
         Message in = ex.getIn();
         Map<String, Object> headers = new HashMap<>();
         String data = ";institutionCodes#institutionCodes*CUL*PUL*NYPL";
-        headers.put("batchHeaders", data);
+        String data1 = ";imsDepositoryCodes#imsDepositoryCodes*HD*PU*CU";
+        String data2 = ";isRequestFromSwagger#Boolean.TRUE";
+        headers.put("batchHeaders", Arrays.asList(data,data1,data2).toString());
         in.setHeaders(headers);
         in.setBody("CUL");
         ex.setIn(in);
         try {
-
             zipFileProcessor.process(ex);
         } catch (Exception e) {
             e.printStackTrace();

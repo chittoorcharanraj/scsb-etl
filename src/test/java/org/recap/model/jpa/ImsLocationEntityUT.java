@@ -6,6 +6,7 @@ import org.recap.BaseTestCaseUT;
 import java.util.Date;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class ImsLocationEntityUT extends BaseTestCaseUT {
 
@@ -13,7 +14,7 @@ public class ImsLocationEntityUT extends BaseTestCaseUT {
     public void testImsLocationEntity() {
 
         ImsLocationEntity imsLocationEntity = new ImsLocationEntity();
-
+        ImsLocationEntity imsLocationEntity1 = new ImsLocationEntity();
         imsLocationEntity.setId(1);
         imsLocationEntity.setImsLocationCode("HD");
         imsLocationEntity.setCreatedBy("test");
@@ -23,6 +24,11 @@ public class ImsLocationEntityUT extends BaseTestCaseUT {
         imsLocationEntity.setCreatedDate(new Date());
         imsLocationEntity.setUpdatedDate(new Date());
         imsLocationEntity.setActive(true);
+        imsLocationEntity.equals(null);
+        imsLocationEntity.equals(imsLocationEntity);
+        imsLocationEntity.equals(imsLocationEntity1);
+        imsLocationEntity.hashCode();
+        imsLocationEntity1.hashCode();
 
         assertNotNull(imsLocationEntity.getId());
         assertNotNull(imsLocationEntity.getImsLocationCode());
@@ -32,5 +38,6 @@ public class ImsLocationEntityUT extends BaseTestCaseUT {
         assertNotNull(imsLocationEntity.getDescription());
         assertNotNull(imsLocationEntity.getUpdatedBy());
         assertNotNull(imsLocationEntity.getCreatedBy());
+        assertTrue(imsLocationEntity.isActive());
     }
 }
