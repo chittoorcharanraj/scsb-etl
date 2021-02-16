@@ -2,10 +2,8 @@ package org.recap.camel.datadump.consumer;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -58,8 +56,6 @@ public class BibEntityGeneratorActiveMQConsumerUT extends BaseTestCaseUT {
 
             List<BibliographicEntity> bibliographicEntityList = new ArrayList<>();
             bibliographicEntityList.add(getBibliographicEntity());
-            Mockito.when(future.get())
-                    .thenReturn(CompletableFuture.completedFuture(Arrays.asList(getBibliographicEntity())));
             Mockito.when(executorService.invokeAll(any())).thenReturn(futures);
             Mockito.when(bibliographicDetailsRepository.getBibliographicEntityList(Mockito.anyList())).thenReturn(bibliographicEntityList);
             bibEntityGeneratorActiveMQConsumer.processBibEntities(ex);
