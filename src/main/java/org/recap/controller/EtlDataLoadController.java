@@ -157,7 +157,6 @@ public class EtlDataLoadController {
 
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Status  : " + status).append("\n");
-        //TODO: This call takes a long time to fetch the count.
         return stringBuilder.toString();
     }
 
