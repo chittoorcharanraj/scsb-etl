@@ -148,6 +148,7 @@ public class RecapConstants {
     public static final String INPROGRESS_ERR_MSG = "Can't run data export now, already data export in progress, wait until it completes.";
     public static final String INCREMENTAL_DATE_LIMIT_EMPTY_ERR_MSG = "The incremental Date limit is missing. Please contact HTC Support {0} for assistance.";
     public static final String INITIAL_DATA_LOAD_DATE_MISSING_ERR_MSG = "The initial data load Date is missing for the institution {0}. Please contact HTC Support {1} for assistance.";
+    public static final String INITIAL_DATA_LOAD_DATE_INVALID_FORMAT = "The initial data load Date format is invalid. Please contact HTC Support for assistance.";
     public static final String DATADUMP_DAYS_LIMIT_EXCEEDED_ERROR_MSG = "The date used for incremental data dump cannot be older than {0} days from the date of request. Please contact HTC Support {1} for assistance.";
     public static final String RESTRICT_FULLDUMP_VIA_INCREMENTAL_ERROR_MSG = "The date used for incremental data dump precedes (or) is the date on which records for the institution {0} were created. Kindly use a later date or contact HTC Support {1} for assistance.";
 
@@ -229,6 +230,7 @@ public class RecapConstants {
     public static final String INVALID = "INVALID";
     public static final String SWAGGER = "SWAGGER";
     public static final String EXPORT_MESSAGE = "Can't run export now as another process is in progress. We have saved your request.We will initiate and notify once the exiting process completes";
+    public static final String LAS_EMAIL_ASSIST_TO = "las.email.assist.to";
 
     public class MarcFields {
         public static final String CF_001 = "001";

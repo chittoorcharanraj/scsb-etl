@@ -18,6 +18,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by peris on 11/1/16.
@@ -69,23 +70,12 @@ public class SCSBRecordFormatActiveMQConsumer extends CommonReportGenerator {
         }
 
         List<Future<Map<String, Object>>> futureList = getExecutorService().invokeAll(callables);
-        futureList.stream()
-                .map(future -> {
-                    try {
-                        return future.get();
-                    } catch (InterruptedException  e) {
-                        logger.error(RecapConstants.ERROR,e);
-                        Thread.currentThread().interrupt();
-                        throw new RuntimeException(e);
-                    }
-                    catch (ExecutionException e) {
-                        logger.error(RecapConstants.ERROR,e);
-                        throw new RuntimeException(e);
-                    }
-                });
+        List<Future<Map<String, Object>>> collectedFutures = futureList.stream()
+                .map(this::getMapFuture)
+                .collect(Collectors.toList());
         List<Integer> itemExportedCountList = new ArrayList<>();
         List failures = new ArrayList();
-        for (Future future : futureList) {
+        for (Future future : collectedFutures) {
             Map<String, Object> results = (Map<String, Object>) future.get();
             Collection<? extends BibRecord> successRecords = (Collection<? extends BibRecord>) results.get(RecapCommonConstants.SUCCESS);
             if (!CollectionUtils.isEmpty(successRecords)) {
@@ -123,6 +113,19 @@ public class SCSBRecordFormatActiveMQConsumer extends CommonReportGenerator {
                 .withHeader(RecapConstants.ITEM_EXPORTED_COUNT,itemExportedCount);
         fluentProducerTemplate.send();
    }
+
+    private Future<Map<String, Object>> getMapFuture(Future<Map<String, Object>> future) {
+        try {
+             future.get();
+             return future;
+        } catch (InterruptedException  e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException(e);
+        }
+        catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     /**
      * Process the failure records for bib records export.

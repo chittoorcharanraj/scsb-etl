@@ -198,7 +198,7 @@ public class DataExportValidateService {
             }
         } catch (IOException e) {
             logger.error(RecapConstants.ERROR,e);
-            logger.error("Exception while creating or updating the file : " + e.getMessage());
+            logger.error("Exception while creating or updating the file : {}", e.getMessage());
         }
         return dataDumpStatus;
     }
@@ -217,13 +217,17 @@ public class DataExportValidateService {
 
     private Integer checkToRestrictFullDumpViaIncremental(Map<Integer, String> errorMessageMap, Integer errorcount, String dataDumpRequestDateString, String initialDataLoadDateString, String institutionCode, String imsLocationCode) {
         if(StringUtils.isBlank(initialDataLoadDateString)) {
-            errorMessageMap.put(errorcount, MessageFormat.format(RecapConstants.INITIAL_DATA_LOAD_DATE_MISSING_ERR_MSG, institutionCode, propertyUtil.getPropertyByImsLocationAndKey(imsLocationCode, "las.email.assist.to")));
+            errorMessageMap.put(errorcount, MessageFormat.format(RecapConstants.INITIAL_DATA_LOAD_DATE_MISSING_ERR_MSG, institutionCode, propertyUtil.getPropertyByImsLocationAndKey(imsLocationCode, RecapConstants.LAS_EMAIL_ASSIST_TO)));
             errorcount++;
         } else {
             Date dataDumpRequestDate = getFormattedDate(RecapConstants.DATE_FORMAT_YYYYMMDD, dataDumpRequestDateString);
             Date initialDataLoadDate = getFormattedDate(RecapConstants.DATE_FORMAT_YYYYMMDD, initialDataLoadDateString);
-            if(initialDataLoadDate.after(dataDumpRequestDate) || initialDataLoadDate.equals(dataDumpRequestDate)) {
-                errorMessageMap.put(errorcount, MessageFormat.format(RecapConstants.RESTRICT_FULLDUMP_VIA_INCREMENTAL_ERROR_MSG, institutionCode, propertyUtil.getPropertyByImsLocationAndKey(imsLocationCode, "las.email.assist.to")));
+            if(initialDataLoadDate==null){
+                errorMessageMap.put(errorcount, MessageFormat.format(RecapConstants.INITIAL_DATA_LOAD_DATE_INVALID_FORMAT, institutionCode, propertyUtil.getPropertyByImsLocationAndKey(imsLocationCode, RecapConstants.LAS_EMAIL_ASSIST_TO)));
+                errorcount++;
+            }
+            else if(initialDataLoadDate.after(dataDumpRequestDate) || initialDataLoadDate.equals(dataDumpRequestDate)) {
+                errorMessageMap.put(errorcount, MessageFormat.format(RecapConstants.RESTRICT_FULLDUMP_VIA_INCREMENTAL_ERROR_MSG, institutionCode, propertyUtil.getPropertyByImsLocationAndKey(imsLocationCode, RecapConstants.LAS_EMAIL_ASSIST_TO)));
                 errorcount++;
             }
         }
@@ -232,19 +236,23 @@ public class DataExportValidateService {
 
     private Integer checkForIncrementalDateLimit(Date currentDate, Map<Integer, String> errorMessageMap, Integer errorcount, String dataDumpRequestDateString, String imsLocationCode) {
         Date dataDumpRequestDateTime = getFormattedDate(RecapCommonConstants.DATE_FORMAT_YYYYMMDDHHMM, dataDumpRequestDateString);
-        long dateDifference = currentDate.getTime() - dataDumpRequestDateTime.getTime();
-        long days = TimeUnit.DAYS.convert(dateDifference, TimeUnit.MILLISECONDS);
-
-        if(StringUtils.isBlank(incrementalDateLimit)) {
-            errorMessageMap.put(errorcount, MessageFormat.format(RecapConstants.INCREMENTAL_DATE_LIMIT_EMPTY_ERR_MSG, propertyUtil.getPropertyByImsLocationAndKey(imsLocationCode, "las.email.assist.to")));
+        if(dataDumpRequestDateTime==null){
+            errorMessageMap.put(errorcount, RecapConstants.INITIAL_DATA_LOAD_DATE_INVALID_FORMAT);
             errorcount++;
-        } else {
-            if(Math.toIntExact(days) > Integer.valueOf(incrementalDateLimit)) {
-                errorMessageMap.put(errorcount, MessageFormat.format(RecapConstants.DATADUMP_DAYS_LIMIT_EXCEEDED_ERROR_MSG, incrementalDateLimit, propertyUtil.getPropertyByImsLocationAndKey(imsLocationCode, "las.email.assist.to")));
+        }
+        else{
+            long dateDifference = currentDate.getTime() - dataDumpRequestDateTime.getTime();
+            long days = TimeUnit.DAYS.convert(dateDifference, TimeUnit.MILLISECONDS);
+            if(StringUtils.isBlank(incrementalDateLimit)) {
+                errorMessageMap.put(errorcount, MessageFormat.format(RecapConstants.INCREMENTAL_DATE_LIMIT_EMPTY_ERR_MSG, propertyUtil.getPropertyByImsLocationAndKey(imsLocationCode, RecapConstants.LAS_EMAIL_ASSIST_TO)));
                 errorcount++;
+            } else {
+                if(Math.toIntExact(days) > Integer.valueOf(incrementalDateLimit)) {
+                    errorMessageMap.put(errorcount, MessageFormat.format(RecapConstants.DATADUMP_DAYS_LIMIT_EXCEEDED_ERROR_MSG, incrementalDateLimit, propertyUtil.getPropertyByImsLocationAndKey(imsLocationCode, RecapConstants.LAS_EMAIL_ASSIST_TO)));
+                    errorcount++;
+                }
             }
         }
         return errorcount;
     }
-
 }

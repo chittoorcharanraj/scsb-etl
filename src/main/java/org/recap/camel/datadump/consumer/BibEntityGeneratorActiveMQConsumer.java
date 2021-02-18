@@ -22,6 +22,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 /**
  * Created by peris on 11/1/16.
@@ -84,24 +85,13 @@ public class BibEntityGeneratorActiveMQConsumer {
             }
 
             List<Future<BibliographicEntity>> futureList = getExecutorService().invokeAll(callables);
-            futureList.stream()
-                    .map(future -> {
-                        try {
-                            return future.get();
-                        } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
-                            logger.error(RecapConstants.ERROR,e);
-                            throw new RuntimeException(e);
-                        }
-                        catch (ExecutionException e) {
-                            logger.error(RecapConstants.ERROR,e);
-                            throw new RuntimeException(e);
-                        }
-                    });
+            List<Future<BibliographicEntity>> collectedFutures = futureList.stream()
+                    .map(this::getBibliographicEntityFuture)
+                    .collect(Collectors.toList());
 
 
-            for (Future future : futureList) {
-                bibliographicEntities.add((BibliographicEntity) future.get());
+            for (Future<BibliographicEntity> future : collectedFutures) {
+                bibliographicEntities.add(future.get());
             }
 
             long endTime = System.currentTimeMillis();
@@ -121,6 +111,19 @@ public class BibEntityGeneratorActiveMQConsumer {
                     .withHeader("transmissionType", exchange.getIn().getHeader("transmissionType"));
             fluentProducerTemplate.send();
          }
+    }
+
+    private Future<BibliographicEntity> getBibliographicEntityFuture(Future<BibliographicEntity> future) {
+        try {
+            future.get();
+            return future;
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException(e);
+        }
+        catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**

@@ -26,6 +26,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 /**
  * Created by peris on 11/1/16.
@@ -79,23 +80,12 @@ public class DeletedRecordFormatActiveMQConsumer extends CommonReportGenerator {
         }
 
         List<Future<DeletedRecord>> futureList = getExecutorService().invokeAll(callables);
-        futureList.stream()
-                .map(future -> {
-                    try {
-                        return future.get();
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                        logger.error(e.getMessage());
-                        throw new RuntimeException(e);
-                    }
-                    catch (ExecutionException e) {
-                        logger.error(e.getMessage());
-                        throw new RuntimeException(e);
-                    }
-                });
+        List<Future<DeletedRecord>> collectedFutures = futureList.stream()
+                .map(this::getDeletedRecordFuture)
+                .collect(Collectors.toList());
         List<Integer> itemExportedCountList = new ArrayList<>();
         List failures = new ArrayList<>();
-        for (Future<DeletedRecord> future : futureList) {
+        for (Future<DeletedRecord> future : collectedFutures) {
             Map<String, Object> results = (Map<String, Object>) future.get();
             Collection<? extends DeletedRecord> successRecords = (Collection<? extends DeletedRecord>) results.get(RecapCommonConstants.SUCCESS);
             if (CollectionUtils.isNotEmpty(successRecords)) {
@@ -132,6 +122,19 @@ public class DeletedRecordFormatActiveMQConsumer extends CommonReportGenerator {
                 .withHeader(RecapConstants.TRANSMISSION_TYPE, exchange.getIn().getHeader(RecapConstants.TRANSMISSION_TYPE))
                 .withHeader(RecapConstants.ITEM_EXPORTED_COUNT,itemExportedCount);
         fluentProducerTemplate.send();
+    }
+
+    private Future<DeletedRecord> getDeletedRecordFuture(Future<DeletedRecord> future) {
+        try {
+             future.get();
+             return future;
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException(e);
+        }
+        catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
