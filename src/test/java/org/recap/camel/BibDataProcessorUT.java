@@ -11,7 +11,6 @@ import org.mockito.MockitoAnnotations;
 import org.recap.BaseTestCaseUT;
 import org.recap.model.etl.BibPersisterCallable;
 import org.recap.model.jaxb.BibRecord;
-
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.HoldingsEntity;
 import org.recap.model.jpa.ItemEntity;
@@ -60,42 +59,16 @@ public class BibDataProcessorUT extends BaseTestCaseUT {
 
     @Mock
     ReportDetailRepository reportDetailRepository;
-
-    @Mock
-    private Map<String, Integer> institutionMap;
-
-    @Mock
-    private Map<String, Integer> collectionGroupMap;
-
-    @Mock
-    private Map itemStatusMap;
-
-    @Mock
-    private ProducerTemplate producer;
-
-    @Mock
-    private DBReportUtil dbReportUtil;
-
     @Mock
     EtlDataLoadDAOService etlDataLoadDAOService;
-
     @Mock
     ItemDetailsRepository itemDetailsRepository;
-
     @Mock
     NullPointerException nullPointerException;
-
     @Mock
     NullPointerException nullPointerException1;
-
     @Mock
     NullPointerException nullPointerException2;
-
-    @Before
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
-    }
-
     String content = "<collection>\n" +
             "        <record>\n" +
             "        <controlfield tag=\"001\">47764496</controlfield>\n" +
@@ -118,6 +91,21 @@ public class BibDataProcessorUT extends BaseTestCaseUT {
             "        <leader>01184nam a22003494a 4500</leader>\n" +
             "        </record>\n" +
             "        </collection>";
+    @Mock
+    private Map<String, Integer> institutionMap;
+    @Mock
+    private Map<String, Integer> collectionGroupMap;
+    @Mock
+    private Map itemStatusMap;
+    @Mock
+    private ProducerTemplate producer;
+    @Mock
+    private DBReportUtil dbReportUtil;
+
+    @Before
+    public void setUp() {
+        MockitoAnnotations.initMocks(this);
+    }
 
     @Test
     public void persistDataToDB() throws Exception {
@@ -134,19 +122,29 @@ public class BibDataProcessorUT extends BaseTestCaseUT {
     }
 
     @Test
-    public void persistDataToDBPersistenceException() throws Exception {
+    public void persistDataToDBPersistenceExceptionDifferentOwingInstitutionItemId() throws Exception {
         BibliographicEntity bibliographicEntity = getBibliographicEntity();
+        bibliographicEntity.getItemEntities().get(0).setOwningInstitutionItemId("1");
         ETLExchange etlExchange = new ETLExchange();
         etlExchange.setBibliographicEntities(Arrays.asList(bibliographicEntity));
         etlExchange.setInstitutionEntityMap(etlExchange.getInstitutionEntityMap() == null ? new HashMap() : etlExchange.getInstitutionEntityMap());
         etlExchange.setCollectionGroupMap(etlExchange.getCollectionGroupMap() == null ? new HashMap() : etlExchange.getCollectionGroupMap());
         Mockito.doThrow(PersistenceException.class).when(etlDataLoadDAOService).saveBibliographicEntityList(Mockito.anyList());
-        Mockito.when(itemDetailsRepository.findByBarcode(Mockito.anyString())).thenReturn(bibliographicEntity.getItemEntities());
-        try {
-            bibDataProcessor.processETLExchagneAndPersistToDB(etlExchange);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Mockito.when(itemDetailsRepository.findByBarcode(Mockito.anyString())).thenReturn(getBibliographicEntity().getItemEntities());
+        bibDataProcessor.processETLExchagneAndPersistToDB(etlExchange);
+    }
+
+    @Test
+    public void persistDataToDBPersistenceExceptionAndNullPoiterException() throws Exception {
+        BibliographicEntity bibliographicEntity = getBibliographicEntity();
+        bibliographicEntity.getItemEntities().get(0).setOwningInstitutionItemId("1");
+        ETLExchange etlExchange = new ETLExchange();
+        etlExchange.setBibliographicEntities(Arrays.asList(bibliographicEntity));
+        etlExchange.setInstitutionEntityMap(etlExchange.getInstitutionEntityMap() == null ? new HashMap() : etlExchange.getInstitutionEntityMap());
+        etlExchange.setCollectionGroupMap(etlExchange.getCollectionGroupMap() == null ? new HashMap() : etlExchange.getCollectionGroupMap());
+        Mockito.doThrow(PersistenceException.class).when(etlDataLoadDAOService).saveBibliographicEntityList(Mockito.anyList());
+        Mockito.doThrow(new NullPointerException()).when(itemDetailsRepository).findByBarcode(Mockito.anyString());
+        bibDataProcessor.processETLExchagneAndPersistToDB(etlExchange);
     }
 
     @Test
@@ -182,6 +180,31 @@ public class BibDataProcessorUT extends BaseTestCaseUT {
     }
 
     @Test
+    public void setDuplicateBarcodeReportInfoForItemsinSameBib() {
+        String barcode = "24366";
+        ItemEntity existingItemEntity = getBibliographicEntity().getItemEntities().get(0);
+        BibliographicEntity bibliographicEntity = getBibliographicEntity();
+        HoldingsEntity holdingsEntity = getBibliographicEntity().getHoldingsEntities().get(0);
+        ItemEntity itemEntity = getBibliographicEntity().getItemEntities().get(0);
+        ReflectionTestUtils.invokeMethod(bibDataProcessor, "setDuplicateBarcodeReportInfoForItemsinSameBib", barcode, existingItemEntity, dbReportUtil, bibliographicEntity, holdingsEntity, itemEntity);
+    }
+
+    @Test
+    public void getExistingBarcodeItemWithinSameBib() {
+        List<ItemEntity> existingItemList = getBibliographicEntity().getItemEntities();
+        ItemEntity itemEntity = getBibliographicEntity().getItemEntities().get(0);
+        ReflectionTestUtils.invokeMethod(bibDataProcessor, "getExistingBarcodeItemWithinSameBib", existingItemList, itemEntity);
+    }
+
+    @Test
+    public void getExistingBarcodeItemWithinSameBibWithNullValue() {
+        List<ItemEntity> existingItemList = getBibliographicEntity().getItemEntities();
+        ItemEntity itemEntity = getBibliographicEntity().getItemEntities().get(0);
+        itemEntity.setBarcode("456631");
+        ReflectionTestUtils.invokeMethod(bibDataProcessor, "getExistingBarcodeItemWithinSameBib", existingItemList, itemEntity);
+    }
+
+    @Test
     public void persistDataToDBExceptionEx() throws Exception {
         BibliographicEntity bibliographicEntity = getBibliographicEntity();
         ETLExchange etlExchange = new ETLExchange();
@@ -213,7 +236,7 @@ public class BibDataProcessorUT extends BaseTestCaseUT {
         Mockito.when(nullPointerException2.getMessage()).thenReturn("error");
 
         Mockito.when(etlDataLoadDAOService.saveItemEntity(Mockito.any())).thenThrow(nullPointerException);
-        Mockito.when(dbReportUtil.generateBibHoldingsFailureReportEntity(Mockito.any(),Mockito.any())).thenReturn(new ArrayList<>());
+        Mockito.when(dbReportUtil.generateBibHoldingsFailureReportEntity(Mockito.any(), Mockito.any())).thenReturn(new ArrayList<>());
         try {
             bibDataProcessor.processETLExchagneAndPersistToDB(etlExchange);
         } catch (Exception e) {
@@ -274,16 +297,16 @@ public class BibDataProcessorUT extends BaseTestCaseUT {
         bibDataProcessor.setXmlFileName("testFailureForItemsAndHoldings.xml");
         ReportEntity reportEntity = bibDataProcessor.processBibHoldingsItems(dbReportUtil, bibliographicEntity);
         assertNotNull(reportEntity);
-     }
+    }
 
     @Test
     public void getXmlFileName() throws Exception {
-     ReflectionTestUtils.setField(bibDataProcessor,"xmlFileName","file");
-     String xmlFileName=bibDataProcessor.getXmlFileName();
-     assertEquals("file",xmlFileName);
-     ReflectionTestUtils.setField(bibDataProcessor,"institutionName","PUL");
-     String institutionName=bibDataProcessor.getInstitutionName();
-     assertEquals("PUL",institutionName);
+        ReflectionTestUtils.setField(bibDataProcessor, "xmlFileName", "file");
+        String xmlFileName = bibDataProcessor.getXmlFileName();
+        assertEquals("file", xmlFileName);
+        ReflectionTestUtils.setField(bibDataProcessor, "institutionName", "PUL");
+        String institutionName = bibDataProcessor.getInstitutionName();
+        assertEquals("PUL", institutionName);
     }
 
     @Test
@@ -369,7 +392,7 @@ public class BibDataProcessorUT extends BaseTestCaseUT {
         itemEntity.setLastUpdatedDate(new Date());
         itemEntity.setLastUpdatedBy("etl");
         itemEntity.setBarcode("334330028533193343300285331933433002853319555565");
-        itemEntity.setOwningInstitutionItemId(".i1231");
+        itemEntity.setOwningInstitutionItemId("1231");
         itemEntity.setOwningInstitutionId(1);
         itemEntity.setCollectionGroupId(1);
         itemEntity.setCustomerCode("PA");

@@ -26,6 +26,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 /**
  * Created by peris on 11/1/16.
@@ -81,23 +82,12 @@ public class MarcRecordFormatActiveMQConsumer extends CommonReportGenerator {
         }
 
         List<Future<Map<String, Object>>> futureList = getExecutorService().invokeAll(callables);
-        futureList.stream()
-                .map(future -> {
-                    try {
-                        return future.get();
-                    } catch (InterruptedException  e) {
-                        logger.error(e.getMessage());
-                        Thread.currentThread().interrupt();
-                        throw new RuntimeException(e);
-                    }
-                    catch (ExecutionException e) {
-                        logger.error(e.getMessage());
-                        throw new RuntimeException(e);
-                    }
-                });
+        List<Future<Map<String, Object>>> collectedFutures = futureList.stream()
+                .map(this::getMapFuture)
+                .collect(Collectors.toList());
         List<Integer> itemExportedCountList = new ArrayList<>();
         List failures = new ArrayList();
-        for (Future future : futureList) {
+        for (Future future : collectedFutures) {
             Map<String, Object> results = (Map<String, Object>) future.get();
             Collection<? extends Record> successRecords = (Collection<? extends Record>) results.get(RecapCommonConstants.SUCCESS);
             if (!CollectionUtils.isEmpty(successRecords)) {
@@ -131,6 +121,19 @@ public class MarcRecordFormatActiveMQConsumer extends CommonReportGenerator {
                 .withHeader(RecapConstants.TRANSMISSION_TYPE, exchange.getIn().getHeader(RecapConstants.TRANSMISSION_TYPE))
                 .withHeader(RecapConstants.ITEM_EXPORTED_COUNT,itemExportedCount);
         fluentProducerTemplate.send();
+    }
+
+    private Future<Map<String, Object>> getMapFuture(Future<Map<String, Object>> future) {
+        try {
+             future.get();
+             return future;
+        } catch (InterruptedException  e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException(e);
+        }
+        catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
