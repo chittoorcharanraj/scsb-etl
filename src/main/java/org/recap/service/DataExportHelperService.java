@@ -25,11 +25,11 @@ public class DataExportHelperService {
     @Autowired private DataDumpExportService dataDumpExportService;
 
     public String checkForExistingRequestAndStart(DataDumpRequest dataDumpRequest) {
-        if (dataDumpRequest.getTransmissionType().equalsIgnoreCase(RecapConstants.DATADUMP_TRANSMISSION_TYPE_S3) && checkIfAnyExportIsInProgress()) {
+        if (checkIfAnyExportIsInProgress()) {
             saveRequestToDB(dataDumpRequest,RecapConstants.AWAITING);
             return RecapConstants.EXPORT_MESSAGE;
         }
-        else if(dataDumpRequest.getTransmissionType().equalsIgnoreCase(RecapConstants.DATADUMP_TRANSMISSION_TYPE_S3) && checkIfAnyExportIsAwaiting()){
+        else if(checkIfAnyExportIsAwaiting()){
             saveRequestToDB(dataDumpRequest,RecapConstants.AWAITING);
             dynamicRouteBuilder.addDataDumpExportRoutes();
             dataDumpExportService.startDataDumpProcess(dataDumpUtil.prepareRequestForExistingAwaiting());
@@ -50,13 +50,13 @@ public class DataExportHelperService {
 
     public boolean checkIfAnyExportIsInProgress() {
         ExportStatusEntity exportStatusEntity = dataExportDBService.findByExportStatusCode(RecapConstants.IN_PROGRESS);
-        List<ETLRequestLogEntity> etlRequestLogEntityList = dataExportDBService.findByExportStatusIdAndTransmissionType(exportStatusEntity.getId(),RecapConstants.DATADUMP_TRANSMISSION_TYPE_S3);
+        List<ETLRequestLogEntity> etlRequestLogEntityList = dataExportDBService.findAllStatusById(exportStatusEntity.getId());
         return  !etlRequestLogEntityList.isEmpty();
     }
 
     public boolean checkIfAnyExportIsAwaiting() {
         ExportStatusEntity exportStatusEntity = dataExportDBService.findByExportStatusCode(RecapConstants.AWAITING);
-        List<ETLRequestLogEntity> allStatusOrderByRequestedTime = dataExportDBService.findByExportStatusIdAndTransmissionType(exportStatusEntity.getId(),RecapConstants.DATADUMP_TRANSMISSION_TYPE_S3);
+        List<ETLRequestLogEntity> allStatusOrderByRequestedTime = dataExportDBService.findAllStatusById(exportStatusEntity.getId());
         return !allStatusOrderByRequestedTime.isEmpty();
     }
 

@@ -174,8 +174,8 @@ public class DataDumpExportService {
         HttpHeaders responseHeaders = new HttpHeaders();
         String date = new Date().toString();
         if (dataDumpRequest.getTransmissionType().equals(RecapConstants.DATADUMP_TRANSMISSION_TYPE_S3)) {
-            if (outputString.equals(RecapConstants.DATADUMP_RECORDS_AVAILABLE_FOR_PROCESS)||outputString.equals(RecapConstants.DATADUMP_PROCESS_STARTED)) {
-                logger.info("Writing to data-dump status file as 'In Progress' on Dump-Type:{} Requesting Inst : {}",dataDumpRequest.getFetchType(),dataDumpRequest.getRequestingInstitutionCode());
+            if (outputString.equals(RecapConstants.DATADUMP_RECORDS_AVAILABLE_FOR_PROCESS)) {
+                logger.info("Writing to data-dump status file as 'In Progress' on Dump-Type:{} Requesting Inst : {} and Request ID : {} ",dataDumpRequest.getFetchType(),dataDumpRequest.getRequestingInstitutionCode(),dataDumpRequest.getEtlRequestId());
                 if(!dataDumpRequest.isRequestFromSwagger()){
                     setDataExportCurrentStatus();
                 }

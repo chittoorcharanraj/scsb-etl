@@ -230,6 +230,10 @@ public class DataDumpUtil {
                 exportLog.setExportStatusId(exportStatusEntity.getId());
                 exportLog.setExportStatusEntity(exportStatusEntity);
                 exportLog.setMessage("Diplayed the result in the response");
+                DataDumpRequest awaitingRequest = checkAndPrepareAwaitingReqIfAny();
+                if(awaitingRequest!=null){
+                    dataDumpExportService.startDataDumpProcess(awaitingRequest);
+                }
             }
             else{
                 ExportStatusEntity exportStatusEntity = exportStatusDetailsRepository.findByExportStatusCode(outputString);
@@ -265,7 +269,7 @@ public class DataDumpUtil {
 
     public DataDumpRequest checkAndPrepareAwaitingReqIfAny() {
         ExportStatusEntity awaitingStatusEntity = dataExportDBService.findByExportStatusCode(RecapConstants.AWAITING);
-        List<ETLRequestLogEntity> etlRequestsAwaitingForExport = dataExportDBService.findAllStatusForS3OrderByRequestedTime(awaitingStatusEntity.getId(),RecapConstants.DATADUMP_TRANSMISSION_TYPE_S3);
+        List<ETLRequestLogEntity> etlRequestsAwaitingForExport = dataExportDBService.findAllStatusById(awaitingStatusEntity.getId());
         if(!etlRequestsAwaitingForExport.isEmpty()){
             return prepareRequestForExistingAwaiting();
         }
@@ -274,7 +278,7 @@ public class DataDumpUtil {
 
     public DataDumpRequest prepareRequestForExistingAwaiting() {
         ExportStatusEntity exportStatusEntity = dataExportDBService.findByExportStatusCode(RecapConstants.AWAITING);
-        List<ETLRequestLogEntity> allByStatusOrderByRequestedTime = dataExportDBService.findAllStatusForS3OrderByRequestedTime(exportStatusEntity.getId(),RecapConstants.DATADUMP_TRANSMISSION_TYPE_S3);
+        List<ETLRequestLogEntity> allByStatusOrderByRequestedTime = dataExportDBService.findAllStatusById(exportStatusEntity.getId());
         return prepareDataDumpReq(allByStatusOrderByRequestedTime.get(0));
     }
 
