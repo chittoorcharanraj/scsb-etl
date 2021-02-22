@@ -230,6 +230,10 @@ public class DataDumpUtil {
                 exportLog.setExportStatusId(exportStatusEntity.getId());
                 exportLog.setExportStatusEntity(exportStatusEntity);
                 exportLog.setMessage("Diplayed the result in the response");
+                DataDumpRequest awaitingRequest = checkAndPrepareAwaitingReqIfAny();
+                if(awaitingRequest!=null){
+                    dataDumpExportService.startDataDumpProcess(awaitingRequest);
+                }
             }
             else{
                 ExportStatusEntity exportStatusEntity = exportStatusDetailsRepository.findByExportStatusCode(outputString);
