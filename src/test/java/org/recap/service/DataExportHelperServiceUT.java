@@ -45,7 +45,7 @@ public class DataExportHelperServiceUT extends BaseTestCaseUT {
         ExportStatusEntity exportStatusEntity = getExportStatusEntity();
         ETLRequestLogEntity etlRequestLogEntity = getEtlRequestLogEntity();
         Mockito.when(dataExportDBService.findByExportStatusCode(RecapConstants.IN_PROGRESS)).thenReturn(exportStatusEntity);
-        Mockito.when(dataExportDBService.findByExportStatusIdAndTransmissionType(exportStatusEntity.getId(),RecapConstants.DATADUMP_TRANSMISSION_TYPE_S3)).thenReturn(Arrays.asList(etlRequestLogEntity));
+        Mockito.when(dataExportDBService.findAllStatusById(exportStatusEntity.getId())).thenReturn(Arrays.asList(etlRequestLogEntity));
         Mockito.when(dataDumpUtil.prepareRequestForAwaiting(any(),any())).thenReturn(etlRequestLogEntity);
         Mockito.when(dataExportDBService.saveETLRequestToDB(any())).thenReturn(etlRequestLogEntity);
         String result = dataExportHelperService.checkForExistingRequestAndStart(dataDumpRequest);
@@ -80,10 +80,13 @@ public class DataExportHelperServiceUT extends BaseTestCaseUT {
         DataDumpRequest dataDumpRequest = getDataDumpRequest();
         dataDumpRequest.setTransmissionType("");
         ETLRequestLogEntity etlRequestLogEntity = getEtlRequestLogEntity();
+        ExportStatusEntity exportStatusEntity = getExportStatusEntity();
         Mockito.when(dataDumpUtil.prepareRequestForAwaiting(any(),any())).thenReturn(etlRequestLogEntity);
         Mockito.when(dataExportDBService.saveETLRequestToDB(any())).thenReturn(etlRequestLogEntity);
-        //Mockito.doNothing().when(dynamicRouteBuilder).addDataDumpExportRoutes();
+       // Mockito.doNothing().when(dynamicRouteBuilder).addDataDumpExportRoutes();
         Mockito.when(dataDumpExportService.startDataDumpProcess(any())).thenReturn(RecapConstants.EXPORT_MESSAGE);
+        Mockito.when(dataExportDBService.findByExportStatusCode(RecapConstants.IN_PROGRESS)).thenReturn(exportStatusEntity);
+        Mockito.when(dataExportDBService.findAllStatusById(exportStatusEntity.getId())).thenReturn(Arrays.asList(etlRequestLogEntity));
         String result = dataExportHelperService.checkForExistingRequestAndStart(dataDumpRequest);
         assertNotNull(result);
         assertEquals(RecapConstants.EXPORT_MESSAGE,result);
