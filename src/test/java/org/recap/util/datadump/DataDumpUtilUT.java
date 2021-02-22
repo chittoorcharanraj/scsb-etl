@@ -16,6 +16,7 @@ import org.recap.repository.ETLRequestLogDetailsRepository;
 import org.recap.repository.ExportStatusDetailsRepository;
 import org.recap.repository.ImsLocationDetailsRepository;
 import org.recap.service.DataExportDBService;
+import org.recap.service.preprocessor.DataDumpExportService;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -43,6 +44,9 @@ public class DataDumpUtilUT extends BaseTestCaseUT {
 
     @Mock
     DataExportDBService dataExportDBService;
+
+    @Mock
+    DataDumpExportService dataDumpExportService;
 
     @Test
     public void setDataDumpRequest() {
@@ -107,6 +111,8 @@ public class DataDumpUtilUT extends BaseTestCaseUT {
         String outputString = "100";
         ETLRequestLogEntity etlRequestLogEntity = getEtlRequestLogEntity();
         ExportStatusEntity exportStatusEntity = getExportStatusEntity();
+        Mockito.when(dataExportDBService.findByExportStatusCode(RecapConstants.AWAITING)).thenReturn(exportStatusEntity);
+        Mockito.when(dataExportDBService.findAllStatusById(exportStatusEntity.getId())).thenReturn(Arrays.asList(etlRequestLogEntity));
         Mockito.when(etlRequestLogDetailsRepository.findById(dataDumpRequest.getEtlRequestId())).thenReturn(Optional.of(etlRequestLogEntity));
         Mockito.when(exportStatusDetailsRepository.findByExportStatusCode(any())).thenReturn(exportStatusEntity);
         dataDumpUtil.updateStatusInETLRequestLog(dataDumpRequest, outputString);
@@ -128,7 +134,7 @@ public class DataDumpUtilUT extends BaseTestCaseUT {
         ExportStatusEntity exportStatusEntity = getExportStatusEntity();
         ETLRequestLogEntity etlRequestLogEntity = getEtlRequestLogEntity();
         Mockito.when(dataExportDBService.findByExportStatusCode(RecapConstants.AWAITING)).thenReturn(exportStatusEntity);
-        Mockito.when(dataExportDBService.findAllStatusForS3OrderByRequestedTime(any(), any())).thenReturn(Arrays.asList(etlRequestLogEntity));
+        Mockito.when(dataExportDBService.findAllStatusById(exportStatusEntity.getId())).thenReturn(Arrays.asList(etlRequestLogEntity));
         DataDumpRequest dataDumpRequest = dataDumpUtil.checkAndPrepareAwaitingReqIfAny();
         assertNotNull(dataDumpRequest);
     }
@@ -137,7 +143,7 @@ public class DataDumpUtilUT extends BaseTestCaseUT {
     public void checkAndPrepareAwaitingReqIfAnyWithEmptyLog() {
         ExportStatusEntity exportStatusEntity = getExportStatusEntity();
         Mockito.when(dataExportDBService.findByExportStatusCode(RecapConstants.AWAITING)).thenReturn(exportStatusEntity);
-        Mockito.when(dataExportDBService.findAllStatusForS3OrderByRequestedTime(any(), any())).thenReturn(Collections.EMPTY_LIST);
+        Mockito.when(dataExportDBService.findAllStatusById(exportStatusEntity.getId())).thenReturn(Collections.EMPTY_LIST);
         DataDumpRequest dataDumpRequest = dataDumpUtil.checkAndPrepareAwaitingReqIfAny();
         assertNull(dataDumpRequest);
     }
@@ -147,7 +153,7 @@ public class DataDumpUtilUT extends BaseTestCaseUT {
         ExportStatusEntity exportStatusEntity = getExportStatusEntity();
         ETLRequestLogEntity etlRequestLogEntity = getEtlRequestLogEntity();
         Mockito.when(dataExportDBService.findByExportStatusCode(RecapConstants.AWAITING)).thenReturn(exportStatusEntity);
-        Mockito.when(dataExportDBService.findAllStatusForS3OrderByRequestedTime(exportStatusEntity.getId(), RecapConstants.DATADUMP_TRANSMISSION_TYPE_S3)).thenReturn(Arrays.asList(etlRequestLogEntity));
+        Mockito.when(dataExportDBService.findAllStatusById(exportStatusEntity.getId())).thenReturn(Arrays.asList(etlRequestLogEntity));
         DataDumpRequest dataDumpRequest = dataDumpUtil.prepareRequestForExistingAwaiting();
         assertNotNull(dataDumpRequest);
     }
