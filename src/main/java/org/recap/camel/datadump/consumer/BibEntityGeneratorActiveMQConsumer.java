@@ -1,5 +1,6 @@
 package org.recap.camel.datadump.consumer;
 
+import com.google.common.collect.Lists;
 import org.apache.camel.Exchange;
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.impl.engine.DefaultFluentProducerTemplate;
@@ -74,9 +75,14 @@ public class BibEntityGeneratorActiveMQConsumer {
         }
 
         if(CollectionUtils.isNotEmpty(bibIdList)) {
-            List<BibliographicEntity> bibliographicEntityList = bibliographicDetailsRepository.getBibliographicEntityList(bibIdList);
-
             List<Callable<BibliographicEntity>> callables = new ArrayList<>();
+            List<BibliographicEntity> bibliographicEntityList=new ArrayList<>();
+
+            List<List<Integer>> partition = Lists.partition(bibIdList, 1000);
+            for (List<Integer> integers : partition) {
+                List<BibliographicEntity> bibliographicEntityList1 = bibliographicDetailsRepository.getBibliographicEntityList(integers);
+                bibliographicEntityList.addAll(bibliographicEntityList1);
+            }
 
             for (Iterator<BibliographicEntity> iterator = bibliographicEntityList.iterator(); iterator.hasNext(); ) {
                 BibliographicEntity bibliographicEntity = iterator.next();
