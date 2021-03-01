@@ -19,9 +19,7 @@ import org.recap.util.PropertyUtil;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -211,6 +209,33 @@ public class DataExportValidateServiceUT extends BaseTestCaseUT {
         assertTrue(validationMessage.contains(RecapConstants.DATADUMP_VALID_REQ_INST_CODE_ERR_MSG));
         assertTrue(validationMessage.contains(RecapConstants.DATADUMP_VALID_IMS_DEPOSITORY_CODE_ERR_MSG));
         assertTrue(validationMessage.contains(RecapConstants.DATADUMP_TRANS_TYPE_ERR_MSG));
+    }
+
+    @Test
+    public void checkForIncrementalDateLimit() {
+        Date currentDate = new Date();
+        Map<Integer, String> errorMessageMap = new HashMap<>();
+        Integer errorcount = 1;
+        String dataDumpRequestDateString = "Date";
+        String imsLocationCode = "HD";
+        ReflectionTestUtils.invokeMethod(dataExportValidateService, "checkForIncrementalDateLimit", currentDate, errorMessageMap, errorcount, dataDumpRequestDateString, imsLocationCode);
+    }
+
+    @Test
+    public void checkToRestrictFullDumpViaIncremental() {
+        Map<Integer, String> errorMessageMap = new HashMap<>();
+        Integer errorcount = 1;
+        String dataDumpRequestDateString = "Date";
+        String initialDataLoadDateString = "Date";
+        String institutionCode = "PUL";
+        String imsLocationCode = "HD";
+        ReflectionTestUtils.invokeMethod(dataExportValidateService, "checkToRestrictFullDumpViaIncremental", errorMessageMap, errorcount, dataDumpRequestDateString, initialDataLoadDateString, institutionCode, imsLocationCode);
+    }
+
+    @Test
+    public void validateDate() {
+        String dataDumpRequestDateString = new Date() + "test" + "date";
+        ReflectionTestUtils.invokeMethod(dataExportValidateService, "validateDate", dataDumpRequestDateString);
     }
 
     private DataDumpRequest getDataDumpRequest(List<String> institutionCodes, String requestingInstitutionCode, List<String> imsDepositoryCodes, String fetchType, String transmissionType, String date) {

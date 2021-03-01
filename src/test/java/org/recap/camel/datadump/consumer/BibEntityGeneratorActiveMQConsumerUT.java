@@ -12,13 +12,10 @@ import org.mockito.Spy;
 import org.recap.BaseTestCaseUT;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.repository.BibliographicDetailsRepository;
+import org.springframework.test.util.ReflectionTestUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CompletableFuture;
+import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
@@ -51,7 +48,7 @@ public class BibEntityGeneratorActiveMQConsumerUT extends BaseTestCaseUT {
             results.put("dataDumpSearchResults", dataDumpSearchResults);
             Exchange ex = getExchange(results);
 
-            List<Future<Object>> futures= new ArrayList<>();
+            List<Future<Object>> futures = new ArrayList<>();
             futures.add(future);
 
             List<BibliographicEntity> bibliographicEntityList = new ArrayList<>();
@@ -59,22 +56,42 @@ public class BibEntityGeneratorActiveMQConsumerUT extends BaseTestCaseUT {
             Mockito.when(executorService.invokeAll(any())).thenReturn(futures);
             Mockito.when(bibliographicDetailsRepository.getBibliographicEntityList(Mockito.anyList())).thenReturn(bibliographicEntityList);
             bibEntityGeneratorActiveMQConsumer.processBibEntities(ex);
-        }catch (Exception e){}
+        } catch (Exception e) {
+        }
     }
 
     @Test
-    public void getExecutorServiceShutDown(){
+    public void getExecutorServiceShutDown() {
         Mockito.when(executorService.isShutdown()).thenReturn(Boolean.TRUE);
         bibEntityGeneratorActiveMQConsumer.getExecutorService();
     }
+
     @Test
-    public void getExecutorServiceNull(){
+    public void getBibliographicEntityFutureInterruptedException() throws ExecutionException, InterruptedException {
+        Mockito.when(future.get()).thenThrow(new InterruptedException());
+        try {
+            ReflectionTestUtils.invokeMethod(bibEntityGeneratorActiveMQConsumer, "getBibliographicEntityFuture", future);
+        } catch (RuntimeException e) {
+        }
+    }
+
+    @Test
+    public void getBibliographicEntityFutureExecutionException() throws ExecutionException, InterruptedException {
+        Mockito.when(future.get()).thenThrow(new ExecutionException(new Throwable()));
+        try {
+            ReflectionTestUtils.invokeMethod(bibEntityGeneratorActiveMQConsumer, "getBibliographicEntityFuture", future);
+        } catch (RuntimeException e) {
+        }
+    }
+
+    @Test
+    public void getExecutorServiceNull() {
         BibEntityGeneratorActiveMQConsumer bibEntityGeneratorActiveMQConsumer = new BibEntityGeneratorActiveMQConsumer(bibliographicDetailsRepository);
         bibEntityGeneratorActiveMQConsumer.getExecutorService();
     }
 
     private BibliographicEntity getBibliographicEntity() {
-        BibliographicEntity bibliographicEntity=new BibliographicEntity();
+        BibliographicEntity bibliographicEntity = new BibliographicEntity();
         bibliographicEntity.setId(1);
         return bibliographicEntity;
     }

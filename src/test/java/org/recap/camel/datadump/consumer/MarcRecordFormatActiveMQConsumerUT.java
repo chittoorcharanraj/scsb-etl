@@ -21,6 +21,7 @@ import org.recap.util.datadump.DataExportHeaderUtil;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
@@ -49,7 +50,7 @@ public class MarcRecordFormatActiveMQConsumerUT extends BaseTestCaseUT {
 
     @Test
     public void testgetDataExportHeaderUtil() {
-        ReflectionTestUtils.setField(marcRecordFormatActiveMQConsumer,"dataExportHeaderUtil",null);
+        ReflectionTestUtils.setField(marcRecordFormatActiveMQConsumer, "dataExportHeaderUtil", null);
         marcRecordFormatActiveMQConsumer.getDataExportHeaderUtil();
         assertNotNull(dataExportHeaderUtil);
     }
@@ -60,11 +61,30 @@ public class MarcRecordFormatActiveMQConsumerUT extends BaseTestCaseUT {
         executorService = marcRecordFormatActiveMQConsumer.getExecutorService();
         assertNotNull(executorService);
     }
+
     @Test
     public void testgetExecutorServiceNULL() {
-        ReflectionTestUtils.setField(marcRecordFormatActiveMQConsumer,"executorService",null);
+        ReflectionTestUtils.setField(marcRecordFormatActiveMQConsumer, "executorService", null);
         executorService = marcRecordFormatActiveMQConsumer.getExecutorService();
         assertNotNull(executorService);
+    }
+
+    @Test
+    public void getMapFutureInterruptedException() throws ExecutionException, InterruptedException {
+        Mockito.when(future.get()).thenThrow(new InterruptedException());
+        try {
+            ReflectionTestUtils.invokeMethod(marcRecordFormatActiveMQConsumer, "getMapFuture", future);
+        } catch (RuntimeException e) {
+        }
+    }
+
+    @Test
+    public void getMapFutureExecutionException() throws ExecutionException, InterruptedException {
+        Mockito.when(future.get()).thenThrow(new ExecutionException(new Throwable()));
+        try {
+            ReflectionTestUtils.invokeMethod(marcRecordFormatActiveMQConsumer, "getMapFuture", future);
+        } catch (RuntimeException e) {
+        }
     }
 
     @Test
@@ -93,12 +113,12 @@ public class MarcRecordFormatActiveMQConsumerUT extends BaseTestCaseUT {
         List<Future<Object>> futureList = new ArrayList<>();
         futureList.add(future);
         Map<String, Object> results = new HashMap<>();
-        results.put(RecapCommonConstants.SUCCESS,Arrays.asList(getDeletedRecord()));
-        results.put(RecapCommonConstants.FAILURE,Arrays.asList("FailureRecords",getDeletedRecord()));
-        results.put(RecapConstants.ITEM_EXPORTED_COUNT,10);
+        results.put(RecapCommonConstants.SUCCESS, Arrays.asList(getDeletedRecord()));
+        results.put(RecapCommonConstants.FAILURE, Arrays.asList("FailureRecords", getDeletedRecord()));
+        results.put(RecapConstants.ITEM_EXPORTED_COUNT, 10);
         Mockito.when(executorService.invokeAll(any())).thenReturn(futureList);
         Mockito.when(future.get()).thenReturn(results);
-        Mockito.doNothing().when(marcRecordFormatActiveMQConsumer).processRecordFailures(any(),any(),any(),any(),any());
+        Mockito.doNothing().when(marcRecordFormatActiveMQConsumer).processRecordFailures(any(), any(), any(), any(), any());
         try {
             marcRecordFormatActiveMQConsumer.processRecords(ex);
         } catch (Exception e) {
