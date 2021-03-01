@@ -1,7 +1,11 @@
 package org.recap.service;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.*;
+import com.amazonaws.services.s3.model.ListObjectsRequest;
+import com.amazonaws.services.s3.model.ObjectListing;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectInputStream;
+import com.amazonaws.services.s3.model.S3ObjectSummary;
 import org.recap.RecapCommonConstants;
 import org.recap.model.export.S3RecentDataExportInfo;
 import org.slf4j.Logger;
@@ -12,7 +16,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
@@ -39,32 +45,30 @@ public class RecentDataExportsInfoService {
             listObjectsRequest.setPrefix(s3DataExportBasePath + institution + "/" + bibDataFormat + "Xml/Full/" + institution);
             ObjectListing objectListing = s3client.listObjects(listObjectsRequest);
             for (S3ObjectSummary os : objectListing.getObjectSummaries()) {
-                String[] records = getObjectContent(os.getKey());
+                Map<String, String> records = getObjectContent(os.getKey());
                 S3RecentDataExportInfo s3RecentDataExportInfo = new S3RecentDataExportInfo();
                 s3RecentDataExportInfo.setKeyName(os.getKey());
                 s3RecentDataExportInfo.setInstitution(institution);
                 s3RecentDataExportInfo.setBibDataFormat(bibDataFormat);
-                s3RecentDataExportInfo.setGcd(records[4]);
-                s3RecentDataExportInfo.setBibCount(records[8]);
-                s3RecentDataExportInfo.setItemCount(records[9]);
+                s3RecentDataExportInfo.setGcd(records.get("Collection Group Id(s)"));
+                s3RecentDataExportInfo.setBibCount(records.get("No of Bibs Exported"));
+                s3RecentDataExportInfo.setItemCount(records.get("No of Items Exported"));
                 s3RecentDataExportInfo.setKeySize(os.getSize());
                 s3RecentDataExportInfo.setKeyLastModified(os.getLastModified());
                 recentDataExportInfoList.add(s3RecentDataExportInfo);
                 logger.info("File with the key -->" + os.getKey() + " " + os.getSize() + " " + os.getLastModified());
             }
-            //Sorts the list in the reverse order of last Modified Date
-            recentDataExportInfoList.sort(Comparator.comparing(S3RecentDataExportInfo::getKeyLastModified).reversed());
-            //Limits the count of keys to three
-            recentDataExportInfoList = recentDataExportInfoList.stream().limit(3).collect(Collectors.toList());
         } catch (Exception e) {
             logger.error(RecapCommonConstants.LOG_ERROR, e);
         }
-        return recentDataExportInfoList;
+        recentDataExportInfoList.sort(Comparator.comparing(S3RecentDataExportInfo::getKeyLastModified).reversed());
+        return recentDataExportInfoList.stream().limit(3).collect(Collectors.toList());
     }
 
-    public String[] getObjectContent(String fileName) {
+    public Map<String, String> getObjectContent(String fileName) {
         List<String> str = new ArrayList<>();
         String[] records = null;
+        String[] headers = null;
         try {
             String basepath = fileName.substring(0, fileName.lastIndexOf('/'));
             String csvFileName = fileName.substring(fileName.lastIndexOf('/'));
@@ -76,11 +80,20 @@ public class RecentDataExportsInfoService {
                 while (fileIn.hasNext()) {
                     str.add(fileIn.nextLine());
                 }
+                headers = str.get(0).replace("\"", "").split(",");
                 records = str.get(1).replace("\"", "").split(",");
             }
         } catch (Exception e) {
             logger.error(RecapCommonConstants.LOG_ERROR, e);
         }
-        return records;
+        return mapResult(headers, records);
+    }
+    private Map<String, String> mapResult(String[] headers,
+                                          String[] records) {
+        Map<String, String> result = new HashMap<>();
+        for (int i = 0; i < headers.length; i++) {
+            result.put(headers[i], records[i]);
+        }
+        return result;
     }
 }
