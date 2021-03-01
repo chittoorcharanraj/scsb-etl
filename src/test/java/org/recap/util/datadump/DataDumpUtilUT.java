@@ -61,7 +61,8 @@ public class DataDumpUtilUT extends BaseTestCaseUT {
         String toEmailAddress = "test@gmail.com";
         String outputFormat = "xml";
         String imsDepositoryCodes = "2321";
-        dataDumpUtil.setDataDumpRequest(dataDumpRequest, fetchType, institutionCodes, date, toDate, collectionGroupIds, transmissionType, requestingInstitutionCode, toEmailAddress, outputFormat, imsDepositoryCodes);
+        String userName = "test";
+        dataDumpUtil.setDataDumpRequest(dataDumpRequest, fetchType, institutionCodes, date, toDate, collectionGroupIds, transmissionType, requestingInstitutionCode, toEmailAddress, outputFormat, imsDepositoryCodes,userName);
     }
 
     @Test
@@ -77,11 +78,12 @@ public class DataDumpUtilUT extends BaseTestCaseUT {
         String toEmailAddress = "test@gmail.com";
         String outputFormat = "xml";
         String imsDepositoryCodes = null;
+        String userName = "test";
         ImsLocationEntity imsLocationEntity = getImsLocationEntity();
         CollectionGroupEntity collectionGroupEntity = getCollectionGroupEntity();
         Mockito.when(imsLocationDetailsRepository.findByImsLocationCode(RecapConstants.IMS_DEPOSITORY_RECAP)).thenReturn(imsLocationEntity);
         Mockito.when(collectionGroupDetailsRepository.findByCollectionGroupCode(any())).thenReturn(collectionGroupEntity);
-        dataDumpUtil.setDataDumpRequest(dataDumpRequest, fetchType, institutionCodes, date, toDate, collectionGroupIds, transmissionType, requestingInstitutionCode, toEmailAddress, outputFormat, imsDepositoryCodes);
+        dataDumpUtil.setDataDumpRequest(dataDumpRequest, fetchType, institutionCodes, date, toDate, collectionGroupIds, transmissionType, requestingInstitutionCode, toEmailAddress, outputFormat, imsDepositoryCodes,userName);
     }
 
     @Test
