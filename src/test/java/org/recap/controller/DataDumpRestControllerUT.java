@@ -78,9 +78,10 @@ public class DataDumpRestControllerUT extends BaseTestCaseUT {
     private final String process;
     private final String request;
     private final String scenario;
+    private final String userName;
 
 
-    public DataDumpRestControllerUT(String institutionCodes, String requestingInstitutionCode, String fetchType, String outputFormat, String date, String toDate, String collectionGroupIds, String transmissionType, String emailToAddress, String imsDepositoryCodes, String process, String request, String scenario) {
+    public DataDumpRestControllerUT(String institutionCodes, String requestingInstitutionCode, String fetchType, String outputFormat, String date, String toDate, String collectionGroupIds, String transmissionType, String emailToAddress, String imsDepositoryCodes, String process, String request, String scenario,String userName) {
         super();
         this.institutionCodes = institutionCodes;
         this.requestingInstitutionCode = requestingInstitutionCode;
@@ -95,6 +96,7 @@ public class DataDumpRestControllerUT extends BaseTestCaseUT {
         this.process = process;
         this.request = request;
         this.scenario = scenario;
+        this.userName = userName;
     }
 
     @Parameterized.Parameters(name = "{index} : Scenario - {12}")
@@ -118,11 +120,11 @@ public class DataDumpRestControllerUT extends BaseTestCaseUT {
 
     @Test
     public void testExportDataDump() throws Exception {
-        Mockito.doNothing().when(dataDumpUtil).setDataDumpRequest(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any());
+        Mockito.doNothing().when(dataDumpUtil).setDataDumpRequest(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(),any());
         Mockito.when(mockedDataDumpExportService.startDataDumpProcess(Mockito.any())).thenReturn(process);
         Mockito.when(dataExportValidateService.validateIncomingRequest(Mockito.any())).thenReturn(request);
         Mockito.when(dataExportHelperService.checkForExistingRequestAndStart(any())).thenReturn("");
-        String response = mockedDataDumpRestController.exportDataDump(institutionCodes, requestingInstitutionCode, fetchType, outputFormat, date, toDate, collectionGroupIds, transmissionType, emailToAddress, imsDepositoryCodes);
+        String response = mockedDataDumpRestController.exportDataDump(institutionCodes, requestingInstitutionCode, fetchType, outputFormat, date, toDate, collectionGroupIds, transmissionType, emailToAddress, imsDepositoryCodes, userName);
         assertNotNull(response);
     }
 
