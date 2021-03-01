@@ -136,6 +136,7 @@ public class DataDumpEmailService {
             emailPayLoad.setRequestingInstitution(dataDumpRequest.getRequestingInstitutionCode());
             emailPayLoad.setFetchType(fetchType);
             emailPayLoad.setCollectionGroupIds(dataDumpRequest.getCollectionGroupIds());
+            emailPayLoad.setCollectionGroupCodes(dataDumpUtil.getCollectionGroupCodes(dataDumpRequest.getCollectionGroupIds()));
             emailPayLoad.setTransmissionType(transmissionType);
             emailPayLoad.setOutputFileFormat(outputformat);
             emailPayLoad.setImsDepositoryCodes(dataDumpRequest.getImsDepositoryCodes());
