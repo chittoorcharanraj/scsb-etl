@@ -1,12 +1,15 @@
 package org.recap.camel;
 
 import org.apache.camel.ProducerTemplate;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.Spy;
-import org.recap.BaseTestCaseUT;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import org.recap.RecapConstants;
 import org.recap.model.jaxb.BibRecord;
 import org.recap.model.jaxb.Holding;
@@ -24,25 +27,27 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
 
-public class RecordProcessorUT extends BaseTestCaseUT {
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({JAXBContext.class, XMLInputFactory.class})
+public class RecordProcessorUT {
 
     @InjectMocks
-    @Spy
     RecordProcessor recordProcessor;
+
+    @Mock
+    BibDataProcessor bibDataProcessor;
 
     @Mock
     InstitutionDetailsRepository institutionDetailsRepository;
@@ -62,16 +67,113 @@ public class RecordProcessorUT extends BaseTestCaseUT {
     @Mock
     ImsLocationDetailsRepository imsLocationDetailsRepository;
 
+    @Mock
+    Future future;
+
+    @Mock
+    JAXBContext jaxbContext;
+
+    @Mock
+    XMLInputFactory xmlInputFactory;
+
+    @Mock
+    XMLStreamReader xmlStreamReader;
+
+    @Mock
+    Unmarshaller unmarshaller;
+
+    @Before
+    public void setup() throws Exception {
+        PowerMockito.mockStatic(JAXBContext.class);
+        PowerMockito.mockStatic(XMLInputFactory.class);
+    }
+
     @Test
-    public void process() throws JAXBException, XMLStreamException {
+    public void process() throws Exception {
         XmlRecordEntity xmlRecordEntity = getXmlRecordEntity();
         InstitutionEntity institutionEntity = getInstitutionEntity();
         Page<XmlRecordEntity> xmlRecordEntities = new PageImpl<XmlRecordEntity>(Arrays.asList(xmlRecordEntity));
-        List<ReportEntity> reportEntities = new ArrayList<>();
-        List<Future<Map<String, String>>> futures = new ArrayList<>();
-        Mockito.when(ReflectionTestUtils.invokeMethod(recordProcessor, "prepareFutureTasks", xmlRecordEntities, reportEntities)).thenReturn(futures);
+        Map<String, Object> object = new HashMap<>();
+        object.put("bibliographicEntity", getBibliographicEntity());
+        List<Future<Object>> futures = new ArrayList<>();
+        futures.add(future);
+        Mockito.when(future.get()).thenReturn(object);
+        Mockito.when(executorService.invokeAll(any())).thenReturn(futures);
+        BibRecord bibRecord = new BibRecord();
+        bibRecord.setHoldings(Arrays.asList(getHoldings()));
+        PowerMockito.when(JAXBContext.newInstance(BibRecord.class)).thenReturn(jaxbContext);
+        PowerMockito.when(XMLInputFactory.newFactory()).thenReturn(xmlInputFactory);
+        Mockito.when(xmlInputFactory.createXMLStreamReader(any(InputStream.class))).thenReturn(xmlStreamReader);
+        Mockito.when(jaxbContext.createUnmarshaller()).thenReturn(unmarshaller);
+        Mockito.when(unmarshaller.unmarshal(any(XMLStreamReader.class))).thenReturn(bibRecord);
         Mockito.when(institutionDetailsRepository.findAll()).thenReturn(Arrays.asList(institutionEntity));
         recordProcessor.process(xmlRecordEntities);
+    }
+
+    @Test
+    public void processInterruptedException() throws Exception {
+        XmlRecordEntity xmlRecordEntity = getXmlRecordEntity();
+        InstitutionEntity institutionEntity = getInstitutionEntity();
+        Page<XmlRecordEntity> xmlRecordEntities = new PageImpl<XmlRecordEntity>(Arrays.asList(xmlRecordEntity));
+        Map<String, Object> object = new HashMap<>();
+        object.put("bibliographicEntity", getBibliographicEntity());
+        List<Future<Object>> futures = new ArrayList<>();
+        futures.add(future);
+        Mockito.when(future.get()).thenThrow(new InterruptedException());
+        Mockito.when(executorService.invokeAll(any())).thenReturn(futures);
+        BibRecord bibRecord = new BibRecord();
+        bibRecord.setHoldings(Arrays.asList(getHoldings()));
+        PowerMockito.when(JAXBContext.newInstance(BibRecord.class)).thenReturn(jaxbContext);
+        PowerMockito.when(XMLInputFactory.newFactory()).thenReturn(xmlInputFactory);
+        Mockito.when(xmlInputFactory.createXMLStreamReader(any(InputStream.class))).thenReturn(xmlStreamReader);
+        Mockito.when(jaxbContext.createUnmarshaller()).thenReturn(unmarshaller);
+        Mockito.when(unmarshaller.unmarshal(any(XMLStreamReader.class))).thenReturn(bibRecord);
+        Mockito.when(institutionDetailsRepository.findAll()).thenReturn(Arrays.asList(institutionEntity));
+        recordProcessor.process(xmlRecordEntities);
+    }
+
+    @Test
+    public void processExecutionException() throws Exception {
+        XmlRecordEntity xmlRecordEntity = getXmlRecordEntity();
+        InstitutionEntity institutionEntity = getInstitutionEntity();
+        Page<XmlRecordEntity> xmlRecordEntities = new PageImpl<XmlRecordEntity>(Arrays.asList(xmlRecordEntity));
+        Map<String, Object> object = new HashMap<>();
+        object.put("bibliographicEntity", getBibliographicEntity());
+        List<Future<Object>> futures = new ArrayList<>();
+        futures.add(future);
+        Mockito.when(future.get()).thenThrow(new ExecutionException(new Throwable()));
+        Mockito.when(executorService.invokeAll(any())).thenReturn(futures);
+        BibRecord bibRecord = new BibRecord();
+        PowerMockito.when(JAXBContext.newInstance(BibRecord.class)).thenReturn(jaxbContext);
+        PowerMockito.when(XMLInputFactory.newFactory()).thenReturn(xmlInputFactory);
+        Mockito.when(xmlInputFactory.createXMLStreamReader(any(InputStream.class))).thenReturn(xmlStreamReader);
+        Mockito.when(jaxbContext.createUnmarshaller()).thenReturn(unmarshaller);
+        Mockito.when(unmarshaller.unmarshal(any(XMLStreamReader.class))).thenReturn(bibRecord);
+        Mockito.when(institutionDetailsRepository.findAll()).thenReturn(Arrays.asList(institutionEntity));
+        recordProcessor.process(xmlRecordEntities);
+    }
+
+    @Test
+    public void processInnerException() throws Exception {
+        XmlRecordEntity xmlRecordEntity = getXmlRecordEntity();
+        InstitutionEntity institutionEntity = getInstitutionEntity();
+        Page<XmlRecordEntity> xmlRecordEntities = new PageImpl<XmlRecordEntity>(Arrays.asList(xmlRecordEntity));
+        Map<String, Object> object = new HashMap<>();
+        object.put("bibliographicEntity", getBibliographicEntity());
+        List<Future<Object>> futures = new ArrayList<>();
+        futures.add(future);
+        Mockito.when(executorService.invokeAll(any())).thenThrow(new InterruptedException());
+        BibRecord bibRecord = new BibRecord();
+        PowerMockito.when(JAXBContext.newInstance(BibRecord.class)).thenReturn(jaxbContext);
+        PowerMockito.when(XMLInputFactory.newFactory()).thenReturn(xmlInputFactory);
+        Mockito.when(xmlInputFactory.createXMLStreamReader(any(InputStream.class))).thenReturn(xmlStreamReader);
+        Mockito.when(jaxbContext.createUnmarshaller()).thenReturn(unmarshaller);
+        Mockito.when(unmarshaller.unmarshal(any(XMLStreamReader.class))).thenReturn(bibRecord);
+        Mockito.when(institutionDetailsRepository.findAll()).thenReturn(Arrays.asList(institutionEntity));
+        try {
+            recordProcessor.process(xmlRecordEntities);
+        } catch (Exception e) {
+        }
     }
 
     @Test
@@ -103,19 +205,20 @@ public class RecordProcessorUT extends BaseTestCaseUT {
     }
 
     @Test
-    public void getJaxbHandler(){
+    public void getJaxbHandler() {
         recordProcessor.getJaxbHandler();
     }
 
     @Test
-    public void getItemStatusMap(){
+    public void getItemStatusMap() {
         ItemStatusEntity itemStatusEntity = getItemStatusEntity();
         Mockito.when(itemStatusDetailsRepository.findAll()).thenReturn(Arrays.asList(itemStatusEntity));
         Map<String, Integer> result = recordProcessor.getItemStatusMap();
         assertNotNull(result);
     }
+
     @Test
-    public void getCollectionGroupMap(){
+    public void getCollectionGroupMap() {
         CollectionGroupEntity collectionGroupEntity = getCollectionGroupEntity();
         Mockito.when(collectionGroupDetailsRepository.findAll()).thenReturn(Arrays.asList(collectionGroupEntity));
         Map<String, Integer> result = recordProcessor.getCollectionGroupMap();
@@ -123,17 +226,19 @@ public class RecordProcessorUT extends BaseTestCaseUT {
     }
 
     @Test
-    public void getImsLocationCodeMap(){
+    public void getImsLocationCodeMap() {
         ImsLocationEntity imsLocationEntity = getImsLocationEntity();
         Mockito.when(imsLocationDetailsRepository.findAll()).thenReturn(Arrays.asList(imsLocationEntity));
         Map<String, Integer> result = recordProcessor.getImsLocationCodeMap();
         assertNotNull(result);
     }
+
     @Test
-    public void getExecutorService(){
+    public void getExecutorService() {
         Mockito.when(executorService.isShutdown()).thenReturn(true);
         recordProcessor.getExecutorService();
     }
+
     @Test
     public void validateHoldingsContent() {
         List<Holdings> holdingsList = new ArrayList<>();
@@ -154,7 +259,7 @@ public class RecordProcessorUT extends BaseTestCaseUT {
     }
 
     @Test
-    public void checkGetters(){
+    public void checkGetters() {
         recordProcessor.setXmlFileName("test.xml");
         assertNotNull(recordProcessor.getXmlFileName());
         recordProcessor.setExecutorService(executorService);
@@ -163,6 +268,7 @@ public class RecordProcessorUT extends BaseTestCaseUT {
         assertNotNull(recordProcessor.getInstitutionName());
 
     }
+
     @Test
     public void validateHoldingsContentWithoutHolding() {
         List<Holdings> holdingsList = new ArrayList<>();
@@ -254,6 +360,7 @@ public class RecordProcessorUT extends BaseTestCaseUT {
         reportEntity.setCreatedDate(new Date());
         return reportEntity;
     }
+
     public ItemStatusEntity getItemStatusEntity() {
         ItemStatusEntity itemStatusEntity = new ItemStatusEntity();
         itemStatusEntity.setId(1);
@@ -261,6 +368,7 @@ public class RecordProcessorUT extends BaseTestCaseUT {
         itemStatusEntity.setStatusDescription("statusCode");
         return itemStatusEntity;
     }
+
     private CollectionGroupEntity getCollectionGroupEntity() {
         CollectionGroupEntity collectionGroupEntity = new CollectionGroupEntity();
         collectionGroupEntity.setId(1);
@@ -268,6 +376,7 @@ public class RecordProcessorUT extends BaseTestCaseUT {
         collectionGroupEntity.setCollectionGroupDescription("Complete");
         return collectionGroupEntity;
     }
+
     private ImsLocationEntity getImsLocationEntity() {
         ImsLocationEntity imsLocationEntity = new ImsLocationEntity();
         imsLocationEntity.setId(1);

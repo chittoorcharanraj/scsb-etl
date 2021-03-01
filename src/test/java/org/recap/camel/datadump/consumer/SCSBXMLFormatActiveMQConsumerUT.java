@@ -63,6 +63,36 @@ public class SCSBXMLFormatActiveMQConsumerUT extends BaseTestCaseUT {
         assertEquals("testXMl", result);
     }
 
+    @Test
+    public void testProcessSCSBXmlStringException() throws Exception {
+        BibRecord bibRecord = new BibRecord();
+        bibRecord.setBib(getBib());
+        extracted();
+        String dataHeader = ";requestId#1";
+        CamelContext ctx = new DefaultCamelContext();
+        Exchange ex = new DefaultExchange(ctx);
+        Message in = ex.getIn();
+        ex.setMessage(in);
+        in.setBody(Arrays.asList(bibRecord));
+        ex.setIn(in);
+        Map<String, Object> mapdata = new HashMap<>();
+        mapdata.put("batchHeaders", dataHeader);
+        in.setHeaders(mapdata);
+        scsbXMLFormatActiveMQConsumer.setDataExportHeaderUtil(dataExportHeaderUtil);
+        Mockito.when(scsbXmlFormatterService.getSCSBXmlForBibRecords(any())).thenReturn("testXMl");
+        try {
+            String result = scsbXMLFormatActiveMQConsumer.processSCSBXmlString(ex);
+        } catch (Exception e) {
+        }
+    }
+
+    @Test
+    public void getDataExportHeaderUtil() {
+        SCSBXMLFormatActiveMQConsumer scsbXMLFormatActiveMQConsumer = new SCSBXMLFormatActiveMQConsumer(scsbXmlFormatterService, xmlFormatter);
+        DataExportHeaderUtil dataExportHeaderUtil = scsbXMLFormatActiveMQConsumer.getDataExportHeaderUtil();
+        assertNotNull(dataExportHeaderUtil);
+    }
+
     private void extracted() {
         Holdings holdings = new Holdings();
         Holding holding1 = new Holding();
