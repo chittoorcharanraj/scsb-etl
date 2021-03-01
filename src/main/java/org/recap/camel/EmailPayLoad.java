@@ -26,6 +26,7 @@ public class EmailPayLoad implements Serializable{
     private String message;
 
     private List<Integer> collectionGroupIds;
+    private List<String> collectionGroupCodes;
     private List<String> institutionsRequested;
     private List<String> institutions;
     private List<String> imsDepositoryCodes;

@@ -41,6 +41,13 @@ public class DataDumpUtil {
     @Autowired ImsLocationDetailsRepository imsLocationDetailsRepository;
     @Autowired DataExportDBService dataExportDBService;
 
+    public List<String> getCollectionGroupCodes(List<Integer> collectionGroupIds){
+        List<CollectionGroupEntity> collectionGroupEntityList = collectionGroupDetailsRepository.findAllByIds(collectionGroupIds);
+        return collectionGroupEntityList.stream()
+                .map(CollectionGroupEntity::getCollectionGroupCode)
+                .collect(Collectors.toList());
+    }
+
     public String getFetchType(String fetchTypeNumber) {
         String fetchType ="";
         switch (fetchTypeNumber) {
