@@ -105,7 +105,7 @@ public class DataDumpUtil {
      * @param outputFormat              the output format
      */
     public void setDataDumpRequest(DataDumpRequest dataDumpRequest, String fetchType, String institutionCodes, String date, String toDate, String collectionGroupIds,
-                                   String transmissionType, String requestingInstitutionCode, String toEmailAddress, String outputFormat,String imsDepositoryCodes) {
+                                   String transmissionType, String requestingInstitutionCode, String toEmailAddress, String outputFormat,String imsDepositoryCodes,String userName) {
         if (fetchType != null) {
             dataDumpRequest.setFetchType(fetchType);
         }
@@ -153,6 +153,8 @@ public class DataDumpUtil {
         if (!StringUtils.isEmpty(outputFormat)) {
             dataDumpRequest.setOutputFileFormat(outputFormat);
         }
+
+        dataDumpRequest.setUserName(!userName.isEmpty()?userName:RecapConstants.SWAGGER);
 
         dataDumpRequest.setDateTimeString(DateUtil.getDateTimeString());
 
@@ -209,7 +211,7 @@ public class DataDumpUtil {
         etlRequestLogEntity.setInstCodeToExport(String.join(",",dataDumpRequest.getInstitutionCodes()));
         etlRequestLogEntity.setTransmissionType(dataDumpRequest.getTransmissionType()!=null? dataDumpRequest.getTransmissionType() : "0");
         etlRequestLogEntity.setImsRepositoryCodes(dataDumpRequest.getImsDepositoryCodes()!=null?String.join(",",dataDumpRequest.getImsDepositoryCodes()): RecapConstants.IMS_DEPOSITORY_RECAP);
-        etlRequestLogEntity.setUserName(dataDumpRequest.getUserName()!=null?dataDumpRequest.getUserName():RecapConstants.SWAGGER);
+        etlRequestLogEntity.setUserName(dataDumpRequest.getUserName());
         etlRequestLogEntity.setProvidedDate(dataDumpRequest.getDate()!=null?DateUtil.getDateFromString(dataDumpRequest.getDate(),RecapCommonConstants.DATE_FORMAT_YYYYMMDDHHMM):null);
         return etlRequestLogEntity;
     }
@@ -224,23 +226,30 @@ public class DataDumpUtil {
                 exportLog.setExportStatusId(exportStatusEntity.getId());
                 exportLog.setExportStatusEntity(exportStatusEntity);
                 exportLog.setMessage(outputString);
+                exportLog.setCompleteTime(new Date());
             }
             else if(outputString.contains("100")){
                 ExportStatusEntity exportStatusEntity = exportStatusDetailsRepository.findByExportStatusCode(RecapConstants.COMPLETED);
                 exportLog.setExportStatusId(exportStatusEntity.getId());
                 exportLog.setExportStatusEntity(exportStatusEntity);
                 exportLog.setMessage("Diplayed the result in the response");
+                exportLog.setCompleteTime(new Date());
                 DataDumpRequest awaitingRequest = checkAndPrepareAwaitingReqIfAny();
                 if(awaitingRequest!=null){
                     dataDumpExportService.startDataDumpProcess(awaitingRequest);
                 }
             }
+            else if(outputString.contains(RecapConstants.IN_PROGRESS)){
+                ExportStatusEntity exportStatusEntity = exportStatusDetailsRepository.findByExportStatusCode(RecapConstants.IN_PROGRESS);
+                exportLog.setExportStatusId(exportStatusEntity.getId());
+                exportLog.setExportStatusEntity(exportStatusEntity);
+            }
             else{
                 ExportStatusEntity exportStatusEntity = exportStatusDetailsRepository.findByExportStatusCode(outputString);
                 exportLog.setExportStatusId(exportStatusEntity.getId());
                 exportLog.setExportStatusEntity(exportStatusEntity);
+                exportLog.setCompleteTime(new Date());
             }
-            exportLog.setCompleteTime(new Date());
             etlRequestLogDetailsRepository.saveAndFlush(exportLog);
         });
     }
@@ -263,7 +272,7 @@ public class DataDumpUtil {
         dataDumpRequestForAwaiting.setRequestFromSwagger(true);
         dataDumpRequestForAwaiting.setEtlRequestId(etlRequestLogEntity.getId());
         dataDumpRequestForAwaiting.setToEmailAddress(etlRequestLogEntity.getEmailIds());
-        dataDumpRequestForAwaiting.setUserName(etlRequestLogEntity.getUserName()!=null?etlRequestLogEntity.getUserName():RecapConstants.SWAGGER);
+        dataDumpRequestForAwaiting.setUserName(etlRequestLogEntity.getUserName());
         return dataDumpRequestForAwaiting;
     }
 
