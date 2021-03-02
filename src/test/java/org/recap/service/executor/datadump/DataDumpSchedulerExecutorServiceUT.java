@@ -47,7 +47,7 @@ public class DataDumpSchedulerExecutorServiceUT extends BaseTestCaseUT {
         Map<String, String> requestParameterMap = new HashMap<>();
         requestParameterMap.put(RecapConstants.FETCH_TYPE, RecapConstants.FETCH_TYPE);
         Mockito.when(jobDataParameterUtil.buildJobRequestParameterMap(RecapConstants.EXPORT_FETCH_TYPE_INSTITUTION)).thenReturn(requestParameterMap);
-        Mockito.doNothing().when(dataDumpUtil).setDataDumpRequest(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any());
+        Mockito.doNothing().when(dataDumpUtil).setDataDumpRequest(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(),any());
         ILSConfigProperties ilsConfigProperties = new ILSConfigProperties();
         ilsConfigProperties.setEmailDataDumpTo("to");
         Mockito.when(propertyUtil.getILSConfigProperties(Mockito.anyString())).thenReturn(ilsConfigProperties);
@@ -61,7 +61,7 @@ public class DataDumpSchedulerExecutorServiceUT extends BaseTestCaseUT {
         Map<String, String> requestParameterMap = new HashMap<>();
         requestParameterMap.put(RecapConstants.FETCH_TYPE, RecapConstants.FETCH_TYPE);
         Mockito.when(jobDataParameterUtil.buildJobRequestParameterMap(RecapConstants.EXPORT_FETCH_TYPE_INSTITUTION)).thenReturn(requestParameterMap);
-        Mockito.doNothing().when(dataDumpUtil).setDataDumpRequest(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any());
+        Mockito.doNothing().when(dataDumpUtil).setDataDumpRequest(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(),any());
         ILSConfigProperties ilsConfigProperties = new ILSConfigProperties();
         ilsConfigProperties.setEmailDataDumpTo("to");
         Mockito.when(propertyUtil.getILSConfigProperties(anyString())).thenReturn(ilsConfigProperties);

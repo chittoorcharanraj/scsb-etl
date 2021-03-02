@@ -54,10 +54,42 @@ public class DeletedRecordFormatActiveMQConsumerUT extends BaseTestCaseUT {
     }
 
     @Test
+    public void testgetDataExportHeaderUtilNew() {
+        DeletedRecordFormatActiveMQConsumer deletedRecordFormatActiveMQConsumer = new DeletedRecordFormatActiveMQConsumer(deletedJsonFormatterService);
+        deletedRecordFormatActiveMQConsumer.getDataExportHeaderUtil();
+        assertNotNull(dataExportHeaderUtil);
+    }
+
+    @Test
     public void testgetExecutorService() {
         Mockito.when(executorService.isShutdown()).thenReturn(Boolean.TRUE);
         executorService = deletedRecordFormatActiveMQConsumer.getExecutorService();
         assertNotNull(executorService);
+    }
+
+    @Test
+    public void testgetExecutorServiceNew() {
+        DeletedRecordFormatActiveMQConsumer deletedRecordFormatActiveMQConsumer = new DeletedRecordFormatActiveMQConsumer(deletedJsonFormatterService);
+        executorService = deletedRecordFormatActiveMQConsumer.getExecutorService();
+        assertNotNull(executorService);
+    }
+
+    @Test
+    public void getDeletedRecordFutureInterruptedException() throws ExecutionException, InterruptedException {
+        Mockito.when(future.get()).thenThrow(new InterruptedException());
+        try {
+            ReflectionTestUtils.invokeMethod(deletedRecordFormatActiveMQConsumer, "getDeletedRecordFuture", future);
+        } catch (RuntimeException e) {
+        }
+    }
+
+    @Test
+    public void getDeletedRecordFutureExecutionException() throws ExecutionException, InterruptedException {
+        Mockito.when(future.get()).thenThrow(new ExecutionException(new Throwable()));
+        try {
+            ReflectionTestUtils.invokeMethod(deletedRecordFormatActiveMQConsumer, "getDeletedRecordFuture", future);
+        } catch (RuntimeException e) {
+        }
     }
 
     @Test
@@ -74,21 +106,21 @@ public class DeletedRecordFormatActiveMQConsumerUT extends BaseTestCaseUT {
         bibliographicEntity.setCreatedBy("tst");
         bibliographicEntity.setLastUpdatedDate(new Date());
         bibliographicEntity.setLastUpdatedBy("tst");
-        List<BibliographicEntity> bibliographicEntities=new ArrayList<>();
+        List<BibliographicEntity> bibliographicEntities = new ArrayList<>();
         bibliographicEntities.add(bibliographicEntity);
         in.setBody(bibliographicEntities);
         ex.setIn(in);
         List<Future<Object>> futureList = new ArrayList<>();
         futureList.add(future);
         Map<String, Object> results = new HashMap<>();
-        results.put(RecapCommonConstants.SUCCESS,Arrays.asList(getDeletedRecord()));
-        results.put(RecapCommonConstants.FAILURE,Arrays.asList("FailureRecords",getDeletedRecord()));
-        results.put(RecapConstants.ITEM_EXPORTED_COUNT,10);
-        ReflectionTestUtils.setField(deletedRecordFormatActiveMQConsumer,"deletedJsonFormatterService",deletedJsonFormatterService);
-        ReflectionTestUtils.setField(deletedRecordFormatActiveMQConsumer,"executorService",executorService);
+        results.put(RecapCommonConstants.SUCCESS, Arrays.asList(getDeletedRecord()));
+        results.put(RecapCommonConstants.FAILURE, Arrays.asList("FailureRecords", getDeletedRecord()));
+        results.put(RecapConstants.ITEM_EXPORTED_COUNT, 10);
+        ReflectionTestUtils.setField(deletedRecordFormatActiveMQConsumer, "deletedJsonFormatterService", deletedJsonFormatterService);
+        ReflectionTestUtils.setField(deletedRecordFormatActiveMQConsumer, "executorService", executorService);
         Mockito.when(executorService.invokeAll(any())).thenReturn(futureList);
         Mockito.when(future.get()).thenReturn(results);
-        Mockito.doNothing().when(deletedRecordFormatActiveMQConsumer).processRecordFailures(any(),any(),any(),any(),any());
+        Mockito.doNothing().when(deletedRecordFormatActiveMQConsumer).processRecordFailures(any(), any(), any(), any(), any());
         Mockito.when(deletedJsonFormatterService.prepareDeletedRecords(any())).thenReturn(new HashMap<>());
         try {
             deletedRecordFormatActiveMQConsumer.processRecords(ex);
@@ -115,15 +147,16 @@ public class DeletedRecordFormatActiveMQConsumerUT extends BaseTestCaseUT {
     }
 
     @Test
-    public void processFailures(){
+    public void processFailures() {
         CamelContext ctx = new DefaultCamelContext();
         Exchange ex = new DefaultExchange(ctx);
         List failures = new ArrayList();
         failures.add("failed");
-        String batchHeaders ="test";
+        String batchHeaders = "test";
         String requestId = "1";
         try {
             ReflectionTestUtils.invokeMethod(deletedRecordFormatActiveMQConsumer, "processFailures", ex, failures, batchHeaders, requestId);
-        }catch (Exception e){}
+        } catch (Exception e) {
+        }
     }
 }

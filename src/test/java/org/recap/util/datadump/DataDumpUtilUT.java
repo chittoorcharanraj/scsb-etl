@@ -20,7 +20,9 @@ import org.recap.service.preprocessor.DataDumpExportService;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -61,7 +63,8 @@ public class DataDumpUtilUT extends BaseTestCaseUT {
         String toEmailAddress = "test@gmail.com";
         String outputFormat = "xml";
         String imsDepositoryCodes = "2321";
-        dataDumpUtil.setDataDumpRequest(dataDumpRequest, fetchType, institutionCodes, date, toDate, collectionGroupIds, transmissionType, requestingInstitutionCode, toEmailAddress, outputFormat, imsDepositoryCodes);
+        String userName = "test";
+        dataDumpUtil.setDataDumpRequest(dataDumpRequest, fetchType, institutionCodes, date, toDate, collectionGroupIds, transmissionType, requestingInstitutionCode, toEmailAddress, outputFormat, imsDepositoryCodes,userName);
     }
 
     @Test
@@ -77,11 +80,12 @@ public class DataDumpUtilUT extends BaseTestCaseUT {
         String toEmailAddress = "test@gmail.com";
         String outputFormat = "xml";
         String imsDepositoryCodes = null;
+        String userName = "test";
         ImsLocationEntity imsLocationEntity = getImsLocationEntity();
-        CollectionGroupEntity collectionGroupEntity = getCollectionGroupEntity();
+        CollectionGroupEntity collectionGroupEntity = getCollectionGroupEntity(RecapConstants.COLLECTION_GROUP_SHARED,RecapConstants.DATADUMP_CGD_SHARED);
         Mockito.when(imsLocationDetailsRepository.findByImsLocationCode(RecapConstants.IMS_DEPOSITORY_RECAP)).thenReturn(imsLocationEntity);
         Mockito.when(collectionGroupDetailsRepository.findByCollectionGroupCode(any())).thenReturn(collectionGroupEntity);
-        dataDumpUtil.setDataDumpRequest(dataDumpRequest, fetchType, institutionCodes, date, toDate, collectionGroupIds, transmissionType, requestingInstitutionCode, toEmailAddress, outputFormat, imsDepositoryCodes);
+        dataDumpUtil.setDataDumpRequest(dataDumpRequest, fetchType, institutionCodes, date, toDate, collectionGroupIds, transmissionType, requestingInstitutionCode, toEmailAddress, outputFormat, imsDepositoryCodes,userName);
     }
 
     @Test
@@ -158,6 +162,14 @@ public class DataDumpUtilUT extends BaseTestCaseUT {
         assertNotNull(dataDumpRequest);
     }
 
+    @Test
+    public void getCollectionGroupCodes(){
+        Mockito.when(collectionGroupDetailsRepository.findAllByIds(any())).thenReturn(getCollectionGroupEntityList());
+        List<Integer> collectionGroupIds = getCollectionGroupEntityList().stream().map(CollectionGroupEntity::getId).collect(Collectors.toList());
+        List<String> collectionGroupCodes = dataDumpUtil.getCollectionGroupCodes(collectionGroupIds);
+        assertEquals(Arrays.asList(RecapConstants.COLLECTION_GROUP_SHARED,RecapConstants.COLLECTION_GROUP_OPEN,RecapConstants.COLLECTION_GROUP_PRIVATE),collectionGroupCodes);
+    }
+
     private ETLRequestLogEntity getEtlRequestLogEntity() {
         ETLRequestLogEntity etlRequestLogEntity = new ETLRequestLogEntity();
         etlRequestLogEntity.setId(1);
@@ -187,12 +199,20 @@ public class DataDumpUtilUT extends BaseTestCaseUT {
         return exportStatusEntity;
     }
 
-    private CollectionGroupEntity getCollectionGroupEntity() {
+    private CollectionGroupEntity getCollectionGroupEntity(String collectionGroupCode,Integer collectionGroupId) {
         CollectionGroupEntity collectionGroupEntity = new CollectionGroupEntity();
-        collectionGroupEntity.setId(1);
-        collectionGroupEntity.setCollectionGroupCode("Complete");
-        collectionGroupEntity.setCollectionGroupDescription("Complete");
+        collectionGroupEntity.setId(collectionGroupId);
+        collectionGroupEntity.setCollectionGroupCode(collectionGroupCode);
+        collectionGroupEntity.setCollectionGroupDescription(collectionGroupCode);
         return collectionGroupEntity;
+    }
+
+    private List<CollectionGroupEntity> getCollectionGroupEntityList(){
+        List<CollectionGroupEntity> collectionGroupEntityList=new ArrayList<>();
+        collectionGroupEntityList.add(getCollectionGroupEntity(RecapConstants.COLLECTION_GROUP_SHARED,RecapConstants.DATADUMP_CGD_SHARED));
+        collectionGroupEntityList.add(getCollectionGroupEntity(RecapConstants.COLLECTION_GROUP_OPEN,RecapConstants.DATADUMP_CGD_OPEN));
+        collectionGroupEntityList.add(getCollectionGroupEntity(RecapConstants.COLLECTION_GROUP_PRIVATE,RecapConstants.DATADUMP_CGD_PRIVATE));
+        return collectionGroupEntityList;
     }
 
     private ImsLocationEntity getImsLocationEntity() {

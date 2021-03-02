@@ -3,7 +3,7 @@ Initiated data-dump process. Below are the mentioned parameters :
 Fetch-Type               : ${header.emailPayLoad.fetchType}
 Requesting-Institution   : ${header.emailPayLoad.requestingInstitution}
 Requested-Institution(s) : ${header.emailPayLoad.institutionsRequested}
-Collection-group-id(s)   : ${header.emailPayLoad.collectionGroupIds}
+Collection-group-code(s) : ${header.emailPayLoad.collectionGroupCodes}
 Transmission type        : ${header.emailPayLoad.transmissionType}
 XML format               : ${header.emailPayLoad.outputFileFormat}
 IMS Depository           : ${header.emailPayLoad.imsDepositoryCodes}

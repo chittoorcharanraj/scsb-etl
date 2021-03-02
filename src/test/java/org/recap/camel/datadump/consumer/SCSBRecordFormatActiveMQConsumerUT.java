@@ -19,6 +19,7 @@ import org.recap.model.export.DeletedRecord;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.service.formatter.datadump.SCSBXmlFormatterService;
 import org.recap.util.datadump.DataExportHeaderUtil;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.*;
 import java.util.concurrent.ExecutionException;
@@ -61,10 +62,42 @@ public class SCSBRecordFormatActiveMQConsumerUT extends BaseTestCaseUT {
     }
 
     @Test
+    public void testgetDataExportHeaderUtilNull() {
+        SCSBRecordFormatActiveMQConsumer sCSBRecordFormatActiveMQConsumer = new SCSBRecordFormatActiveMQConsumer(scsbXmlFormatterService);
+        sCSBRecordFormatActiveMQConsumer.getDataExportHeaderUtil();
+        assertNotNull(dataExportHeaderUtil);
+    }
+
+    @Test
     public void testgetExecutorService() {
         Mockito.when(executorService.isShutdown()).thenReturn(Boolean.TRUE);
         executorService = sCSBRecordFormatActiveMQConsumer.getExecutorService();
         assertNotNull(executorService);
+    }
+
+    @Test
+    public void testgetExecutorServiceNull() {
+        SCSBRecordFormatActiveMQConsumer scsbRecordFormatActiveMQConsumer = new SCSBRecordFormatActiveMQConsumer(scsbXmlFormatterService);
+        executorService = scsbRecordFormatActiveMQConsumer.getExecutorService();
+        assertNotNull(executorService);
+    }
+
+    @Test
+    public void getMapFutureInterruptedException() throws ExecutionException, InterruptedException {
+        Mockito.when(future.get()).thenThrow(new InterruptedException());
+        try {
+            ReflectionTestUtils.invokeMethod(sCSBRecordFormatActiveMQConsumer, "getMapFuture", future);
+        } catch (RuntimeException e) {
+        }
+    }
+
+    @Test
+    public void getMapFutureExecutionException() throws ExecutionException, InterruptedException {
+        Mockito.when(future.get()).thenThrow(new ExecutionException(new Throwable()));
+        try {
+            ReflectionTestUtils.invokeMethod(sCSBRecordFormatActiveMQConsumer, "getMapFuture", future);
+        } catch (RuntimeException e) {
+        }
     }
 
     @Test
