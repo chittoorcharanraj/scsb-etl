@@ -116,7 +116,7 @@ public class RecapConstants {
     public static final String DATADUMP_VALID_REQ_INST_CODE_ERR_MSG = "Please enter valid institution code for requestingInstitutionCode .";
     public static final String DATADUMP_VALID_IMS_DEPOSITORY_CODE_ERR_MSG = "Please enter valid IMS Depository code";
     public static final String DATADUMP_FULL_VALID_TRANS_TYPE = "Transmission type 1 is not valid for full dump. Use transmission type 0 or 2";
-    public static final String DATADUMP_HTTP_REPONSE_RECORD_LIMIT_ERR_MSG = "There are more than 100 records. Use transmission type ftp to dump the data";
+    public static final String DATADUMP_HTTP_REPONSE_RECORD_LIMIT_ERR_MSG = "There are more than 100 records. Use transmission type S3 to dump the data";
     public static final String DATADUMP_EMAIL_TO_ADDRESS_REQUIRED = "Please enter a valid email address";
     public static final String INVALID_EMAIL_ADDRESS = "Email address is invalid.";
     public static final String INVALID_DATE_FORMAT = "Please enter the date in \"{0}\" format.";
