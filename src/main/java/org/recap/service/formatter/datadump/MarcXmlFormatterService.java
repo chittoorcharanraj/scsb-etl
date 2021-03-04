@@ -105,9 +105,9 @@ public class MarcXmlFormatterService implements DataDumpFormatterInterface {
             record = addHoldingInfo(record, bibliographicEntity.getHoldingsEntities(),itemIds,getNonOrphanHoldingsIdList(bibliographicEntity.getItemEntities()));
             results.put(RecapCommonConstants.SUCCESS, record);
         } catch (Exception e) {
-            logger.info("failed bib own ins bib id--->{} %s" , bibliographicEntity.getOwningInstitutionBibId());
+            logger.info("failed bib own ins bib id--->{} " , bibliographicEntity.getOwningInstitutionBibId());
             logger.error(RecapConstants.ERROR,e);
-            results.put(RecapCommonConstants.FAILURE,bibliographicEntity.getOwningInstitutionBibId()+" * "+ String.valueOf(e));
+            results.put(RecapCommonConstants.FAILURE,bibliographicEntity.getOwningInstitutionBibId()+" * "+ e);
         }
         return results;
     }
@@ -299,7 +299,7 @@ public class MarcXmlFormatterService implements DataDumpFormatterInterface {
         dataField.addSubfield(getFactory().newSubfield('t', itemEntity.getCopyNumber() != null ? String.valueOf(itemEntity.getCopyNumber()) : ""));
         dataField.addSubfield(getFactory().newSubfield('x', itemEntity.getCollectionGroupEntity().getCollectionGroupCode()));
         dataField.addSubfield(getFactory().newSubfield('z', itemEntity.getCustomerCode()));
-        dataField.addSubfield(getFactory().newSubfield('l', itemEntity.getImsLocationEntity().getImsLocationCode()));
+        dataField.addSubfield(getFactory().newSubfield('l', itemEntity.getImsLocationEntity() != null ? itemEntity.getImsLocationEntity().getImsLocationCode() : ""));
         record.addVariableField(dataField);
 
         return record;

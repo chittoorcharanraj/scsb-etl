@@ -86,7 +86,7 @@ public class DataDumpUtil {
         String type ="";
         switch (transmissionType) {
             case RecapConstants.DATADUMP_TRANSMISSION_TYPE_S3:
-                type= "FTP";
+                type= "S3";
                 break;
             case RecapConstants.DATADUMP_TRANSMISSION_TYPE_HTTP:
                 type= "HTTP";
