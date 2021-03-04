@@ -170,6 +170,69 @@ public class DataDumpUtilUT extends BaseTestCaseUT {
         assertEquals(Arrays.asList(RecapConstants.COLLECTION_GROUP_SHARED,RecapConstants.COLLECTION_GROUP_OPEN,RecapConstants.COLLECTION_GROUP_PRIVATE),collectionGroupCodes);
     }
 
+    @Test
+    public void getOutputformatMarc(){
+        String outputFileFormat =RecapConstants.DATADUMP_XML_FORMAT_MARC;
+        String format = dataDumpUtil.getOutputformat(outputFileFormat);
+        assertEquals(RecapConstants.MARC,format);
+    }
+
+    @Test
+    public void getOutputformatSCSB(){
+        String outputFileFormat =RecapConstants.DATADUMP_XML_FORMAT_SCSB;
+        String format = dataDumpUtil.getOutputformat(outputFileFormat);
+        assertEquals(RecapConstants.SCSB,format);
+    }
+
+    @Test
+    public void getOutputformatJSON(){
+        String outputFileFormat =RecapConstants.DATADUMP_DELETED_JSON_FORMAT;
+        String format = dataDumpUtil.getOutputformat(outputFileFormat);
+        assertEquals(RecapConstants.JSON,format);
+    }
+
+    @Test
+    public void getTransmissionTypeS3(){
+        String transmissionType = RecapConstants.DATADUMP_TRANSMISSION_TYPE_S3;
+        String type = dataDumpUtil.getTransmissionType(transmissionType);
+        assertEquals("FTP",type);
+    }
+
+    @Test
+    public void getTransmissionTypeHTTP(){
+        String transmissionType = RecapConstants.DATADUMP_TRANSMISSION_TYPE_HTTP;
+        String type = dataDumpUtil.getTransmissionType(transmissionType);
+        assertEquals("HTTP",type);
+    }
+
+    @Test
+    public void getTransmissionTypeFS(){
+        String transmissionType = RecapConstants.DATADUMP_TRANSMISSION_TYPE_FILESYSTEM;
+        String type = dataDumpUtil.getTransmissionType(transmissionType);
+        assertEquals("Filesystem",type);
+    }
+
+    @Test
+    public void getFetchTypeFULL(){
+        String fetchTypeNumber = RecapConstants.DATADUMP_FETCHTYPE_FULL;
+        String fetchType = dataDumpUtil.getFetchType(fetchTypeNumber);
+        assertEquals(RecapConstants.EXPORT_TYPE_FULL,fetchType);
+    }
+
+    @Test
+    public void getFetchTypeIncremental(){
+        String fetchTypeNumber = RecapConstants.DATADUMP_FETCHTYPE_INCREMENTAL;
+        String fetchType = dataDumpUtil.getFetchType(fetchTypeNumber);
+        assertEquals(RecapConstants.INCREMENTAL,fetchType);
+    }
+
+    @Test
+    public void getFetchTypeDeleted(){
+        String fetchTypeNumber = RecapConstants.DATADUMP_FETCHTYPE_DELETED;
+        String fetchType = dataDumpUtil.getFetchType(fetchTypeNumber);
+        assertEquals(RecapConstants.DELETED,fetchType);
+    }
+
     private ETLRequestLogEntity getEtlRequestLogEntity() {
         ETLRequestLogEntity etlRequestLogEntity = new ETLRequestLogEntity();
         etlRequestLogEntity.setId(1);

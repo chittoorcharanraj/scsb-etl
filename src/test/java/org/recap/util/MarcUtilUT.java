@@ -1,10 +1,13 @@
 package org.recap.util;
 
 import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.recap.BaseTestCaseUT;
 import org.recap.model.jaxb.BibRecord;
 import org.recap.model.jaxb.JAXBHandler;
 import org.recap.model.jaxb.BibRecord;
 import org.recap.model.jaxb.marc.*;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -16,6 +19,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -23,7 +27,10 @@ import static org.junit.Assert.*;
 /**
  * Created by pvsubrah on 6/22/16.
  */
-public class MarcUtilUT {
+public class MarcUtilUT extends BaseTestCaseUT {
+
+    @InjectMocks
+    MarcUtil marcUtil;
 
     @Test
     public void controlField001() throws Exception {
@@ -131,16 +138,7 @@ public class MarcUtilUT {
         LeaderFieldType leaderFieldType = new LeaderFieldType();
         leaderFieldType.setId("1");
         leaderFieldType.setValue("Test Leader Field");
-        DataFieldType dataFieldType = new DataFieldType();
-        dataFieldType.setId("1");
-        dataFieldType.setTag("001");
-        dataFieldType.setInd1("001");
-        dataFieldType.setInd2("002");
-        SubfieldatafieldType subfieldatafieldType = new SubfieldatafieldType();
-        subfieldatafieldType.setId("1");
-        subfieldatafieldType.setValue("Test Value");
-        subfieldatafieldType.setCode("Test code");
-        dataFieldType.setSubfield(Arrays.asList(subfieldatafieldType));
+        DataFieldType dataFieldType = getDataFieldType();
         recordType.setDatafield(Arrays.asList(dataFieldType));
         recordType.setLeader(leaderFieldType);
         recordType.setType(RecordTypeType.fromValue("Bibliographic"));
@@ -191,4 +189,34 @@ public class MarcUtilUT {
         assertEquals("Test code", subfieldatafieldType.getCode());
     }
 
+    @Test
+    public void getInd1Null(){
+        RecordType marcRecord = new RecordType();
+        String field = "";
+        String subField = "";
+        String result = marcUtil.getInd1(marcRecord,field,subField);
+        assertNull(result);
+    }
+
+    @Test
+    public void doIndicatorsMatch(){
+        String indicator1 = "001";
+        String indicator2 = "002";
+        DataFieldType dataField = getDataFieldType();
+        ReflectionTestUtils.invokeMethod(marcUtil,"doIndicatorsMatch",indicator1,indicator2,dataField);
+    }
+
+    private DataFieldType getDataFieldType() {
+        DataFieldType dataFieldType = new DataFieldType();
+        dataFieldType.setId("1");
+        dataFieldType.setTag("001");
+        dataFieldType.setInd1("001");
+        dataFieldType.setInd2("002");
+        SubfieldatafieldType subfieldatafieldType = new SubfieldatafieldType();
+        subfieldatafieldType.setId("1");
+        subfieldatafieldType.setValue("Test Value");
+        subfieldatafieldType.setCode("Test code");
+        dataFieldType.setSubfield(Arrays.asList(subfieldatafieldType));
+        return dataFieldType;
+    }
 }
