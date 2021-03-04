@@ -113,7 +113,7 @@ public class RecapConstantsUT extends BaseTestCaseUT {
         String DATADUMP_VALID_FETCHTYPE_ERR_MSG = "Please enter valid fetchType either 1 or 2 or configured value for full dump.";
         String DATADUMP_VALID_REQ_INST_CODE_ERR_MSG = "Please enter valid institution code CUL or PUL or NYPL for requestingInstitutionCode .";
         String DATADUMP_FULL_VALID_TRANS_TYPE = "Transmission type 1 is not valid for full dump. Use transmission type 0 or 2";
-        String DATADUMP_HTTP_REPONSE_RECORD_LIMIT_ERR_MSG = "There are more than 100 records. Use transmission type ftp to dump the data";
+        String DATADUMP_HTTP_REPONSE_RECORD_LIMIT_ERR_MSG = "There are more than 100 records. Use transmission type S3 to dump the data";
         String DATADUMP_EMAIL_TO_ADDRESS_REQUIRED = "Please enter a valid email address";
         String INVALID_EMAIL_ADDRESS = "Email address is invalid.";
         String INVALID_DATE_FORMAT = "Please enter the date in \"{0}\" format.";
