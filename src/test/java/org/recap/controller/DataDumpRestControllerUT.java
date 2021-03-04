@@ -102,14 +102,14 @@ public class DataDumpRestControllerUT extends BaseTestCaseUT {
     @Parameterized.Parameters(name = "{index} : Scenario - {12}")
     public static Collection input() {
         return Arrays.asList(new Object[][]{
-                {"CUL", "NYPL", "0", "0", new Date().toString(), null, "1,2", "1", "test@gmail.com", "RECAP", RecapCommonConstants.SUCCESS, null, "exportIncrementalMarcXmlFormatForHttp"},
-                {"CUL", "PUL", "0", "1", new Date().toString(), null, "1,2", "1", "test@gmail.com", "RECAP", null, RecapCommonConstants.SUCCESS, "exportIncrementalSCSBXmlFormatForHttp"},
-                {"NYPL", "PUL", "0", "1", new Date().toString(), null, "1,2", "0", "test@gmail.com", "HD", RecapConstants.DATADUMP_PROCESS_STARTED, null, "exportFullDataDumpMarcXmlFormat"},
-                {"NYPL", "PUL", "0", "1", new Date().toString(), null, "1,2", "0", "test@gmail.com", "RECAP", RecapConstants.DATADUMP_PROCESS_STARTED, null, "exportFullDataDumpScsbXmlFormat"},
-                {"NYPL,PUL", "NYPL", "1", "1", new Date().toString(), null, "1,2", "0", "test@gmail.com", "RECAP", RecapConstants.DATADUMP_PROCESS_STARTED, null, "exportIncrementalDataDump"},
-                {"NYPL,PUL", "NYPL", "2", "2", new Date().toString(), null, "1,2", "0", "test@gmail.com", "RECAP", RecapConstants.DATADUMP_PROCESS_STARTED, null, "exportDeletedRecordsDataDump"},
-                {"NYPL", "NYPL", "1", "1", new Date().toString(), null, "1,2", "0", "test@gmail.com", "RECAP", null, RecapConstants.DATADUMP_VALID_FETCHTYPE_ERR_MSG, "invalidFetchTypeParameters"},
-                {"NYPL", "NYPL", "1", "1", "", null, "1,2", "0", "test@gmail.com", "RECAP", null, RecapConstants.DATADUMP_DATE_ERR_MSG, "invalidIncrementalDumpParameters"}
+                {"CUL", "NYPL", "0", "0", new Date().toString(), null, "1,2", "1", "test@gmail.com", "RECAP", RecapCommonConstants.SUCCESS, null,"userName", "exportIncrementalMarcXmlFormatForHttp"},
+                {"CUL", "PUL", "0", "1", new Date().toString(), null, "1,2", "1", "test@gmail.com", "RECAP", null, RecapCommonConstants.SUCCESS,"userName", "exportIncrementalSCSBXmlFormatForHttp"},
+                {"NYPL", "PUL", "0", "1", new Date().toString(), null, "1,2", "0", "test@gmail.com", "HD", RecapConstants.DATADUMP_PROCESS_STARTED, null,"userName", "exportFullDataDumpMarcXmlFormat"},
+                {"NYPL", "PUL", "0", "1", new Date().toString(), null, "1,2", "0", "test@gmail.com", "RECAP", RecapConstants.DATADUMP_PROCESS_STARTED, null,"userName", "exportFullDataDumpScsbXmlFormat"},
+                {"NYPL,PUL", "NYPL", "1", "1", new Date().toString(), null, "1,2", "0", "test@gmail.com", "RECAP", RecapConstants.DATADUMP_PROCESS_STARTED, null,"userName", "exportIncrementalDataDump"},
+                {"NYPL,PUL", "NYPL", "2", "2", new Date().toString(), null, "1,2", "0", "test@gmail.com", "RECAP", RecapConstants.DATADUMP_PROCESS_STARTED, null,"userName", "exportDeletedRecordsDataDump"},
+                {"NYPL", "NYPL", "1", "1", new Date().toString(), null, "1,2", "0", "test@gmail.com", "RECAP", null, RecapConstants.DATADUMP_VALID_FETCHTYPE_ERR_MSG,"userName", "invalidFetchTypeParameters"},
+                {"NYPL", "NYPL", "1", "1", "", null, "1,2", "0", "test@gmail.com", "RECAP", null, RecapConstants.DATADUMP_DATE_ERR_MSG,"userName", "invalidIncrementalDumpParameters"}
         });
     }
 
