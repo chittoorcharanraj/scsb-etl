@@ -121,6 +121,18 @@ public class DataDumpUtilUT extends BaseTestCaseUT {
         Mockito.when(exportStatusDetailsRepository.findByExportStatusCode(any())).thenReturn(exportStatusEntity);
         dataDumpUtil.updateStatusInETLRequestLog(dataDumpRequest, outputString);
     }
+    @Test
+    public void updateStatusInETLRequestLogInProgress() {
+        DataDumpRequest dataDumpRequest = getDataDumpRequest();
+        String outputString = RecapConstants.IN_PROGRESS;
+        ETLRequestLogEntity etlRequestLogEntity = getEtlRequestLogEntity();
+        ExportStatusEntity exportStatusEntity = getExportStatusEntity();
+        Mockito.when(dataExportDBService.findByExportStatusCode(RecapConstants.AWAITING)).thenReturn(exportStatusEntity);
+        Mockito.when(dataExportDBService.findAllStatusById(exportStatusEntity.getId())).thenReturn(Arrays.asList(etlRequestLogEntity));
+        Mockito.when(etlRequestLogDetailsRepository.findById(dataDumpRequest.getEtlRequestId())).thenReturn(Optional.of(etlRequestLogEntity));
+        Mockito.when(exportStatusDetailsRepository.findByExportStatusCode(any())).thenReturn(exportStatusEntity);
+        dataDumpUtil.updateStatusInETLRequestLog(dataDumpRequest, outputString);
+    }
 
     @Test
     public void updateStatusInETLRequestLog() {
@@ -195,7 +207,7 @@ public class DataDumpUtilUT extends BaseTestCaseUT {
     public void getTransmissionTypeS3(){
         String transmissionType = RecapConstants.DATADUMP_TRANSMISSION_TYPE_S3;
         String type = dataDumpUtil.getTransmissionType(transmissionType);
-        assertEquals("FTP",type);
+        assertEquals("S3",type);
     }
 
     @Test
