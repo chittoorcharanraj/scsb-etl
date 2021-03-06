@@ -38,7 +38,7 @@ public class DataExportsRecentInfoController {
             List<String> allInstitutionCodeExceptHTC = institutionDetailsRepository.findAllInstitutionCodeExceptHTC();
             for (String institution : allInstitutionCodeExceptHTC) {
                 String bibDataFormat = propertyUtil.getPropertyByInstitutionAndKey(institution, "bibdata.format");
-                List<S3RecentDataExportInfo> recentDataExportInfoList = recentDataExportsInfoService.generateRecentDataExportsInfo(institution, bibDataFormat);
+                List<S3RecentDataExportInfo> recentDataExportInfoList = recentDataExportsInfoService.generateRecentDataExportsInfo(allInstitutionCodeExceptHTC, institution, bibDataFormat);
                 if (!recentDataExportInfoList.isEmpty()) {
                     recentDataExportInfoFinalList.addAll(recentDataExportInfoList);
                     s3RecentDataExportInfoList.setRecentDataExportInfoList(recentDataExportInfoFinalList);
