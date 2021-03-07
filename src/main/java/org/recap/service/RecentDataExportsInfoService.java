@@ -36,33 +36,38 @@ public class RecentDataExportsInfoService {
     @Value("${s3.data.dump.dir}")
     private String s3DataExportBasePath;
 
-    public List<S3RecentDataExportInfo> generateRecentDataExportsInfo(String institution, String bibDataFormat) {
+    @Value("${recent.data.export.limit}")
+    private String recentDataExportInfoLimit;
+
+    public List<S3RecentDataExportInfo> generateRecentDataExportsInfo(List<String> allInstitutionCodeExceptHTC, String institution, String bibDataFormat) {
 
         List<S3RecentDataExportInfo> recentDataExportInfoList = new ArrayList<>();
         ListObjectsRequest listObjectsRequest = new ListObjectsRequest();
         try {
             listObjectsRequest.setBucketName(scsbBucketName);
-            listObjectsRequest.setPrefix(s3DataExportBasePath + institution + "/" + bibDataFormat + "Xml/Full/" + institution);
-            ObjectListing objectListing = s3client.listObjects(listObjectsRequest);
-            for (S3ObjectSummary os : objectListing.getObjectSummaries()) {
-                Map<String, String> records = getObjectContent(os.getKey());
-                S3RecentDataExportInfo s3RecentDataExportInfo = new S3RecentDataExportInfo();
-                s3RecentDataExportInfo.setKeyName(os.getKey());
-                s3RecentDataExportInfo.setInstitution(institution);
-                s3RecentDataExportInfo.setBibDataFormat(bibDataFormat);
-                s3RecentDataExportInfo.setGcd(records.get("Collection Group Id(s)"));
-                s3RecentDataExportInfo.setBibCount(records.get("No of Bibs Exported"));
-                s3RecentDataExportInfo.setItemCount(records.get("No of Items Exported"));
-                s3RecentDataExportInfo.setKeySize(os.getSize());
-                s3RecentDataExportInfo.setKeyLastModified(os.getLastModified());
-                recentDataExportInfoList.add(s3RecentDataExportInfo);
-                logger.info("File with the key -->" + os.getKey() + " " + os.getSize() + " " + os.getLastModified());
+            for (String institutionPrefix : allInstitutionCodeExceptHTC) {
+                listObjectsRequest.setPrefix(s3DataExportBasePath + institution + "/" + bibDataFormat + "Xml/Full/" + institutionPrefix);
+                ObjectListing objectListing = s3client.listObjects(listObjectsRequest);
+                for (S3ObjectSummary os : objectListing.getObjectSummaries()) {
+                    Map<String, String> records = getObjectContent(os.getKey());
+                    S3RecentDataExportInfo s3RecentDataExportInfo = new S3RecentDataExportInfo();
+                    s3RecentDataExportInfo.setKeyName(os.getKey());
+                    s3RecentDataExportInfo.setInstitution(institution);
+                    s3RecentDataExportInfo.setBibDataFormat(bibDataFormat);
+                    s3RecentDataExportInfo.setGcd(records.get("Collection Group Id(s)"));
+                    s3RecentDataExportInfo.setBibCount(records.get("No of Bibs Exported"));
+                    s3RecentDataExportInfo.setItemCount(records.get("No of Items Exported"));
+                    s3RecentDataExportInfo.setKeySize(os.getSize());
+                    s3RecentDataExportInfo.setKeyLastModified(os.getLastModified());
+                    recentDataExportInfoList.add(s3RecentDataExportInfo);
+                    logger.info("File with the key -->" + os.getKey() + " " + os.getSize() + " " + os.getLastModified());
+                }
             }
         } catch (Exception e) {
             logger.error(RecapCommonConstants.LOG_ERROR, e);
         }
         recentDataExportInfoList.sort(Comparator.comparing(S3RecentDataExportInfo::getKeyLastModified).reversed());
-        return recentDataExportInfoList.stream().limit(3).collect(Collectors.toList());
+        return recentDataExportInfoList.stream().limit(Integer.parseInt(recentDataExportInfoLimit)).collect(Collectors.toList());
     }
 
     public Map<String, String> getObjectContent(String fileName) {
