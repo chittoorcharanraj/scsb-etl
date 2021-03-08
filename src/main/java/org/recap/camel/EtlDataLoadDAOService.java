@@ -6,13 +6,13 @@ import org.recap.model.jpa.ItemEntity;
 import org.recap.repository.BibliographicDetailsRepository;
 import org.recap.repository.HoldingsDetailsRepository;
 import org.recap.repository.ItemDetailsRepository;
+import org.recap.service.BibliographicRepositoryDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
-import java.util.List;
 
 /**
  * Created by premkb on 28/6/17.
@@ -29,6 +29,10 @@ public class EtlDataLoadDAOService {
     @Autowired
     private ItemDetailsRepository itemDetailsRepository;
 
+    @Autowired
+    BibliographicRepositoryDAO bibliographicRepositoryDAO;
+
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -39,20 +43,10 @@ public class EtlDataLoadDAOService {
      */
     @Transactional
     public void saveBibliographicEntity(BibliographicEntity bibliographicEntity) {
-        bibliographicDetailsRepository.save(bibliographicEntity);
-        flushAndClearSession();
+        bibliographicRepositoryDAO.saveOrUpdate(bibliographicEntity);
+        entityManager.clear();
     }
 
-    /**
-     * Saves list of bibliographic entity.
-     *
-     * @param bibliographicEntityList the bibliographic entity list
-     */
-    @Transactional
-    public void saveBibliographicEntityList(List<BibliographicEntity> bibliographicEntityList) {
-        bibliographicDetailsRepository.saveAll(bibliographicEntityList);
-        flushAndClearSession();
-    }
 
     /**
      * Saves holdings entity.

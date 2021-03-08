@@ -60,7 +60,7 @@ public class RecentDataExportsInfoServiceUT extends BaseTestCaseUT {
         Mockito.when(s3client.getObject(anyString(), any())).thenReturn(s3Object);
         Mockito.when(s3Object.getObjectContent()).thenReturn(s3ObjectInputStream);
         Mockito.doReturn(records).when(recentDataExportsInfoService).getObjectContent(any());
-        recentDataExportsInfoService.generateRecentDataExportsInfo(institution, bibDataFormat);
+        recentDataExportsInfoService.generateRecentDataExportsInfo(Arrays.asList("PUL,CUL,NYPL"), institution, bibDataFormat);
     }
 
     @Test
@@ -72,7 +72,7 @@ public class RecentDataExportsInfoServiceUT extends BaseTestCaseUT {
         Mockito.when(s3client.listObjects(any(ListObjectsRequest.class))).thenReturn(objectListing);
         Mockito.when(s3client.getObject(anyString(), any())).thenReturn(s3Object);
         Mockito.when(s3Object.getObjectContent()).thenReturn(s3ObjectInputStream);
-        recentDataExportsInfoService.generateRecentDataExportsInfo(institution, bibDataFormat);
+        recentDataExportsInfoService.generateRecentDataExportsInfo(Arrays.asList("PUL,CUL,NYPL"), institution, bibDataFormat);
     }
 
     @Test

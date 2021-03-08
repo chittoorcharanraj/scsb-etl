@@ -82,8 +82,8 @@ public class RecentDataExportsInfoControllerUT {
         List<S3RecentDataExportInfo> recentDataExportInfoActualFinalList = null;
         Mockito.when(institutionDetailsRepositoryMock.findAllInstitutionCodeExceptHTC()).thenReturn(institutions);
         Mockito.when(propertyUtilMock.getPropertyByInstitutionAndKey(Mockito.anyString(), Mockito.anyString())).thenReturn(bibDataFormat);
-        Mockito.when(recentDataExportsInfoServiceMock.generateRecentDataExportsInfo("PUL", "MARC")).thenReturn(recentDataExportInfoListPUL);
-        Mockito.when(recentDataExportsInfoServiceMock.generateRecentDataExportsInfo("CUL", "MARC")).thenReturn(recentDataExportInfoListCUL);
+        Mockito.when(recentDataExportsInfoServiceMock.generateRecentDataExportsInfo(Arrays.asList("PUL,CUL,NYPL"),"PUL", "MARC")).thenReturn(recentDataExportInfoListPUL);
+        Mockito.when(recentDataExportsInfoServiceMock.generateRecentDataExportsInfo(Arrays.asList("PUL,CUL,NYPL"),"CUL", "MARC")).thenReturn(recentDataExportInfoListCUL);
         s3RecentDataExportActualInfoList = recentDataExportsInfoControllerMock.getRecentDataExportsInfo();
         assertEquals(s3RecentDataExportInfoList.getRecentDataExportInfoList(), s3RecentDataExportActualInfoList.getRecentDataExportInfoList());
     }

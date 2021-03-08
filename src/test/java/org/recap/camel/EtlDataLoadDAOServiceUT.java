@@ -11,6 +11,7 @@ import org.recap.model.jpa.ItemEntity;
 import org.recap.repository.BibliographicDetailsRepository;
 import org.recap.repository.HoldingsDetailsRepository;
 import org.recap.repository.ItemDetailsRepository;
+import org.recap.service.BibliographicRepositoryDAO;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
@@ -39,6 +40,9 @@ public class EtlDataLoadDAOServiceUT extends BaseTestCaseUT {
     ItemDetailsRepository itemDetailsRepository;
 
     @Mock
+    BibliographicRepositoryDAO bibliographicRepositoryDAO;
+
+    @Mock
     EntityManager entityManager;
 
     @Test
@@ -64,7 +68,7 @@ public class EtlDataLoadDAOServiceUT extends BaseTestCaseUT {
         List<BibliographicEntity> bibliographicEntityList=new ArrayList<>();
         bibliographicEntityList.add(bibliographicEntity);
         Mockito.when(bibliographicDetailsRepository.saveAll(Mockito.any())).thenReturn(bibliographicEntityList);
-        etlDataLoadDAOService.saveBibliographicEntityList(bibliographicEntityList);
+        bibliographicRepositoryDAO.saveOrUpdateList(bibliographicEntityList);
         etlDataLoadDAOService.clearSession();
         assertTrue(true);
     }
