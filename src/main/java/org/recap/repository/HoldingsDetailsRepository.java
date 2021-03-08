@@ -2,7 +2,6 @@ package org.recap.repository;
 
 import org.recap.model.jpa.HoldingsEntity;
 import org.recap.repository.jpa.BaseRepository;
-import org.springframework.data.jpa.repository.JpaRepository;
 
 
 /**
@@ -17,5 +16,7 @@ public interface HoldingsDetailsRepository extends BaseRepository<HoldingsEntity
      * @return the long
      */
     Long countByOwningInstitutionId(Integer owningInstitutionId);
+
+    HoldingsEntity findByOwningInstitutionHoldingsIdAndOwningInstitutionId(String owningInstitutionHoldingsId, Integer owningInstitutionId);
 
 }

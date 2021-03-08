@@ -19,6 +19,7 @@ import org.recap.model.jparw.ReportEntity;
 import org.recap.repository.BibliographicDetailsRepository;
 import org.recap.repository.ItemDetailsRepository;
 import org.recap.repositoryrw.ReportDetailRepository;
+import org.recap.service.BibliographicRepositoryDAO;
 import org.recap.util.DBReportUtil;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -56,6 +57,9 @@ public class BibDataProcessorUT extends BaseTestCaseUT {
 
     @Mock
     BibliographicDetailsRepository bibliographicDetailsRepository;
+
+    @Mock
+    BibliographicRepositoryDAO bibliographicRepositoryDAO;
 
     @Mock
     ReportDetailRepository reportDetailRepository;
@@ -129,7 +133,7 @@ public class BibDataProcessorUT extends BaseTestCaseUT {
         etlExchange.setBibliographicEntities(Arrays.asList(bibliographicEntity));
         etlExchange.setInstitutionEntityMap(etlExchange.getInstitutionEntityMap() == null ? new HashMap() : etlExchange.getInstitutionEntityMap());
         etlExchange.setCollectionGroupMap(etlExchange.getCollectionGroupMap() == null ? new HashMap() : etlExchange.getCollectionGroupMap());
-        Mockito.doThrow(PersistenceException.class).when(etlDataLoadDAOService).saveBibliographicEntityList(Mockito.anyList());
+        Mockito.doThrow(PersistenceException.class).when(bibliographicRepositoryDAO).saveOrUpdateList(Mockito.anyList());
         Mockito.when(itemDetailsRepository.findByBarcode(Mockito.anyString())).thenReturn(getBibliographicEntity().getItemEntities());
         bibDataProcessor.processETLExchagneAndPersistToDB(etlExchange);
     }
@@ -142,7 +146,7 @@ public class BibDataProcessorUT extends BaseTestCaseUT {
         etlExchange.setBibliographicEntities(Arrays.asList(bibliographicEntity));
         etlExchange.setInstitutionEntityMap(etlExchange.getInstitutionEntityMap() == null ? new HashMap() : etlExchange.getInstitutionEntityMap());
         etlExchange.setCollectionGroupMap(etlExchange.getCollectionGroupMap() == null ? new HashMap() : etlExchange.getCollectionGroupMap());
-        Mockito.doThrow(PersistenceException.class).when(etlDataLoadDAOService).saveBibliographicEntityList(Mockito.anyList());
+        Mockito.doThrow(PersistenceException.class).when(bibliographicRepositoryDAO).saveOrUpdateList(Mockito.anyList());
         Mockito.doThrow(new NullPointerException()).when(itemDetailsRepository).findByBarcode(Mockito.anyString());
         bibDataProcessor.processETLExchagneAndPersistToDB(etlExchange);
     }
@@ -154,7 +158,7 @@ public class BibDataProcessorUT extends BaseTestCaseUT {
         etlExchange.setBibliographicEntities(Arrays.asList(bibliographicEntity));
         etlExchange.setInstitutionEntityMap(etlExchange.getInstitutionEntityMap() == null ? new HashMap() : etlExchange.getInstitutionEntityMap());
         etlExchange.setCollectionGroupMap(etlExchange.getCollectionGroupMap() == null ? new HashMap() : etlExchange.getCollectionGroupMap());
-        Mockito.doThrow(PersistenceException.class).when(etlDataLoadDAOService).saveBibliographicEntityList(Mockito.anyList());
+        Mockito.doThrow(PersistenceException.class).when(bibliographicRepositoryDAO).saveOrUpdateList(Mockito.anyList());
         Mockito.when(itemDetailsRepository.findByBarcode(Mockito.anyString())).thenReturn(Arrays.asList());
         try {
             bibDataProcessor.processETLExchagneAndPersistToDB(etlExchange);
@@ -170,7 +174,7 @@ public class BibDataProcessorUT extends BaseTestCaseUT {
         etlExchange.setBibliographicEntities(Arrays.asList(bibliographicEntity));
         etlExchange.setInstitutionEntityMap(etlExchange.getInstitutionEntityMap() == null ? new HashMap() : etlExchange.getInstitutionEntityMap());
         etlExchange.setCollectionGroupMap(etlExchange.getCollectionGroupMap() == null ? new HashMap() : etlExchange.getCollectionGroupMap());
-        Mockito.doThrow(NullPointerException.class).when(etlDataLoadDAOService).saveBibliographicEntityList(Mockito.anyList());
+        Mockito.doThrow(NullPointerException.class).when(bibliographicRepositoryDAO).saveOrUpdateList(Mockito.anyList());
         Mockito.when(itemDetailsRepository.findByBarcode(Mockito.anyString())).thenReturn(bibliographicEntity.getItemEntities());
         try {
             bibDataProcessor.processETLExchagneAndPersistToDB(etlExchange);
@@ -211,7 +215,7 @@ public class BibDataProcessorUT extends BaseTestCaseUT {
         etlExchange.setBibliographicEntities(Arrays.asList(bibliographicEntity));
         etlExchange.setInstitutionEntityMap(etlExchange.getInstitutionEntityMap() == null ? new HashMap() : etlExchange.getInstitutionEntityMap());
         etlExchange.setCollectionGroupMap(etlExchange.getCollectionGroupMap() == null ? new HashMap() : etlExchange.getCollectionGroupMap());
-        Mockito.doThrow(NullPointerException.class).when(etlDataLoadDAOService).saveBibliographicEntityList(Mockito.anyList());
+        Mockito.doThrow(NullPointerException.class).when(bibliographicRepositoryDAO).saveOrUpdateList(Mockito.anyList());
         Mockito.doThrow(NullPointerException.class).doNothing().when(etlDataLoadDAOService).saveBibliographicEntity(Mockito.any());
         Mockito.when(itemDetailsRepository.findByBarcode(Mockito.anyString())).thenReturn(bibliographicEntity.getItemEntities());
         try {
@@ -228,7 +232,7 @@ public class BibDataProcessorUT extends BaseTestCaseUT {
         etlExchange.setBibliographicEntities(Arrays.asList(bibliographicEntity));
         etlExchange.setInstitutionEntityMap(etlExchange.getInstitutionEntityMap() == null ? new HashMap() : etlExchange.getInstitutionEntityMap());
         etlExchange.setCollectionGroupMap(etlExchange.getCollectionGroupMap() == null ? new HashMap() : etlExchange.getCollectionGroupMap());
-        Mockito.doThrow(NullPointerException.class).when(etlDataLoadDAOService).saveBibliographicEntityList(Mockito.anyList());
+        Mockito.doThrow(NullPointerException.class).when(bibliographicRepositoryDAO).saveOrUpdateList(Mockito.anyList());
         Mockito.doThrow(NullPointerException.class).doNothing().when(etlDataLoadDAOService).saveBibliographicEntity(Mockito.any());
         Mockito.when(itemDetailsRepository.findByBarcode(Mockito.anyString())).thenReturn(bibliographicEntity.getItemEntities());
         Mockito.when(nullPointerException.getCause()).thenReturn(nullPointerException1);
@@ -251,7 +255,7 @@ public class BibDataProcessorUT extends BaseTestCaseUT {
         etlExchange.setBibliographicEntities(Arrays.asList(bibliographicEntity));
         etlExchange.setInstitutionEntityMap(etlExchange.getInstitutionEntityMap() == null ? new HashMap() : etlExchange.getInstitutionEntityMap());
         etlExchange.setCollectionGroupMap(etlExchange.getCollectionGroupMap() == null ? new HashMap() : etlExchange.getCollectionGroupMap());
-        Mockito.doThrow(NullPointerException.class).when(etlDataLoadDAOService).saveBibliographicEntityList(Mockito.anyList());
+        Mockito.doThrow(NullPointerException.class).when(bibliographicRepositoryDAO).saveOrUpdateList(Mockito.anyList());
         Mockito.doThrow(NullPointerException.class).doNothing().when(etlDataLoadDAOService).saveBibliographicEntity(Mockito.any());
         Mockito.when(itemDetailsRepository.findByBarcode(Mockito.anyString())).thenReturn(bibliographicEntity.getItemEntities());
         Mockito.when(nullPointerException.getCause()).thenReturn(nullPointerException1);
@@ -272,8 +276,8 @@ public class BibDataProcessorUT extends BaseTestCaseUT {
         etlExchange.setBibliographicEntities(Arrays.asList(bibliographicEntity));
         etlExchange.setInstitutionEntityMap(etlExchange.getInstitutionEntityMap() == null ? new HashMap() : etlExchange.getInstitutionEntityMap());
         etlExchange.setCollectionGroupMap(etlExchange.getCollectionGroupMap() == null ? new HashMap() : etlExchange.getCollectionGroupMap());
-        Mockito.doThrow(NullPointerException.class).when(etlDataLoadDAOService).saveBibliographicEntityList(Mockito.anyList());
-        Mockito.doThrow(NullPointerException.class).when(etlDataLoadDAOService).saveBibliographicEntity(Mockito.any());
+        Mockito.doThrow(NullPointerException.class).when(bibliographicRepositoryDAO).saveOrUpdateList(Mockito.anyList());
+        Mockito.doThrow(NullPointerException.class).when(bibliographicRepositoryDAO).saveOrUpdate(Mockito.any());
         Mockito.when(itemDetailsRepository.findByBarcode(Mockito.anyString())).thenReturn(bibliographicEntity.getItemEntities());
         Mockito.when(nullPointerException.getCause()).thenReturn(nullPointerException1);
         Mockito.when(nullPointerException1.getCause()).thenReturn(nullPointerException2);

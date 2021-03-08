@@ -10,6 +10,7 @@ import org.recap.model.jparw.ReportDataEntity;
 import org.recap.model.jparw.ReportEntity;
 import org.recap.repository.BibliographicDetailsRepository;
 import org.recap.repository.ItemDetailsRepository;
+import org.recap.service.BibliographicRepositoryDAO;
 import org.recap.util.DBReportUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +52,10 @@ public class BibDataProcessor {
     @Autowired
     private EtlDataLoadDAOService etlDataLoadDAOService;
 
+    @Autowired
+    BibliographicRepositoryDAO bibliographicRepositoryDAO;
+
+
     /**
      * This method persists the bibliographic entities. If errors encountered prepares report entities and sends to report queue for persisting.
      *
@@ -61,7 +66,7 @@ public class BibDataProcessor {
         if (etlExchange != null) {
             List<BibliographicEntity> bibliographicEntityList = etlExchange.getBibliographicEntities();
             try {
-                etlDataLoadDAOService.saveBibliographicEntityList(bibliographicEntityList);
+                bibliographicRepositoryDAO.saveOrUpdateList(bibliographicEntityList);
             } catch (PersistenceException pe){
                 try {
                     processRecordWhenDuplicateBarcodeException(bibliographicEntityList, pe);
@@ -216,12 +221,12 @@ public class BibDataProcessor {
                 List<ItemEntity> itemEntities = holdingsEntity.getItemEntities();
                 holdingsEntity.setItemEntities(null);
                 try {
-                    HoldingsEntity savedHoldingsEntity = etlDataLoadDAOService.savedHoldingsEntity(holdingsEntity);
+                    HoldingsEntity savedHoldingsEntity = bibliographicRepositoryDAO.saveOrUpdateHoldingsEntity(holdingsEntity);
                     savedHoldingsEntities.add(savedHoldingsEntity);
                     for (ItemEntity itemEntity : itemEntities) {
                         try {
                             itemEntity.setHoldingsEntities(Arrays.asList(savedHoldingsEntity));
-                            ItemEntity savedItemEntity = etlDataLoadDAOService.saveItemEntity(itemEntity);
+                            ItemEntity savedItemEntity = bibliographicRepositoryDAO.saveOrUpdateItemEntity(itemEntity);
                             savedItemEntities.add(savedItemEntity);
                         } catch (Exception itemEx) {
                             logger.error(RecapConstants.ERROR,itemEx);
@@ -246,7 +251,7 @@ public class BibDataProcessor {
             }
             bibliographicEntity.setHoldingsEntities(savedHoldingsEntities);
             bibliographicEntity.setItemEntities(savedItemEntities);
-            bibliographicDetailsRepository.save(bibliographicEntity);
+            etlDataLoadDAOService.saveBibliographicEntity(bibliographicEntity);
         } catch (Exception bibEx) {
             logger.error(RecapConstants.ERROR,bibEx);
             etlDataLoadDAOService.clearSession();
