@@ -5,7 +5,6 @@ import org.recap.repository.jpa.BaseRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.util.List;
 
@@ -73,5 +72,8 @@ public interface ItemDetailsRepository extends BaseRepository<ItemEntity> {
      * @return the list
      */
     List<ItemEntity> findByBarcode(String barcode);
+
+    ItemEntity findByOwningInstitutionItemIdAndOwningInstitutionId(String owningInstitutionItemId, Integer owningInstitutionId);
+
 
 }
