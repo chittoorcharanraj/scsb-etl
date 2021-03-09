@@ -41,10 +41,13 @@ public class RecentDataExportsInfoServiceUT extends BaseTestCaseUT {
 
     private final String s3DataExportBasePath = "testExportPath";
 
+    private final String recentDataExportInfoLimit = "10";
+
     @Before
     public void setup() {
         ReflectionTestUtils.setField(recentDataExportsInfoService, "scsbBucketName", scsbBucketName);
         ReflectionTestUtils.setField(recentDataExportsInfoService, "s3DataExportBasePath", s3DataExportBasePath);
+        ReflectionTestUtils.setField(recentDataExportsInfoService, "recentDataExportInfoLimit", recentDataExportInfoLimit);
     }
 
 
