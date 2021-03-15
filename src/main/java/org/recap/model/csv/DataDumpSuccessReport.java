@@ -29,11 +29,9 @@ public class DataDumpSuccessReport implements Serializable{
     private String exportFormat;
     @DataField(pos = 8, columnName = "IMS Depository")
     private String imsDepositoryCodes;
-    @DataField(pos = 9, columnName = "To Email Id(s)")
-    private String toEmailId;
-    @DataField(pos = 10, columnName = "No of Bibs Exported")
+    @DataField(pos = 9, columnName = "No of Bibs Exported")
     private String noOfBibsExported;
-    @DataField(pos = 11, columnName = "No of Items Exported")
+    @DataField(pos = 10, columnName = "No of Items Exported")
     private String exportedItemCount;
 
 

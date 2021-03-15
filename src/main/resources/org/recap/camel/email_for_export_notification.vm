@@ -7,6 +7,5 @@ Collection-group-code(s) : ${header.emailPayLoad.collectionGroupCodes}
 Transmission type        : ${header.emailPayLoad.transmissionType}
 XML format               : ${header.emailPayLoad.outputFileFormat}
 IMS Depository           : ${header.emailPayLoad.imsDepositoryCodes}
-Emails mentioned         : ${header.emailPayLoad.to}
 
 ${header.emailPayLoad.message}

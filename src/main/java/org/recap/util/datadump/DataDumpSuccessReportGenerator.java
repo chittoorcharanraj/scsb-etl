@@ -38,12 +38,14 @@ public class DataDumpSuccessReportGenerator {
             ReportDataEntity report =  iterator.next();
             String headerName = report.getHeaderName();
             String headerValue = report.getHeaderValue();
-            Method setterMethod = getSetterMethod(headerName);
-            if(null != setterMethod){
-                try {
-                    setterMethod.invoke(dataDumpSuccessReport, headerValue);
-                } catch (IllegalAccessException | InvocationTargetException e) {
-                    logger.error(RecapConstants.ERROR,e);
+            if(!headerName.equalsIgnoreCase(RecapConstants.TO_EMAIL_ID)) {
+                Method setterMethod = getSetterMethod(headerName);
+                if (null != setterMethod) {
+                    try {
+                        setterMethod.invoke(dataDumpSuccessReport, headerValue);
+                    } catch (IllegalAccessException | InvocationTargetException e) {
+                        logger.error(RecapConstants.ERROR, e);
+                    }
                 }
             }
         }
