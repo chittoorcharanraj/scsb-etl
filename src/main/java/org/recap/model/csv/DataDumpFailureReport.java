@@ -29,11 +29,9 @@ public class DataDumpFailureReport implements Serializable{
     private String exportFormat;
     @DataField(pos = 8, columnName = "IMS Depository")
     private String imsDepositoryCodes;
-    @DataField(pos = 9, columnName = "To Email Id(s)")
-    private String toEmailId;
-    @DataField(pos = 10, columnName = "Failed Bibs")
+    @DataField(pos = 9, columnName = "Failed Bibs")
     private String failedBibs;
-    @DataField(pos = 11, columnName = "Failure Cause")
+    @DataField(pos = 10, columnName = "Failure Cause")
     private String failureCause;
 
     private String fileName;
