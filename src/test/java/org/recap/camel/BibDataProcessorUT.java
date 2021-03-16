@@ -15,6 +15,7 @@ import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.HoldingsEntity;
 import org.recap.model.jpa.ItemEntity;
 import org.recap.model.jpa.XmlRecordEntity;
+import org.recap.model.jparw.ReportDataEntity;
 import org.recap.model.jparw.ReportEntity;
 import org.recap.repository.BibliographicDetailsRepository;
 import org.recap.repository.ItemDetailsRepository;
@@ -32,17 +33,12 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 
 
 /**
@@ -184,6 +180,61 @@ public class BibDataProcessorUT extends BaseTestCaseUT {
     }
 
     @Test
+    public void processBibHoldingsItemsHoldingsException(){
+        BibliographicEntity bibliographicEntity = getBibliographicEntity();
+        List<ReportDataEntity> reportDataEntities = new ArrayList<>();
+        Mockito.when(nullPointerException.getCause()).thenReturn(nullPointerException1);
+        Mockito.when(nullPointerException1.getCause()).thenReturn(nullPointerException2);
+        Mockito.when(nullPointerException2.getMessage()).thenReturn("error");
+        Mockito.doThrow(nullPointerException).when(etlDataLoadDAOService).saveBibliographicEntity(bibliographicEntity);
+        Mockito.when(dbReportUtil.generateBibHoldingsFailureReportEntity(any(), any())).thenReturn(reportDataEntities);
+        ReportEntity reportEntity = bibDataProcessor.processBibHoldingsItems(dbReportUtil,bibliographicEntity);
+        assertNotNull(reportEntity);
+    }
+
+    @Test
+    public void processBibHoldingsItemsException(){
+        BibliographicEntity bibliographicEntity = getBibliographicEntity();
+        List<ReportDataEntity> reportDataEntities = new ArrayList<>();
+        Mockito.when(nullPointerException.getCause()).thenReturn(nullPointerException1);
+        Mockito.when(nullPointerException1.getCause()).thenReturn(nullPointerException2);
+        Mockito.when(nullPointerException2.getMessage()).thenReturn("error");
+        Mockito.when( bibliographicRepositoryDAO.saveOrUpdateItemEntity(any())).thenThrow(nullPointerException);
+        ReportEntity reportEntity = bibDataProcessor.processBibHoldingsItems(dbReportUtil,bibliographicEntity);
+        assertNotNull(reportEntity);
+    }
+    @Test
+    public void processBibHoldingsItemsNullException(){
+        BibliographicEntity bibliographicEntity = getBibliographicEntity();
+        List<ReportDataEntity> reportDataEntities = new ArrayList<>();
+        Mockito.when(nullPointerException.getCause()).thenReturn(nullPointerException1);
+        Mockito.when(nullPointerException1.getCause()).thenReturn(nullPointerException2);
+        Mockito.when(nullPointerException2.getMessage()).thenReturn("error");
+        Mockito.when( bibliographicRepositoryDAO.saveOrUpdateItemEntity(any())).thenThrow(nullPointerException);
+        Mockito.when(dbReportUtil.generateBibHoldingsFailureReportEntity(any(), any())).thenReturn(reportDataEntities);
+        ReportEntity reportEntity = bibDataProcessor.processBibHoldingsItems(dbReportUtil,bibliographicEntity);
+        assertNotNull(reportEntity);
+    }
+
+    @Test
+    public void processBibHoldingsItemsNullExceptionWithoutMessage(){
+        BibliographicEntity bibliographicEntity = getBibliographicEntity();
+        List<ReportDataEntity> reportDataEntities = new ArrayList<>();
+        Mockito.when( bibliographicRepositoryDAO.saveOrUpdateItemEntity(any())).thenThrow(new NullPointerException());
+        Mockito.when(dbReportUtil.generateBibHoldingsFailureReportEntity(any(), any())).thenReturn(reportDataEntities);
+        ReportEntity reportEntity = bibDataProcessor.processBibHoldingsItems(dbReportUtil,bibliographicEntity);
+        assertNotNull(reportEntity);
+    }
+
+    @Test
+    public void isDuplicateItem(){
+        List<ItemEntity> existingItemEntityList = new ArrayList<>();
+        ItemEntity itemEntity = getBibliographicEntity().getItemEntities().get(0);
+        existingItemEntityList.add(itemEntity);
+        ReflectionTestUtils.invokeMethod(bibDataProcessor,"isDuplicateItem",existingItemEntityList,itemEntity);
+    }
+
+    @Test
     public void setDuplicateBarcodeReportInfoForItemsinSameBib() {
         String barcode = "24366";
         ItemEntity existingItemEntity = getBibliographicEntity().getItemEntities().get(0);
@@ -216,7 +267,7 @@ public class BibDataProcessorUT extends BaseTestCaseUT {
         etlExchange.setInstitutionEntityMap(etlExchange.getInstitutionEntityMap() == null ? new HashMap() : etlExchange.getInstitutionEntityMap());
         etlExchange.setCollectionGroupMap(etlExchange.getCollectionGroupMap() == null ? new HashMap() : etlExchange.getCollectionGroupMap());
         Mockito.doThrow(NullPointerException.class).when(bibliographicRepositoryDAO).saveOrUpdateList(Mockito.anyList());
-        Mockito.doThrow(NullPointerException.class).doNothing().when(etlDataLoadDAOService).saveBibliographicEntity(Mockito.any());
+        Mockito.doThrow(NullPointerException.class).doNothing().when(etlDataLoadDAOService).saveBibliographicEntity(any());
         Mockito.when(itemDetailsRepository.findByBarcode(Mockito.anyString())).thenReturn(bibliographicEntity.getItemEntities());
         try {
             bibDataProcessor.processETLExchagneAndPersistToDB(etlExchange);
@@ -233,14 +284,14 @@ public class BibDataProcessorUT extends BaseTestCaseUT {
         etlExchange.setInstitutionEntityMap(etlExchange.getInstitutionEntityMap() == null ? new HashMap() : etlExchange.getInstitutionEntityMap());
         etlExchange.setCollectionGroupMap(etlExchange.getCollectionGroupMap() == null ? new HashMap() : etlExchange.getCollectionGroupMap());
         Mockito.doThrow(NullPointerException.class).when(bibliographicRepositoryDAO).saveOrUpdateList(Mockito.anyList());
-        Mockito.doThrow(NullPointerException.class).doNothing().when(etlDataLoadDAOService).saveBibliographicEntity(Mockito.any());
+        Mockito.doThrow(NullPointerException.class).doNothing().when(etlDataLoadDAOService).saveBibliographicEntity(any());
         Mockito.when(itemDetailsRepository.findByBarcode(Mockito.anyString())).thenReturn(bibliographicEntity.getItemEntities());
         Mockito.when(nullPointerException.getCause()).thenReturn(nullPointerException1);
         Mockito.when(nullPointerException1.getCause()).thenReturn(nullPointerException2);
         Mockito.when(nullPointerException2.getMessage()).thenReturn("error");
 
-        Mockito.when(etlDataLoadDAOService.saveItemEntity(Mockito.any())).thenThrow(nullPointerException);
-        Mockito.when(dbReportUtil.generateBibHoldingsFailureReportEntity(Mockito.any(), Mockito.any())).thenReturn(new ArrayList<>());
+        Mockito.when(etlDataLoadDAOService.saveItemEntity(any())).thenThrow(nullPointerException);
+        Mockito.when(dbReportUtil.generateBibHoldingsFailureReportEntity(any(), any())).thenReturn(new ArrayList<>());
         try {
             bibDataProcessor.processETLExchagneAndPersistToDB(etlExchange);
         } catch (Exception e) {
@@ -256,12 +307,12 @@ public class BibDataProcessorUT extends BaseTestCaseUT {
         etlExchange.setInstitutionEntityMap(etlExchange.getInstitutionEntityMap() == null ? new HashMap() : etlExchange.getInstitutionEntityMap());
         etlExchange.setCollectionGroupMap(etlExchange.getCollectionGroupMap() == null ? new HashMap() : etlExchange.getCollectionGroupMap());
         Mockito.doThrow(NullPointerException.class).when(bibliographicRepositoryDAO).saveOrUpdateList(Mockito.anyList());
-        Mockito.doThrow(NullPointerException.class).doNothing().when(etlDataLoadDAOService).saveBibliographicEntity(Mockito.any());
+        Mockito.doThrow(NullPointerException.class).doNothing().when(etlDataLoadDAOService).saveBibliographicEntity(any());
         Mockito.when(itemDetailsRepository.findByBarcode(Mockito.anyString())).thenReturn(bibliographicEntity.getItemEntities());
         Mockito.when(nullPointerException.getCause()).thenReturn(nullPointerException1);
         Mockito.when(nullPointerException1.getCause()).thenReturn(nullPointerException2);
         Mockito.when(nullPointerException2.getMessage()).thenReturn("error");
-        Mockito.when(etlDataLoadDAOService.savedHoldingsEntity(Mockito.any())).thenThrow(nullPointerException);
+        Mockito.when(etlDataLoadDAOService.savedHoldingsEntity(any())).thenThrow(nullPointerException);
         try {
             bibDataProcessor.processETLExchagneAndPersistToDB(etlExchange);
         } catch (Exception e) {
@@ -277,12 +328,12 @@ public class BibDataProcessorUT extends BaseTestCaseUT {
         etlExchange.setInstitutionEntityMap(etlExchange.getInstitutionEntityMap() == null ? new HashMap() : etlExchange.getInstitutionEntityMap());
         etlExchange.setCollectionGroupMap(etlExchange.getCollectionGroupMap() == null ? new HashMap() : etlExchange.getCollectionGroupMap());
         Mockito.doThrow(NullPointerException.class).when(bibliographicRepositoryDAO).saveOrUpdateList(Mockito.anyList());
-        Mockito.doThrow(NullPointerException.class).when(bibliographicRepositoryDAO).saveOrUpdate(Mockito.any());
+        Mockito.doThrow(NullPointerException.class).when(bibliographicRepositoryDAO).saveOrUpdate(any());
         Mockito.when(itemDetailsRepository.findByBarcode(Mockito.anyString())).thenReturn(bibliographicEntity.getItemEntities());
         Mockito.when(nullPointerException.getCause()).thenReturn(nullPointerException1);
         Mockito.when(nullPointerException1.getCause()).thenReturn(nullPointerException2);
         Mockito.when(nullPointerException2.getMessage()).thenReturn("error");
-        Mockito.when(etlDataLoadDAOService.savedHoldingsEntity(Mockito.any())).thenThrow(nullPointerException);
+        Mockito.when(etlDataLoadDAOService.savedHoldingsEntity(any())).thenThrow(nullPointerException);
         try {
             bibDataProcessor.processETLExchagneAndPersistToDB(etlExchange);
         } catch (Exception e) {
