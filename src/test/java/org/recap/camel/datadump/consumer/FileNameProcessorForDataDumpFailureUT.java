@@ -38,7 +38,6 @@ public class FileNameProcessorForDataDumpFailureUT extends BaseTestCaseUT {
         dataDumpFailureReport.setCollectionGroupIds("Open");
         dataDumpFailureReport.setTransmissionType("1");
         dataDumpFailureReport.setExportFormat("1");
-        dataDumpFailureReport.setToEmailId("hemalatha.s@htcindia.com");
         dataDumpFailureReport.setFailedBibs("test");
         dataDumpFailureReport.setFailureCause("test");
         dataDumpFailureReport.setFileName("test");

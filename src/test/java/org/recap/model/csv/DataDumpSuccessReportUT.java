@@ -24,7 +24,6 @@ public class DataDumpSuccessReportUT extends BaseTestCaseUT {
         dataDumpSuccessReport.setTransmissionType("1");
         dataDumpSuccessReport.setImsDepositoryCodes("IMDC");
         dataDumpSuccessReport.setExportFormat("1");
-        dataDumpSuccessReport.setToEmailId("hemalatha.s@htcindia.com");
         dataDumpSuccessReport.setNoOfBibsExported("5");
         dataDumpSuccessReport.setExportedItemCount("3");
 
@@ -35,7 +34,6 @@ public class DataDumpSuccessReportUT extends BaseTestCaseUT {
         assertNotNull(dataDumpSuccessReport.getCollectionGroupIds());
         assertNotNull(dataDumpSuccessReport.getTransmissionType());
         assertNotNull(dataDumpSuccessReport.getExportFormat());
-        assertNotNull(dataDumpSuccessReport.getToEmailId());
         assertNotNull(dataDumpSuccessReport.getImsDepositoryCodes());
         assertNotNull(dataDumpSuccessReport.getExportedItemCount());
         assertNotNull(dataDumpSuccessReport.getNoOfBibsExported());
