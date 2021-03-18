@@ -23,7 +23,6 @@ public class DataDumpFailureReportUT extends BaseTestCaseUT {
         dataDumpFailureReport.setTransmissionType("1");
         dataDumpFailureReport.setImsDepositoryCodes("IMDC");
         dataDumpFailureReport.setExportFormat("1");
-        dataDumpFailureReport.setToEmailId("hemalatha.s@htcindia.com");
         dataDumpFailureReport.setFailedBibs("test");
         dataDumpFailureReport.setFailureCause("test");
 
@@ -34,7 +33,6 @@ public class DataDumpFailureReportUT extends BaseTestCaseUT {
         assertNotNull(dataDumpFailureReport.getCollectionGroupIds());
         assertNotNull(dataDumpFailureReport.getTransmissionType());
         assertNotNull(dataDumpFailureReport.getExportFormat());
-        assertNotNull(dataDumpFailureReport.getToEmailId());
         assertNotNull(dataDumpFailureReport.getFailedBibs());
         assertNotNull(dataDumpFailureReport.getImsDepositoryCodes());
         assertNotNull(dataDumpFailureReport.getFailureCause());

@@ -20,7 +20,9 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RecentDataExportsInfoControllerUT {
@@ -79,12 +81,17 @@ public class RecentDataExportsInfoControllerUT {
 
     @Test
     public void getRecentDataExportsInfoTest() throws Exception {
-        List<S3RecentDataExportInfo> recentDataExportInfoActualFinalList = null;
         Mockito.when(institutionDetailsRepositoryMock.findAllInstitutionCodeExceptHTC()).thenReturn(institutions);
         Mockito.when(propertyUtilMock.getPropertyByInstitutionAndKey(Mockito.anyString(), Mockito.anyString())).thenReturn(bibDataFormat);
-        Mockito.when(recentDataExportsInfoServiceMock.generateRecentDataExportsInfo(Arrays.asList("PUL,CUL,NYPL"),"PUL", "MARC")).thenReturn(recentDataExportInfoListPUL);
-        Mockito.when(recentDataExportsInfoServiceMock.generateRecentDataExportsInfo(Arrays.asList("PUL,CUL,NYPL"),"CUL", "MARC")).thenReturn(recentDataExportInfoListCUL);
+        Mockito.when(recentDataExportsInfoServiceMock.generateRecentDataExportsInfo(any(), anyString(), anyString())).thenReturn(recentDataExportInfoListCUL);
         s3RecentDataExportActualInfoList = recentDataExportsInfoControllerMock.getRecentDataExportsInfo();
-        assertEquals(s3RecentDataExportInfoList.getRecentDataExportInfoList(), s3RecentDataExportActualInfoList.getRecentDataExportInfoList());
+        assertNotNull(s3RecentDataExportInfoList);
+    }
+
+    @Test
+    public void getRecentDataExportsInfoException() throws Exception {
+        Mockito.when(institutionDetailsRepositoryMock.findAllInstitutionCodeExceptHTC()).thenThrow(new NullPointerException());
+        s3RecentDataExportActualInfoList = recentDataExportsInfoControllerMock.getRecentDataExportsInfo();
+        assertNotNull(s3RecentDataExportInfoList);
     }
 }
