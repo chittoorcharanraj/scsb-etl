@@ -287,6 +287,11 @@ public class BibPersisterCallable implements Callable {
         itemEntity.setCallNumberType(holdingsCallNumberType);
         itemEntity.setItemAvailabilityStatusId(itemStatusMap.get("Available"));
 
+        String itemLibrary = getMarcUtil().getDataFieldValue(itemRecordType, "876", null, null, "k");
+        if (StringUtils.isNotBlank(itemLibrary)) {
+            itemEntity.setItemLibrary(itemLibrary);
+        }
+
         String imsLocationCode = null;
         imsLocationCode =  getMarcUtil().getDataFieldValue(itemRecordType, "876", null, null, "l");
         if(imsLocationCode != null && imsLocationCode.trim().length()>0) {
