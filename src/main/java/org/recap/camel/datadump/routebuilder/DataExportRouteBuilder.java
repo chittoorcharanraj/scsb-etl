@@ -49,7 +49,7 @@ public class DataExportRouteBuilder {
                                   SCSBXmlFormatterService scsbXmlFormatterService,
                                   DeletedJsonFormatterService deletedJsonFormatterService,
                                   XmlFormatter xmlFormatter,
-                                  @Value("${datadump.records.per.file}") String dataDumpRecordsPerFile,
+                                  String dataDumpRecordsPerFile,
                                   DataExportCompletionStatusActiveMQConsumer dataExportCompletionStatusActiveMQConsumer,
                                   DataDumpSequenceProcessor dataDumpSequenceProcessor) {
         try {
