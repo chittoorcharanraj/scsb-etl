@@ -43,7 +43,7 @@ public class DynamicRouteBuilder {
     @Autowired
     private DataDumpSequenceProcessor dataDumpSequenceProcessor;
 
-    @Value("${data.dump.records.per.file}")
+    @Value("${etl.data.dump.records.per.file}")
     String dataDumpRecordsPerFile;
 
     /**
