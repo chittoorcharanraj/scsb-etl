@@ -154,11 +154,11 @@ public class BibEntityGeneratorActiveMQConsumer {
      */
     public ExecutorService getExecutorService() {
         if (null == executorService) {
-            logger.info("Creating Thread Pool of Size : {}", dataDumpBibEntityBatchSize);
+            logger.info("Creating Thread Pool of Size : {}", dataDumpBibEntityThreadSize);
             executorService = Executors.newFixedThreadPool(dataDumpBibEntityThreadSize);
         }
         if (executorService.isShutdown()) {
-            logger.info("On Shutdown, Creating Thread Pool of Size : {}", dataDumpBibEntityBatchSize);
+            logger.info("On Shutdown, Creating Thread Pool of Size : {}", dataDumpBibEntityThreadSize);
             executorService = Executors.newFixedThreadPool(dataDumpBibEntityThreadSize);
         }
         return executorService;
