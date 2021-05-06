@@ -171,9 +171,11 @@ public class SCSBRecordFormatActiveMQConsumer extends CommonReportGenerator {
      */
     public ExecutorService getExecutorService() {
         if (null == executorService) {
+            logger.info("Creating Thread Pool of Size : {}", dataDumpScsbFormatThreadSize);
             executorService = Executors.newFixedThreadPool(dataDumpScsbFormatThreadSize);
         }
         if (executorService.isShutdown()) {
+            logger.info("On Shutdown, Creating Thread Pool of Size : {}", dataDumpScsbFormatThreadSize);
             executorService = Executors.newFixedThreadPool(dataDumpScsbFormatThreadSize);
         }
         return executorService;

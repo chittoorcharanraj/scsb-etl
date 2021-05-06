@@ -192,9 +192,11 @@ public class DeletedRecordFormatActiveMQConsumer extends CommonReportGenerator {
      */
     public ExecutorService getExecutorService() {
         if (null == executorService) {
+            logger.info("Creating Thread Pool of Size : {}", dataDumpDeletedRecordsThreadSize);
             executorService = Executors.newFixedThreadPool(dataDumpDeletedRecordsThreadSize);
         }
         if (executorService.isShutdown()) {
+            logger.info("On Shutdown, Creating Thread Pool of Size : {}", dataDumpDeletedRecordsThreadSize);
             executorService = Executors.newFixedThreadPool(dataDumpDeletedRecordsThreadSize);
         }
         return executorService;

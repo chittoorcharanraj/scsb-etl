@@ -172,9 +172,11 @@ public class MarcRecordFormatActiveMQConsumer extends CommonReportGenerator {
      */
     public ExecutorService getExecutorService() {
         if (null == executorService) {
+            logger.info("Creating Thread Pool of Size : {}", dataDumpMarcFormatThreadSize);
             executorService = Executors.newFixedThreadPool(dataDumpMarcFormatThreadSize);
         }
         if (executorService.isShutdown()) {
+            logger.info("On Shutdown, Creating Thread Pool of Size : {}", dataDumpMarcFormatThreadSize);
             executorService = Executors.newFixedThreadPool(dataDumpMarcFormatThreadSize);
         }
         return executorService;
