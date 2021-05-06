@@ -35,6 +35,8 @@ public class BibEntityGeneratorActiveMQConsumer {
     private BibliographicDetailsRepository bibliographicDetailsRepository;
     private ExecutorService executorService;
     private static String batchHeaderName = "batchHeaders";
+    private Integer dataDumpBibEntityThreadSize;
+    private Integer dataDumpBibEntityBatchSize;
 
     /**
      * Instantiates a new Bib entity generator active mq consumer.
@@ -43,6 +45,18 @@ public class BibEntityGeneratorActiveMQConsumer {
      */
     public BibEntityGeneratorActiveMQConsumer(BibliographicDetailsRepository bibliographicDetailsRepository) {
         this.bibliographicDetailsRepository = bibliographicDetailsRepository;
+    }
+
+    /**
+     * Instantiates a new Bib entity generator active mq consumer.
+     *
+     * @param bibliographicDetailsRepository the bibliographic details repository
+     * @param dataDumpBibEntityThreadSize the data dump bib entity thread size
+     */
+    public BibEntityGeneratorActiveMQConsumer(BibliographicDetailsRepository bibliographicDetailsRepository, Integer dataDumpBibEntityThreadSize, Integer dataDumpBibEntityBatchSize) {
+        this.bibliographicDetailsRepository = bibliographicDetailsRepository;
+        this.dataDumpBibEntityThreadSize = dataDumpBibEntityThreadSize;
+        this.dataDumpBibEntityBatchSize = dataDumpBibEntityBatchSize;
     }
 
     /**
@@ -78,7 +92,7 @@ public class BibEntityGeneratorActiveMQConsumer {
             List<Callable<BibliographicEntity>> callables = new ArrayList<>();
             List<BibliographicEntity> bibliographicEntityList=new ArrayList<>();
 
-            List<List<Integer>> partition = Lists.partition(bibIdList, 1000);
+            List<List<Integer>> partition = Lists.partition(bibIdList, dataDumpBibEntityBatchSize);
             for (List<Integer> integers : partition) {
                 List<BibliographicEntity> bibliographicEntityList1 = bibliographicDetailsRepository.getBibliographicEntityList(integers);
                 bibliographicEntityList.addAll(bibliographicEntityList1);
@@ -139,10 +153,10 @@ public class BibEntityGeneratorActiveMQConsumer {
      */
     public ExecutorService getExecutorService() {
         if (null == executorService) {
-            executorService = Executors.newFixedThreadPool(500);
+            executorService = Executors.newFixedThreadPool(dataDumpBibEntityThreadSize);
         }
         if (executorService.isShutdown()) {
-            executorService = Executors.newFixedThreadPool(500);
+            executorService = Executors.newFixedThreadPool(dataDumpBibEntityThreadSize);
         }
         return executorService;
     }

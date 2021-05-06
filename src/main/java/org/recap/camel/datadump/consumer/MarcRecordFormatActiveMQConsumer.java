@@ -41,6 +41,8 @@ public class MarcRecordFormatActiveMQConsumer extends CommonReportGenerator {
     MarcXmlFormatterService marcXmlFormatterService;
     private ExecutorService executorService;
     private DataExportHeaderUtil dataExportHeaderUtil;
+    private Integer dataDumpMarcFormatThreadSize;
+    private Integer dataDumpMarcFormatBatchSize;
 
     /**
      * Instantiates a new Marc record format active mq consumer.
@@ -49,6 +51,18 @@ public class MarcRecordFormatActiveMQConsumer extends CommonReportGenerator {
      */
     public MarcRecordFormatActiveMQConsumer(MarcXmlFormatterService marcXmlFormatterService) {
         this.marcXmlFormatterService = marcXmlFormatterService;
+    }
+
+    /**
+     * Instantiates a new Marc record format active mq consumer.
+     *
+     * @param marcXmlFormatterService the marc xml formatter service
+     * @param dataDumpMarcFormatThreadSize the data Dump Marc Format Thread Size
+     */
+    public MarcRecordFormatActiveMQConsumer(MarcXmlFormatterService marcXmlFormatterService, Integer dataDumpMarcFormatThreadSize, Integer dataDumpMarcFormatBatchSize) {
+        this.marcXmlFormatterService = marcXmlFormatterService;
+        this.dataDumpMarcFormatThreadSize = dataDumpMarcFormatThreadSize;
+        this.dataDumpMarcFormatBatchSize = dataDumpMarcFormatBatchSize;
     }
 
     /**
@@ -72,7 +86,7 @@ public class MarcRecordFormatActiveMQConsumer extends CommonReportGenerator {
 
         List<Callable<Map<String, Object>>> callables = new ArrayList<>();
 
-        List<List<BibliographicEntity>> partitionList = Lists.partition(bibliographicEntities, 1000);
+        List<List<BibliographicEntity>> partitionList = Lists.partition(bibliographicEntities, dataDumpMarcFormatBatchSize);
 
         for (Iterator<List<BibliographicEntity>> iterator = partitionList.iterator(); iterator.hasNext(); ) {
             List<BibliographicEntity> bibliographicEntityList = iterator.next();
@@ -157,10 +171,10 @@ public class MarcRecordFormatActiveMQConsumer extends CommonReportGenerator {
      */
     public ExecutorService getExecutorService() {
         if (null == executorService) {
-            executorService = Executors.newFixedThreadPool(10);
+            executorService = Executors.newFixedThreadPool(dataDumpMarcFormatThreadSize);
         }
         if (executorService.isShutdown()) {
-            executorService = Executors.newFixedThreadPool(10);
+            executorService = Executors.newFixedThreadPool(dataDumpMarcFormatThreadSize);
         }
         return executorService;
     }

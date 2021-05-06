@@ -16,6 +16,7 @@ import org.recap.camel.datadump.consumer.MarcRecordFormatActiveMQConsumer;
 import org.recap.camel.datadump.consumer.MarcXMLFormatActiveMQConsumer;
 import org.recap.camel.datadump.consumer.SCSBRecordFormatActiveMQConsumer;
 import org.recap.camel.datadump.consumer.SCSBXMLFormatActiveMQConsumer;
+import org.recap.model.export.DataDumpPropertyHolder;
 import org.recap.repository.BibliographicDetailsRepository;
 import org.recap.service.formatter.datadump.DeletedJsonFormatterService;
 import org.recap.service.formatter.datadump.MarcXmlFormatterService;
@@ -23,7 +24,6 @@ import org.recap.service.formatter.datadump.SCSBXmlFormatterService;
 import org.recap.util.XmlFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 
 /**
  * Created by peris on 11/5/16.
@@ -41,7 +41,9 @@ public class DataExportRouteBuilder {
      * @param scsbXmlFormatterService        the scsb xml formatter service
      * @param deletedJsonFormatterService    the deleted json formatter service
      * @param xmlFormatter                   the xml formatter
-     * @param dataDumpRecordsPerFile         the data dump records per file
+     * @param dataExportCompletionStatusActiveMQConsumer    the data Export Completion Status ActiveMQ Consumer
+     * @param dataDumpSequenceProcessor      the data Dump Sequence Processor
+     * @param dataDumpPropertyHolder         the data Dump Property Holder
      */
     public DataExportRouteBuilder(CamelContext camelContext,
                                   BibliographicDetailsRepository bibliographicDetailsRepository,
@@ -49,9 +51,9 @@ public class DataExportRouteBuilder {
                                   SCSBXmlFormatterService scsbXmlFormatterService,
                                   DeletedJsonFormatterService deletedJsonFormatterService,
                                   XmlFormatter xmlFormatter,
-                                  String dataDumpRecordsPerFile,
                                   DataExportCompletionStatusActiveMQConsumer dataExportCompletionStatusActiveMQConsumer,
-                                  DataDumpSequenceProcessor dataDumpSequenceProcessor) {
+                                  DataDumpSequenceProcessor dataDumpSequenceProcessor,
+                                  DataDumpPropertyHolder dataDumpPropertyHolder) {
         try {
 
             camelContext.addRoutes(new RouteBuilder() {
@@ -60,7 +62,7 @@ public class DataExportRouteBuilder {
                     from(RecapConstants.SOLR_INPUT_FOR_DATA_EXPORT_Q)
                             .routeId(RecapConstants.SOLR_INPUT_DATA_EXPORT_ROUTE_ID)
                             .threads(20)
-                            .bean(new BibEntityGeneratorActiveMQConsumer(bibliographicDetailsRepository), "processBibEntities");
+                            .bean(new BibEntityGeneratorActiveMQConsumer(bibliographicDetailsRepository, dataDumpPropertyHolder.getDataDumpBibEntityThreadSize(), dataDumpPropertyHolder.getDataDumpBibEntityBatchSize()), "processBibEntities");
                 }
             });
 
@@ -77,11 +79,11 @@ public class DataExportRouteBuilder {
                             .threads(20)
                             .choice()
                             .when(header(RecapConstants.EXPORT_FORMAT).isEqualTo(RecapConstants.DATADUMP_XML_FORMAT_MARC))
-                            .bean(new MarcRecordFormatActiveMQConsumer(marcXmlFormatterService), RecapConstants.PROCESS_RECORDS)
+                            .bean(new MarcRecordFormatActiveMQConsumer(marcXmlFormatterService, dataDumpPropertyHolder.getDataDumpMarcFormatThreadSize(), dataDumpPropertyHolder.getDataDumpMarcFormatBatchSize()), RecapConstants.PROCESS_RECORDS)
                             .when(header(RecapConstants.EXPORT_FORMAT).isEqualTo(RecapConstants.DATADUMP_XML_FORMAT_SCSB))
-                            .bean(new SCSBRecordFormatActiveMQConsumer(scsbXmlFormatterService), RecapConstants.PROCESS_RECORDS)
+                            .bean(new SCSBRecordFormatActiveMQConsumer(scsbXmlFormatterService, dataDumpPropertyHolder.getDataDumpScsbFormatThreadSize(), dataDumpPropertyHolder.getDataDumpScsbFormatBatchSize()), RecapConstants.PROCESS_RECORDS)
                             .when(header(RecapConstants.EXPORT_FORMAT).isEqualTo(RecapConstants.DATADUMP_DELETED_JSON_FORMAT))
-                            .bean(new DeletedRecordFormatActiveMQConsumer(deletedJsonFormatterService), RecapConstants.PROCESS_RECORDS)
+                            .bean(new DeletedRecordFormatActiveMQConsumer(deletedJsonFormatterService, dataDumpPropertyHolder.getDataDumpDeletedRecordsThreadSize(), dataDumpPropertyHolder.getDataDumpDeletedRecordsBatchSize()), RecapConstants.PROCESS_RECORDS)
                     ;
 
                 }
@@ -93,7 +95,7 @@ public class DataExportRouteBuilder {
 
                     from(RecapConstants.MARC_RECORD_FOR_DATA_EXPORT_Q)
                             .routeId(RecapConstants.MARC_RECORD_DATA_EXPORT_ROUTE_ID)
-                            .aggregate(constant(true), new DataExportAggregator()).completionPredicate(new DataExportPredicate(Integer.valueOf(dataDumpRecordsPerFile)))
+                            .aggregate(constant(true), new DataExportAggregator()).completionPredicate(new DataExportPredicate(Integer.valueOf(dataDumpPropertyHolder.getDataDumpRecordsPerFile())))
                             .bean(new MarcXMLFormatActiveMQConsumer(marcXmlFormatterService), "processMarcXmlString")
                             .to(RecapConstants.DATADUMP_STAGING_Q);
                 }
@@ -104,7 +106,7 @@ public class DataExportRouteBuilder {
                 public void configure() throws Exception {
                     from(RecapConstants.SCSB_RECORD_FOR_DATA_EXPORT_Q)
                             .routeId(RecapConstants.SCSB_RECORD_DATA_EXPORT_ROUTE_ID)
-                            .aggregate(constant(true), new DataExportAggregator()).completionPredicate(new DataExportPredicate(Integer.valueOf(dataDumpRecordsPerFile)))
+                            .aggregate(constant(true), new DataExportAggregator()).completionPredicate(new DataExportPredicate(Integer.valueOf(dataDumpPropertyHolder.getDataDumpRecordsPerFile())))
                             .bean(new SCSBXMLFormatActiveMQConsumer(scsbXmlFormatterService, xmlFormatter), "processSCSBXmlString")
                             .to(RecapConstants.DATADUMP_STAGING_Q);
                 }
@@ -115,7 +117,7 @@ public class DataExportRouteBuilder {
                 public void configure() throws Exception {
                     from(RecapConstants.DELETED_JSON_RECORD_FOR_DATA_EXPORT_Q)
                             .routeId(RecapConstants.DELETED_JSON_RECORD_DATA_EXPORT_ROUTE_ID)
-                            .aggregate(constant(true), new DataExportAggregator()).completionPredicate(new DataExportPredicate(Integer.valueOf(dataDumpRecordsPerFile)))
+                            .aggregate(constant(true), new DataExportAggregator()).completionPredicate(new DataExportPredicate(Integer.valueOf(dataDumpPropertyHolder.getDataDumpRecordsPerFile())))
                             .bean(new DeletedJsonFormatActiveMQConsumer(deletedJsonFormatterService), "processDeleteJsonString")
                             .to(RecapConstants.DATADUMP_STAGING_Q);
                 }

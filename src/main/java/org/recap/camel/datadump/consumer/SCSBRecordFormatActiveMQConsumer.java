@@ -33,6 +33,8 @@ public class SCSBRecordFormatActiveMQConsumer extends CommonReportGenerator {
     SCSBXmlFormatterService scsbXmlFormatterService;
     private ExecutorService executorService;
     private DataExportHeaderUtil dataExportHeaderUtil;
+    private Integer dataDumpScsbFormatThreadSize;
+    private Integer dataDumpScsbFormatBatchSize;
 
     /**
      * Instantiates a new Scsb record format active mq consumer.
@@ -41,6 +43,18 @@ public class SCSBRecordFormatActiveMQConsumer extends CommonReportGenerator {
      */
     public SCSBRecordFormatActiveMQConsumer(SCSBXmlFormatterService scsbXmlFormatterService) {
         this.scsbXmlFormatterService = scsbXmlFormatterService;
+    }
+
+    /**
+     * Instantiates a new Scsb record format active mq consumer.
+     *
+     * @param scsbXmlFormatterService      the scsb xml formatter service
+     * @param dataDumpScsbFormatThreadSize the data Dump Scsb Format Thread Size
+     */
+    public SCSBRecordFormatActiveMQConsumer(SCSBXmlFormatterService scsbXmlFormatterService, Integer dataDumpScsbFormatThreadSize, Integer dataDumpScsbFormatBatchSize) {
+        this.scsbXmlFormatterService = scsbXmlFormatterService;
+        this.dataDumpScsbFormatThreadSize = dataDumpScsbFormatThreadSize;
+        this.dataDumpScsbFormatBatchSize = dataDumpScsbFormatBatchSize;
     }
 
     /**
@@ -60,7 +74,7 @@ public class SCSBRecordFormatActiveMQConsumer extends CommonReportGenerator {
 
         List<Callable<Map<String, Object>>> callables = new ArrayList<>();
 
-        List<List<BibliographicEntity>> partitionList = Lists.partition(bibliographicEntities, 1000);
+        List<List<BibliographicEntity>> partitionList = Lists.partition(bibliographicEntities, dataDumpScsbFormatBatchSize);
 
         for (Iterator<List<BibliographicEntity>> iterator = partitionList.iterator(); iterator.hasNext(); ) {
             List<BibliographicEntity> bibliographicEntityList = iterator.next();
@@ -156,10 +170,10 @@ public class SCSBRecordFormatActiveMQConsumer extends CommonReportGenerator {
      */
     public ExecutorService getExecutorService() {
         if (null == executorService) {
-            executorService = Executors.newFixedThreadPool(500);
+            executorService = Executors.newFixedThreadPool(dataDumpScsbFormatThreadSize);
         }
         if (executorService.isShutdown()) {
-            executorService = Executors.newFixedThreadPool(500);
+            executorService = Executors.newFixedThreadPool(dataDumpScsbFormatThreadSize);
         }
         return executorService;
     }

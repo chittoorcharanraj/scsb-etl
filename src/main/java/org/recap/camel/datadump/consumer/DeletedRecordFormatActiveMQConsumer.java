@@ -41,6 +41,8 @@ public class DeletedRecordFormatActiveMQConsumer extends CommonReportGenerator {
 
     private ExecutorService executorService;
     private DataExportHeaderUtil dataExportHeaderUtil;
+    private Integer dataDumpDeletedRecordsThreadSize;
+    private Integer dataDumpDeletedRecordsBatchSize;
 
     /**
      * Instantiates a new Deleted record format active mq consumer.
@@ -49,6 +51,18 @@ public class DeletedRecordFormatActiveMQConsumer extends CommonReportGenerator {
      */
     public DeletedRecordFormatActiveMQConsumer(DeletedJsonFormatterService deletedJsonFormatterService) {
         this.deletedJsonFormatterService = deletedJsonFormatterService;
+    }
+
+    /**
+     * Instantiates a new Deleted record format active mq consumer.
+     *
+     * @param deletedJsonFormatterService the deleted json formatter service
+     * @param dataDumpDeletedRecordsThreadSize the data Dump Deleted Records Thread Size
+     */
+    public DeletedRecordFormatActiveMQConsumer(DeletedJsonFormatterService deletedJsonFormatterService, Integer dataDumpDeletedRecordsThreadSize, Integer dataDumpDeletedRecordsBatchSize) {
+        this.deletedJsonFormatterService = deletedJsonFormatterService;
+        this.dataDumpDeletedRecordsThreadSize = dataDumpDeletedRecordsThreadSize;
+        this.dataDumpDeletedRecordsBatchSize = dataDumpDeletedRecordsBatchSize;
     }
 
     /**
@@ -68,7 +82,7 @@ public class DeletedRecordFormatActiveMQConsumer extends CommonReportGenerator {
 
         List<Callable<DeletedRecord>> callables = new ArrayList<>();
 
-        List<List<BibliographicEntity>> partitionList = Lists.partition(bibliographicEntities, 1000);
+        List<List<BibliographicEntity>> partitionList = Lists.partition(bibliographicEntities, dataDumpDeletedRecordsBatchSize);
 
         for (Iterator<List<BibliographicEntity>> iterator = partitionList.iterator(); iterator.hasNext(); ) {
             List<BibliographicEntity> bibliographicEntityList = iterator.next();
@@ -177,10 +191,10 @@ public class DeletedRecordFormatActiveMQConsumer extends CommonReportGenerator {
      */
     public ExecutorService getExecutorService() {
         if (null == executorService) {
-            executorService = Executors.newFixedThreadPool(500);
+            executorService = Executors.newFixedThreadPool(dataDumpDeletedRecordsThreadSize);
         }
         if (executorService.isShutdown()) {
-            executorService = Executors.newFixedThreadPool(500);
+            executorService = Executors.newFixedThreadPool(dataDumpDeletedRecordsThreadSize);
         }
         return executorService;
     }

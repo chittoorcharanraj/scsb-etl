@@ -26,6 +26,7 @@ import org.recap.util.MarcUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -95,6 +96,9 @@ public class RecordProcessor {
 
     @Autowired
     private MarcUtil marcUtil;
+
+    @Value("${etl.initial.data.load.thread.size}")
+    private Integer dataLoadThreadSize;
 
 
     /**
@@ -426,7 +430,7 @@ public class RecordProcessor {
      */
     public ExecutorService getExecutorService() {
         if (null == executorService || executorService.isShutdown()) {
-            executorService = Executors.newFixedThreadPool(50);
+            executorService = Executors.newFixedThreadPool(dataLoadThreadSize);
         }
         return executorService;
     }
