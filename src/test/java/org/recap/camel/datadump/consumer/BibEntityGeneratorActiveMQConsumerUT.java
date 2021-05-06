@@ -86,7 +86,7 @@ public class BibEntityGeneratorActiveMQConsumerUT extends BaseTestCaseUT {
 
     @Test
     public void getExecutorServiceNull() {
-        BibEntityGeneratorActiveMQConsumer bibEntityGeneratorActiveMQConsumer = new BibEntityGeneratorActiveMQConsumer(bibliographicDetailsRepository, 2);
+        BibEntityGeneratorActiveMQConsumer bibEntityGeneratorActiveMQConsumer = new BibEntityGeneratorActiveMQConsumer(bibliographicDetailsRepository, 2, 10);
         bibEntityGeneratorActiveMQConsumer.getExecutorService();
     }
 
