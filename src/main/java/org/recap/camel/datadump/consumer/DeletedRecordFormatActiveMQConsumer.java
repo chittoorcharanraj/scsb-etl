@@ -58,6 +58,7 @@ public class DeletedRecordFormatActiveMQConsumer extends CommonReportGenerator {
      *
      * @param deletedJsonFormatterService the deleted json formatter service
      * @param dataDumpDeletedRecordsThreadSize the data Dump Deleted Records Thread Size
+     * @param dataDumpDeletedRecordsBatchSize the data Dump Deleted Records Batch Size
      */
     public DeletedRecordFormatActiveMQConsumer(DeletedJsonFormatterService deletedJsonFormatterService, Integer dataDumpDeletedRecordsThreadSize, Integer dataDumpDeletedRecordsBatchSize) {
         this.deletedJsonFormatterService = deletedJsonFormatterService;

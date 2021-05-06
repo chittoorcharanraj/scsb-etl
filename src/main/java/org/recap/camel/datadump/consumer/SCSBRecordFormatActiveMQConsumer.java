@@ -50,6 +50,7 @@ public class SCSBRecordFormatActiveMQConsumer extends CommonReportGenerator {
      *
      * @param scsbXmlFormatterService      the scsb xml formatter service
      * @param dataDumpScsbFormatThreadSize the data Dump Scsb Format Thread Size
+     * @param dataDumpScsbFormatBatchSize the data Dump Scsb Format Batch Size
      */
     public SCSBRecordFormatActiveMQConsumer(SCSBXmlFormatterService scsbXmlFormatterService, Integer dataDumpScsbFormatThreadSize, Integer dataDumpScsbFormatBatchSize) {
         this.scsbXmlFormatterService = scsbXmlFormatterService;

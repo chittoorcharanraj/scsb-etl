@@ -58,6 +58,7 @@ public class MarcRecordFormatActiveMQConsumer extends CommonReportGenerator {
      *
      * @param marcXmlFormatterService the marc xml formatter service
      * @param dataDumpMarcFormatThreadSize the data Dump Marc Format Thread Size
+     * @param dataDumpMarcFormatBatchSize the data Dump Marc Format Batch Size
      */
     public MarcRecordFormatActiveMQConsumer(MarcXmlFormatterService marcXmlFormatterService, Integer dataDumpMarcFormatThreadSize, Integer dataDumpMarcFormatBatchSize) {
         this.marcXmlFormatterService = marcXmlFormatterService;

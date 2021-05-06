@@ -52,6 +52,7 @@ public class BibEntityGeneratorActiveMQConsumer {
      *
      * @param bibliographicDetailsRepository the bibliographic details repository
      * @param dataDumpBibEntityThreadSize the data dump bib entity thread size
+     * @param dataDumpBibEntityBatchSize the data dump bib entity batch size
      */
     public BibEntityGeneratorActiveMQConsumer(BibliographicDetailsRepository bibliographicDetailsRepository, Integer dataDumpBibEntityThreadSize, Integer dataDumpBibEntityBatchSize) {
         this.bibliographicDetailsRepository = bibliographicDetailsRepository;
