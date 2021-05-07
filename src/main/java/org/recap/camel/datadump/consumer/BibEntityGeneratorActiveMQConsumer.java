@@ -119,7 +119,8 @@ public class BibEntityGeneratorActiveMQConsumer {
 
         logger.info("Time taken to prepare {} bib entities is : {} seconds, solr result size {}" , bibliographicEntities.size() , (endTime - startTime) / 1000,dataDumpSearchResults.size());
 
-            getExecutorService().shutdown();
+        getExecutorService().shutdown();
+
         logger.info("sending page count {} to marcrecord formatter route",currentPageCountStr);
             String currentPageCountStrbeforesendingToNxt = new DataExportHeaderUtil().getValueFor(batchHeaders, "currentPageCount");
             logger.info("currentPageCountStrbeforesendingToNxt--->{}",currentPageCountStrbeforesendingToNxt);
