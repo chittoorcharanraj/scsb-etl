@@ -105,6 +105,18 @@ public class BibliographicRepositoryDAO {
         if (null != fetchedBibliographicEntity) {
             isNew = false;
             bibliographicEntity.setId(fetchedBibliographicEntity.getId());
+            if (bibliographicEntity.getOwningInstitutionBibId().equals(fetchedBibliographicEntity.getOwningInstitutionBibId())) {
+                for(HoldingsEntity holdingsEntity : fetchedBibliographicEntity.getHoldingsEntities()) {
+                    if(!bibliographicEntity.getHoldingsEntities().contains(holdingsEntity)) {
+                        bibliographicEntity.getHoldingsEntities().add(holdingsEntity);
+                    }
+                }
+                for(ItemEntity itemEntity : fetchedBibliographicEntity.getItemEntities()) {
+                    if(!bibliographicEntity.getItemEntities().contains(itemEntity)) {
+                        bibliographicEntity.getItemEntities().add(itemEntity);
+                    }
+                }
+           }
         }
         return isNew;
     }
@@ -116,6 +128,13 @@ public class BibliographicRepositoryDAO {
                 if (null != fetchedHoldingsEntity) {
                     isNew = false;
                     holdingsEntity.setId(fetchedHoldingsEntity.getId());
+                    if (holdingsEntity.getOwningInstitutionHoldingsId().equals(fetchedHoldingsEntity.getOwningInstitutionHoldingsId())) {
+                        for(ItemEntity itemEntity : fetchedHoldingsEntity.getItemEntities()) {
+                            if(!holdingsEntity.getItemEntities().contains(itemEntity)) {
+                                holdingsEntity.getItemEntities().add(itemEntity);
+                            }
+                        }
+                    }
                 }
                 if(holdingsEntity.getItemEntities() != null) {
                     for (ItemEntity itemEntity : holdingsEntity.getItemEntities()) {
