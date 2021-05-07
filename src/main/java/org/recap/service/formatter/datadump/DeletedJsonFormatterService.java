@@ -1,8 +1,8 @@
 package org.recap.service.formatter.datadump;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.export.Bib;
 import org.recap.model.export.DeletedRecord;
 import org.recap.model.export.Item;
@@ -37,7 +37,7 @@ public class DeletedJsonFormatterService implements DataDumpFormatterInterface {
      */
     @Override
     public boolean isInterested(String formatType) {
-        return formatType.equals(RecapConstants.DATADUMP_DELETED_JSON_FORMAT);
+        return formatType.equals(ScsbConstants.DATADUMP_DELETED_JSON_FORMAT);
     }
 
     /**
@@ -78,14 +78,14 @@ public class DeletedJsonFormatterService implements DataDumpFormatterInterface {
                 deletedRecords.add(deletedRecord);
                 itemExportedCount = itemExportedCount + bibliographicEntity.getItemEntities().size();
             } catch (Exception e) {
-                logger.error(RecapConstants.ERROR,e);
+                logger.error(ScsbConstants.ERROR,e);
                 errors.add(bibliographicEntity.getOwningInstitutionBibId()+" * "+String.valueOf(e));
             }
         }
 
-        resultsMap.put(RecapCommonConstants.SUCCESS, deletedRecords);
-        resultsMap.put(RecapCommonConstants.FAILURE, errors);
-        resultsMap.put(RecapConstants.ITEM_EXPORTED_COUNT, itemExportedCount);
+        resultsMap.put(ScsbCommonConstants.SUCCESS, deletedRecords);
+        resultsMap.put(ScsbCommonConstants.FAILURE, errors);
+        resultsMap.put(ScsbConstants.ITEM_EXPORTED_COUNT, itemExportedCount);
 
         return resultsMap;
     }
@@ -112,8 +112,8 @@ public class DeletedJsonFormatterService implements DataDumpFormatterInterface {
 
     private boolean isChangedToPrivateCGD(ItemEntity fetchedItemEntity){
         return ((fetchedItemEntity.getCgdChangeLog()!=null) &&
-            (fetchedItemEntity.getCgdChangeLog().equals(RecapCommonConstants.CGD_CHANGE_LOG_SHARED_TO_PRIVATE) ||
-                    fetchedItemEntity.getCgdChangeLog().equals(RecapCommonConstants.CGD_CHANGE_LOG_OPEN_TO_PRIVATE)));
+            (fetchedItemEntity.getCgdChangeLog().equals(ScsbCommonConstants.CGD_CHANGE_LOG_SHARED_TO_PRIVATE) ||
+                    fetchedItemEntity.getCgdChangeLog().equals(ScsbCommonConstants.CGD_CHANGE_LOG_OPEN_TO_PRIVATE)));
     }
 
     /**

@@ -6,7 +6,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
 import org.recap.TestUtil;
-import org.recap.model.csv.FailureReportReCAPCSVRecord;
+import org.recap.model.csv.FailureReportSCSBCSVRecord;
 import org.recap.model.jaxb.Bib;
 import org.recap.model.jaxb.BibRecord;
 import org.recap.model.jaxb.Holding;
@@ -108,7 +108,7 @@ public class BibPersisterCallableUT extends BaseTestCaseUT {
         Mockito.when(collectionGroupMap.get("Open")).thenReturn(2);
         Mockito.when(imsLocationCodeMap.get(Mockito.anyString())).thenReturn(1);
 
-        List<FailureReportReCAPCSVRecord> failureReportReCAPCSVRecords = new ArrayList<>();
+        List<FailureReportSCSBCSVRecord> failureReportSCSBCSVRecords = new ArrayList<>();
 
         Map<String, Integer> institution = new HashMap<>();
         institution.put("NYPL", 3);
@@ -157,10 +157,10 @@ public class BibPersisterCallableUT extends BaseTestCaseUT {
         if (map != null) {
             Object object = map.get("reportEntities");
             if (object != null) {
-                failureReportReCAPCSVRecords.addAll((List<FailureReportReCAPCSVRecord>) object);
+                failureReportSCSBCSVRecords.addAll((List<FailureReportSCSBCSVRecord>) object);
             }
         }
-        assertTrue(failureReportReCAPCSVRecords.size() == 2);
+        assertTrue(failureReportSCSBCSVRecords.size() == 2);
     }
 
     @Test
@@ -186,7 +186,7 @@ public class BibPersisterCallableUT extends BaseTestCaseUT {
         itemsList.add(items);
         Mockito.when(holding.getItems()).thenReturn(itemsList);
         Mockito.when(items.getContent()).thenReturn(contentType);
-        List<FailureReportReCAPCSVRecord> failureReportReCAPCSVRecords = new ArrayList<>();
+        List<FailureReportSCSBCSVRecord> failureReportSCSBCSVRecords = new ArrayList<>();
 
         Map<String, Integer> institution = new HashMap<>();
         institution.put("NYPL", 3);
@@ -233,7 +233,7 @@ public class BibPersisterCallableUT extends BaseTestCaseUT {
         if (map != null) {
             Object object = map.get("reportEntities");
             if (object != null) {
-                failureReportReCAPCSVRecords.addAll((List<FailureReportReCAPCSVRecord>) object);
+                failureReportSCSBCSVRecords.addAll((List<FailureReportSCSBCSVRecord>) object);
             }
         }
     }

@@ -3,9 +3,9 @@ package org.recap.camel;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.commons.io.FilenameUtils;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
-import org.recap.model.csv.ReCAPCSVSuccessRecord;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
+import org.recap.model.csv.SCSBCSVSuccessRecord;
 
 /**
  * Created by angelind on 18/8/16.
@@ -20,10 +20,10 @@ public class FileNameProcessorForSuccessRecord implements Processor {
      */
     @Override
     public void process(Exchange exchange) throws Exception {
-        ReCAPCSVSuccessRecord reCAPCSVSuccessRecord = (ReCAPCSVSuccessRecord) exchange.getIn().getBody();
-        String fileName = FilenameUtils.removeExtension(reCAPCSVSuccessRecord.getReportFileName());
-        exchange.getIn().setHeader(RecapCommonConstants.REPORT_FILE_NAME, fileName);
-        exchange.getIn().setHeader(RecapConstants.REPORT_TYPE, reCAPCSVSuccessRecord.getReportType());
-        exchange.getIn().setHeader(RecapConstants.DIRECTORY_NAME, reCAPCSVSuccessRecord.getInstitutionName());
+        SCSBCSVSuccessRecord SCSBCSVSuccessRecord = (SCSBCSVSuccessRecord) exchange.getIn().getBody();
+        String fileName = FilenameUtils.removeExtension(SCSBCSVSuccessRecord.getReportFileName());
+        exchange.getIn().setHeader(ScsbCommonConstants.REPORT_FILE_NAME, fileName);
+        exchange.getIn().setHeader(ScsbConstants.REPORT_TYPE, SCSBCSVSuccessRecord.getReportType());
+        exchange.getIn().setHeader(ScsbConstants.DIRECTORY_NAME, SCSBCSVSuccessRecord.getInstitutionName());
     }
 }

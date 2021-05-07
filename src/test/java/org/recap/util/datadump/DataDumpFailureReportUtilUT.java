@@ -2,13 +2,11 @@ package org.recap.util.datadump;
 
 import org.junit.Test;
 import org.mockito.InjectMocks;
-import org.recap.BaseTestCase;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.export.DataDumpRequest;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jparw.ReportDataEntity;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 
@@ -36,8 +34,8 @@ public class DataDumpFailureReportUtilUT extends BaseTestCaseUT {
         List<BibliographicEntity> failureList=new ArrayList<>();
         BibliographicEntity bibliographicEntity=new BibliographicEntity();
         failureList.add(bibliographicEntity);
-        successAndFailureFormattedList.put(RecapConstants.DATADUMP_SUCCESSLIST,failureList);
-        successAndFailureFormattedList.put(RecapConstants.DATADUMP_FORMATERROR,"formatError");
+        successAndFailureFormattedList.put(ScsbConstants.DATADUMP_SUCCESSLIST,failureList);
+        successAndFailureFormattedList.put(ScsbConstants.DATADUMP_FORMATERROR,"formatError");
         successAndFailureFormattedFullList.add(successAndFailureFormattedList);
         successAndFailureFormattedFullList.add(successAndFailureFormattedList);
         List<ReportDataEntity> entity = dataDumpFailureReportUtil.generateDataDumpFailureReport(successAndFailureFormattedFullList,dataDumpRequest);

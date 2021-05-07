@@ -3,7 +3,7 @@ package org.recap.camel.datadump;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.AggregationStrategy;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.util.datadump.DataExportHeaderUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,13 +41,13 @@ public class DataExportAggregator implements AggregationStrategy {
         List oldBody = oldExchange.getIn().getBody(List.class);
         if (null != oldBody && null != body) {
             if (!isFirstBatch) {
-                Integer itemExportCount = (Integer) newExchange.getIn().getHeader(RecapConstants.ITEM_EXPORTED_COUNT);
-                Integer previousItemExportCount = (Integer) oldExchange.getIn().getHeader(RecapConstants.ITEM_EXPORTED_COUNT);
+                Integer itemExportCount = (Integer) newExchange.getIn().getHeader(ScsbConstants.ITEM_EXPORTED_COUNT);
+                Integer previousItemExportCount = (Integer) oldExchange.getIn().getHeader(ScsbConstants.ITEM_EXPORTED_COUNT);
                 Integer updatedItemExportCount = previousItemExportCount + itemExportCount;
-                newExchange.getIn().setHeader(RecapConstants.ITEM_EXPORTED_COUNT,updatedItemExportCount);
+                newExchange.getIn().setHeader(ScsbConstants.ITEM_EXPORTED_COUNT,updatedItemExportCount);
                 logger.info("itemExportCount--->{} previousItemExportCount--->{} updatedItemExportCount--->{}",itemExportCount,previousItemExportCount,updatedItemExportCount);
             } else {
-                Integer itemExportCount = (Integer) newExchange.getIn().getHeader(RecapConstants.ITEM_EXPORTED_COUNT);
+                Integer itemExportCount = (Integer) newExchange.getIn().getHeader(ScsbConstants.ITEM_EXPORTED_COUNT);
                 logger.info("first batch...itemExportCount-->{}",itemExportCount);
             }
             oldBody.addAll(body);
@@ -69,7 +69,7 @@ public class DataExportAggregator implements AggregationStrategy {
             for (String key : newExchange.getProperties().keySet()) {
                 oldExchange.setProperty(key, newExchange.getProperty(key));
             }
-            String batchHeaders = (String) oldExchange.getIn().getHeader(RecapConstants.BATCH_HEADERS);
+            String batchHeaders = (String) oldExchange.getIn().getHeader(ScsbConstants.BATCH_HEADERS);
             String currentPageCountStr = new DataExportHeaderUtil().getValueFor(batchHeaders, "currentPageCount");
             logger.info("Current page in DataExportAggregator--->{}",currentPageCountStr);
         }

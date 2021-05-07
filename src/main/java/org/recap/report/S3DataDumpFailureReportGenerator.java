@@ -1,8 +1,8 @@
 package org.recap.report;
 
 import org.apache.commons.io.FilenameUtils;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.csv.DataDumpFailureReport;
 import org.recap.model.jparw.ReportEntity;
 import org.springframework.stereotype.Component;
@@ -20,7 +20,7 @@ import java.util.List;
 public class S3DataDumpFailureReportGenerator extends CommonReportGenerator implements ReportGeneratorInterface {
 
     public boolean isInterested(String reportType) {
-        return reportType.equalsIgnoreCase(RecapConstants.BATCH_EXPORT_FAILURE);
+        return reportType.equalsIgnoreCase(ScsbConstants.BATCH_EXPORT_FAILURE);
     }
 
     /**
@@ -31,7 +31,7 @@ public class S3DataDumpFailureReportGenerator extends CommonReportGenerator impl
      */
     @Override
     public boolean isTransmitted(String transmissionType) {
-        return transmissionType.equalsIgnoreCase(RecapCommonConstants.FTP);
+        return transmissionType.equalsIgnoreCase(ScsbCommonConstants.FTP);
     }
 
     /**
@@ -42,7 +42,7 @@ public class S3DataDumpFailureReportGenerator extends CommonReportGenerator impl
      */
     @Override
     public boolean isOperationType(String operationType) {
-        return operationType.equalsIgnoreCase(RecapConstants.BATCH_EXPORT);
+        return operationType.equalsIgnoreCase(ScsbConstants.BATCH_EXPORT);
     }
 
     /**
@@ -56,8 +56,8 @@ public class S3DataDumpFailureReportGenerator extends CommonReportGenerator impl
     public String generateReport(List<ReportEntity> reportEntities, String fileName) {
        if(!CollectionUtils.isEmpty(reportEntities)) {
             DataDumpFailureReport dataDumpFailureReport = getDataDumpFailureReport(reportEntities, fileName);
-            producerTemplate.sendBody(RecapConstants.DATADUMP_FAILURE_REPORT_FTP_Q, dataDumpFailureReport);
-            DateFormat df = new SimpleDateFormat(RecapCommonConstants.DATE_FORMAT_FOR_FILE_NAME);
+            producerTemplate.sendBody(ScsbConstants.DATADUMP_FAILURE_REPORT_FTP_Q, dataDumpFailureReport);
+            DateFormat df = new SimpleDateFormat(ScsbCommonConstants.DATE_FORMAT_FOR_FILE_NAME);
             return FilenameUtils.removeExtension(dataDumpFailureReport.getFileName()) + "-" + dataDumpFailureReport.getReportType() + "-" + df.format(new Date()) + ".csv";
         }
         return null;

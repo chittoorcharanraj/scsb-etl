@@ -12,8 +12,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.export.Bib;
 import org.recap.model.export.DeletedRecord;
 import org.recap.model.jpa.BibliographicEntity;
@@ -119,9 +119,9 @@ public class SCSBRecordFormatActiveMQConsumerUT extends BaseTestCaseUT {
         List<Future<Object>> futureList = new ArrayList<>();
         futureList.add(future);
         Map<String, Object> results = new HashMap<>();
-        results.put(RecapCommonConstants.SUCCESS, Arrays.asList(getDeletedRecord()));
-        results.put(RecapCommonConstants.FAILURE, Arrays.asList("FailureRecords", getDeletedRecord()));
-        results.put(RecapConstants.ITEM_EXPORTED_COUNT, 10);
+        results.put(ScsbCommonConstants.SUCCESS, Arrays.asList(getDeletedRecord()));
+        results.put(ScsbCommonConstants.FAILURE, Arrays.asList("FailureRecords", getDeletedRecord()));
+        results.put(ScsbConstants.ITEM_EXPORTED_COUNT, 10);
         Mockito.when(executorService.invokeAll(any())).thenReturn(futureList);
         Mockito.when(future.get()).thenReturn(results);
         try {

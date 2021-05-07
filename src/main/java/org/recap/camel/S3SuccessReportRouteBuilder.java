@@ -4,8 +4,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws.s3.S3Constants;
 import org.apache.camel.model.dataformat.BindyType;
-import org.recap.RecapConstants;
-import org.recap.model.csv.ReCAPCSVSuccessRecord;
+import org.recap.ScsbConstants;
+import org.recap.model.csv.SCSBCSVSuccessRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,17 +32,17 @@ public class S3SuccessReportRouteBuilder {
                 context.addRoutes(new RouteBuilder() {
                     @Override
                     public void configure() throws Exception {
-                        from(RecapConstants.FTP_SUCCESS_Q)
-                                .routeId(RecapConstants.FTP_FAILURE_ROUTE_ID)
+                        from(ScsbConstants.FTP_SUCCESS_Q)
+                                .routeId(ScsbConstants.FTP_FAILURE_ROUTE_ID)
                                 .process(new FileNameProcessorForSuccessRecord())
-                                .marshal().bindy(BindyType.Csv, ReCAPCSVSuccessRecord.class)
+                                .marshal().bindy(BindyType.Csv, SCSBCSVSuccessRecord.class)
                                 .setHeader(S3Constants.KEY, simple(s3EtlReportsDir + "${in.header.directoryName}/${in.header.fileName}-${in.header.reportType}-${date:now:ddMMMyyyy}.csv"))
-                                .to(RecapConstants.SCSB_CAMEL_S3_TO_ENDPOINT);
+                                .to(ScsbConstants.SCSB_CAMEL_S3_TO_ENDPOINT);
                     }
                 });
             }
         } catch (Exception e) {
-            logger.error(RecapConstants.ERROR,e);
+            logger.error(ScsbConstants.ERROR,e);
         }
     }
 }

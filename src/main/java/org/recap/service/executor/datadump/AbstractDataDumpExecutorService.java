@@ -5,8 +5,8 @@ import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.impl.engine.DefaultFluentProducerTemplate;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jpa.CollectionGroupEntity;
 import org.recap.util.datadump.DataExportHeaderUtil;
 import org.recap.model.export.DataDumpRequest;
@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.io.File;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -29,7 +28,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -92,9 +90,9 @@ public abstract class AbstractDataDumpExecutorService implements DataDumpExecuto
         boolean isRecordsToProcess = totalBibsCount > 0;
         boolean canProcess = canProcessRecords(totalBibsCount, dataDumpRequest.getTransmissionType());
         boolean bibHasItems = bibHasItems(results);
-        boolean isDeleted = dataDumpRequest.getFetchType().equals(RecapConstants.DATADUMP_FETCHTYPE_DELETED);
+        boolean isDeleted = dataDumpRequest.getFetchType().equals(ScsbConstants.DATADUMP_FETCHTYPE_DELETED);
         if (isRecordsToProcess && canProcess && (bibHasItems || isDeleted)) {//Deleted feed may not have items, if an item got transferred to another bib and source bib became an orphan
-            outputString = RecapConstants.DATADUMP_RECORDS_AVAILABLE_FOR_PROCESS;
+            outputString = ScsbConstants.DATADUMP_RECORDS_AVAILABLE_FOR_PROCESS;
             sendBodyForIsRecordAvailableMessage(outputString);
             String fileName = getFileName(dataDumpRequest, 0);
             String folderName = getFolderName(dataDumpRequest);
@@ -118,10 +116,10 @@ public abstract class AbstractDataDumpExecutorService implements DataDumpExecuto
 
         } else {
             if (!isRecordsToProcess || !bibHasItems) {
-                outputString = RecapConstants.DATADUMP_NO_RECORD;
+                outputString = ScsbConstants.DATADUMP_NO_RECORD;
                 sendBodyForIsRecordAvailableMessage(outputString);
             } else {
-                outputString = RecapConstants.DATADUMP_HTTP_REPONSE_RECORD_LIMIT_ERR_MSG;
+                outputString = ScsbConstants.DATADUMP_HTTP_REPONSE_RECORD_LIMIT_ERR_MSG;
                 sendBodyForIsRecordAvailableMessage(outputString);
             }
         }
@@ -155,7 +153,7 @@ public abstract class AbstractDataDumpExecutorService implements DataDumpExecuto
     private void sendBodyAndHeader(Map results, String headerString) {
         FluentProducerTemplate fluentProducerTemplate = DefaultFluentProducerTemplate.on(camelContext);
         fluentProducerTemplate
-                .to(RecapConstants.SOLR_INPUT_FOR_DATA_EXPORT_Q)
+                .to(ScsbConstants.SOLR_INPUT_FOR_DATA_EXPORT_Q)
                 .withBody(results)
                 .withHeader("batchHeaders", headerString);
         fluentProducerTemplate.send();
@@ -169,7 +167,7 @@ public abstract class AbstractDataDumpExecutorService implements DataDumpExecuto
     private void sendBodyForIsRecordAvailableMessage(String outputString) {
         FluentProducerTemplate fluentProducerTemplate = DefaultFluentProducerTemplate.on(camelContext);
         fluentProducerTemplate
-                .to(RecapConstants.DATADUMP_IS_RECORD_AVAILABLE_Q)
+                .to(ScsbConstants.DATADUMP_IS_RECORD_AVAILABLE_Q)
                 .withBody(outputString);
         fluentProducerTemplate.send();
     }
@@ -183,8 +181,8 @@ public abstract class AbstractDataDumpExecutorService implements DataDumpExecuto
      */
     private String getFileName(DataDumpRequest dataDumpRequest, int pageNum) throws ParseException {
         String institutions = StringUtils.join(dataDumpRequest.getInstitutionCodes(), "-");
-        SimpleDateFormat dateFormatForReport=new SimpleDateFormat(RecapConstants.DATE_FORMAT_FOR_REPORT_NAME);
-        SimpleDateFormat dateFomatFromApi=new SimpleDateFormat(RecapConstants.DATE_FORMAT_FROM_API);
+        SimpleDateFormat dateFormatForReport=new SimpleDateFormat(ScsbConstants.DATE_FORMAT_FOR_REPORT_NAME);
+        SimpleDateFormat dateFomatFromApi=new SimpleDateFormat(ScsbConstants.DATE_FORMAT_FROM_API);
         Date parsedDate = dateFomatFromApi.parse(dataDumpRequest.getDateTimeString());
         String formattedDate = dateFormatForReport.format(parsedDate);
         return dataDumpRequest.getRequestingInstitutionCode()
@@ -226,8 +224,8 @@ public abstract class AbstractDataDumpExecutorService implements DataDumpExecuto
      */
     private String getFolderName(DataDumpRequest dataDumpRequest) throws ParseException {
         String institutions = StringUtils.join(dataDumpRequest.getInstitutionCodes(), "-");
-        SimpleDateFormat dateFormatForReport=new SimpleDateFormat(RecapConstants.DATE_FORMAT_FOR_REPORT_NAME);
-        SimpleDateFormat dateFomatFromApi=new SimpleDateFormat(RecapConstants.DATE_FORMAT_FROM_API);
+        SimpleDateFormat dateFormatForReport=new SimpleDateFormat(ScsbConstants.DATE_FORMAT_FOR_REPORT_NAME);
+        SimpleDateFormat dateFomatFromApi=new SimpleDateFormat(ScsbConstants.DATE_FORMAT_FROM_API);
         Date parsedDate = dateFomatFromApi.parse(dataDumpRequest.getDateTimeString());
         String formattedDate = dateFormatForReport.format(parsedDate);
         return dataDumpRequest.getRequestingInstitutionCode()
@@ -248,12 +246,12 @@ public abstract class AbstractDataDumpExecutorService implements DataDumpExecuto
      * @return
      */
     private String getFullOrIncrementalDirectory(String fetchType) {
-        if (RecapConstants.DATADUMP_FETCHTYPE_INCREMENTAL.equalsIgnoreCase(fetchType)) {
-            return RecapConstants.INCREMENTAL + File.separator;
-        } else if (RecapConstants.DATADUMP_FETCHTYPE_DELETED.equalsIgnoreCase(fetchType)) {
+        if (ScsbConstants.DATADUMP_FETCHTYPE_INCREMENTAL.equalsIgnoreCase(fetchType)) {
+            return ScsbConstants.INCREMENTAL + File.separator;
+        } else if (ScsbConstants.DATADUMP_FETCHTYPE_DELETED.equalsIgnoreCase(fetchType)) {
             return StringUtils.EMPTY;
         } else {
-            return RecapConstants.EXPORT_TYPE_FULL + File.separator;
+            return ScsbConstants.EXPORT_TYPE_FULL + File.separator;
         }
     }
 
@@ -266,7 +264,7 @@ public abstract class AbstractDataDumpExecutorService implements DataDumpExecuto
      */
     private boolean canProcessRecords(Integer totalRecordCount, String transmissionType) {
         boolean canProcess = true;
-        if (totalRecordCount > Integer.parseInt(httpResonseRecordLimit) && transmissionType.equals(RecapConstants.DATADUMP_TRANSMISSION_TYPE_HTTP)) {
+        if (totalRecordCount > Integer.parseInt(httpResonseRecordLimit) && transmissionType.equals(ScsbConstants.DATADUMP_TRANSMISSION_TYPE_HTTP)) {
             canProcess = false;
         }
         return canProcess;

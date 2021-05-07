@@ -2,23 +2,23 @@ package org.recap.report;
 
 import org.apache.camel.component.file.GenericFile;
 import org.apache.commons.lang3.StringUtils;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.apache.camel.Exchange;
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.impl.engine.DefaultFluentProducerTemplate;
 import org.apache.commons.io.FilenameUtils;
-import org.recap.RecapCommonConstants;
+import org.recap.ScsbCommonConstants;
 import org.recap.model.csv.DataDumpFailureReport;
-import org.recap.model.csv.ReCAPCSVFailureRecord;
-import org.recap.model.csv.ReCAPCSVSuccessRecord;
-import org.recap.model.csv.SuccessReportReCAPCSVRecord;
-import org.recap.model.csv.FailureReportReCAPCSVRecord;
+import org.recap.model.csv.SCSBCSVFailureRecord;
+import org.recap.model.csv.SCSBCSVSuccessRecord;
+import org.recap.model.csv.SuccessReportSCSBCSVRecord;
+import org.recap.model.csv.FailureReportSCSBCSVRecord;
 import org.recap.model.jparw.ReportDataEntity;
 import org.recap.model.jparw.ReportEntity;
 import org.recap.repositoryrw.ReportDetailRepository;
-import org.recap.util.ReCAPCSVFailureRecordGenerator;
-import org.recap.util.ReCAPCSVSuccessRecordGenerator;
+import org.recap.util.SCSBCSVFailureRecordGenerator;
+import org.recap.util.SCSBCSVSuccessRecordGenerator;
 import org.recap.util.datadump.DataDumpFailureReportGenerator;
 import org.recap.util.datadump.DataExportHeaderUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,84 +51,84 @@ public class CommonReportGenerator {
     public String generateSuccessReport(List<ReportEntity> reportEntities, String fileName, String reportQueue) {
 
         if (!CollectionUtils.isEmpty(reportEntities)) {
-            ReCAPCSVSuccessRecord reCAPCSVSuccessRecord = new ReCAPCSVSuccessRecord();
-            List<SuccessReportReCAPCSVRecord> successReportReCAPCSVRecords = new ArrayList<>();
+            SCSBCSVSuccessRecord SCSBCSVSuccessRecord = new SCSBCSVSuccessRecord();
+            List<SuccessReportSCSBCSVRecord> successReportSCSBCSVRecords = new ArrayList<>();
             for (ReportEntity reportEntity : reportEntities) {
-                SuccessReportReCAPCSVRecord successReportReCAPCSVRecord = new ReCAPCSVSuccessRecordGenerator().prepareSuccessReportReCAPCSVRecord(reportEntity);
-                successReportReCAPCSVRecords.add(successReportReCAPCSVRecord);
+                SuccessReportSCSBCSVRecord successReportSCSBCSVRecord = new SCSBCSVSuccessRecordGenerator().prepareSuccessReportReCAPCSVRecord(reportEntity);
+                successReportSCSBCSVRecords.add(successReportSCSBCSVRecord);
             }
             ReportEntity reportEntity = reportEntities.get(0);
-            reCAPCSVSuccessRecord.setReportType(reportEntity.getType());
-            reCAPCSVSuccessRecord.setInstitutionName(reportEntity.getInstitutionName());
-            reCAPCSVSuccessRecord.setReportFileName(fileName);
-            reCAPCSVSuccessRecord.setSuccessReportReCAPCSVRecordList(successReportReCAPCSVRecords);
-            producerTemplate.sendBody(reportQueue, reCAPCSVSuccessRecord);
-            DateFormat df = new SimpleDateFormat(RecapCommonConstants.DATE_FORMAT_FOR_FILE_NAME);
-            return FilenameUtils.removeExtension(reCAPCSVSuccessRecord.getReportFileName()) + "-" + reCAPCSVSuccessRecord.getReportType() + "-" + df.format(new Date()) + ".csv";
+            SCSBCSVSuccessRecord.setReportType(reportEntity.getType());
+            SCSBCSVSuccessRecord.setInstitutionName(reportEntity.getInstitutionName());
+            SCSBCSVSuccessRecord.setReportFileName(fileName);
+            SCSBCSVSuccessRecord.setSuccessReportSCSBCSVRecordList(successReportSCSBCSVRecords);
+            producerTemplate.sendBody(reportQueue, SCSBCSVSuccessRecord);
+            DateFormat df = new SimpleDateFormat(ScsbCommonConstants.DATE_FORMAT_FOR_FILE_NAME);
+            return FilenameUtils.removeExtension(SCSBCSVSuccessRecord.getReportFileName()) + "-" + SCSBCSVSuccessRecord.getReportType() + "-" + df.format(new Date()) + ".csv";
         }
         return null;
     }
 
     public void processRecordFailures(Exchange exchange, List failures, String batchHeaders, String requestId, DataExportHeaderUtil dataExportHeaderUtil) {
         Map values = getValues(batchHeaders, dataExportHeaderUtil);
-        values.put(RecapConstants.NUM_RECORDS, String.valueOf(failures.size()));
-        values.put(RecapConstants.FAILURE_CAUSE, (String) failures.get(0));
-        values.put(RecapConstants.FAILED_BIBS, RecapConstants.FAILED_BIBS);
-        values.put(RecapConstants.BATCH_EXPORT, RecapConstants.BATCH_EXPORT_FAILURE);
-        values.put(RecapCommonConstants.REQUEST_ID, requestId);
-        values.put(RecapConstants.FAILURE_LIST, failures);
+        values.put(ScsbConstants.NUM_RECORDS, String.valueOf(failures.size()));
+        values.put(ScsbConstants.FAILURE_CAUSE, (String) failures.get(0));
+        values.put(ScsbConstants.FAILED_BIBS, ScsbConstants.FAILED_BIBS);
+        values.put(ScsbConstants.BATCH_EXPORT, ScsbConstants.BATCH_EXPORT_FAILURE);
+        values.put(ScsbCommonConstants.REQUEST_ID, requestId);
+        values.put(ScsbConstants.FAILURE_LIST, failures);
 
-        FluentProducerTemplate fluentProducerTemplate = generateFluentProducerTemplate(exchange, values, RecapConstants.DATADUMP_FAILURE_REPORT_Q);
+        FluentProducerTemplate fluentProducerTemplate = generateFluentProducerTemplate(exchange, values, ScsbConstants.DATADUMP_FAILURE_REPORT_Q);
         fluentProducerTemplate.send();
     }
 
     public void processSuccessReport(Exchange exchange, Integer size, String batchHeaders, String requestId, DataExportHeaderUtil dataExportHeaderUtil) {
         HashMap<String, String> values = getValues(batchHeaders, dataExportHeaderUtil);
-        values.put(RecapConstants.NUM_RECORDS, String.valueOf(size));
+        values.put(ScsbConstants.NUM_RECORDS, String.valueOf(size));
         setValues(values, exchange, requestId);
-        FluentProducerTemplate fluentProducerTemplate = generateFluentProducerTemplate(exchange, values, RecapConstants.DATADUMP_SUCCESS_REPORT_Q);
+        FluentProducerTemplate fluentProducerTemplate = generateFluentProducerTemplate(exchange, values, ScsbConstants.DATADUMP_SUCCESS_REPORT_Q);
         fluentProducerTemplate.send();
     }
 
     private HashMap<String, String> getValues(String batchHeaders, DataExportHeaderUtil dataExportHeaderUtil) {
         HashMap<String, String> values = new HashMap<>();
-        values.put(RecapConstants.REQUESTING_INST_CODE, dataExportHeaderUtil.getValueFor(batchHeaders, RecapConstants.REQUESTING_INST_CODE));
-        values.put(RecapConstants.INSTITUTION_CODES, dataExportHeaderUtil.getValueFor(batchHeaders, RecapConstants.INSTITUTION_CODES));
-        values.put(RecapConstants.FETCH_TYPE, dataExportHeaderUtil.getValueFor(batchHeaders, RecapConstants.FETCH_TYPE));
-        values.put(RecapConstants.COLLECTION_GROUP_IDS, dataExportHeaderUtil.getValueFor(batchHeaders, RecapConstants.COLLECTION_GROUP_IDS));
-        values.put(RecapConstants.TRANSMISSION_TYPE, dataExportHeaderUtil.getValueFor(batchHeaders, RecapConstants.TRANSMISSION_TYPE));
-        values.put(RecapConstants.EXPORT_FROM_DATE, dataExportHeaderUtil.getValueFor(batchHeaders, RecapConstants.EXPORT_FROM_DATE));
-        values.put(RecapConstants.EXPORT_FORMAT, dataExportHeaderUtil.getValueFor(batchHeaders, RecapConstants.EXPORT_FORMAT));
-        values.put(RecapConstants.TO_EMAIL_ID, dataExportHeaderUtil.getValueFor(batchHeaders, RecapConstants.TO_EMAIL_ID));
-        values.put(RecapConstants.IMS_DEPOSITORY, dataExportHeaderUtil.getValueFor(batchHeaders, RecapConstants.IMS_DEPOSITORY));
+        values.put(ScsbConstants.REQUESTING_INST_CODE, dataExportHeaderUtil.getValueFor(batchHeaders, ScsbConstants.REQUESTING_INST_CODE));
+        values.put(ScsbConstants.INSTITUTION_CODES, dataExportHeaderUtil.getValueFor(batchHeaders, ScsbConstants.INSTITUTION_CODES));
+        values.put(ScsbConstants.FETCH_TYPE, dataExportHeaderUtil.getValueFor(batchHeaders, ScsbConstants.FETCH_TYPE));
+        values.put(ScsbConstants.COLLECTION_GROUP_IDS, dataExportHeaderUtil.getValueFor(batchHeaders, ScsbConstants.COLLECTION_GROUP_IDS));
+        values.put(ScsbConstants.TRANSMISSION_TYPE, dataExportHeaderUtil.getValueFor(batchHeaders, ScsbConstants.TRANSMISSION_TYPE));
+        values.put(ScsbConstants.EXPORT_FROM_DATE, dataExportHeaderUtil.getValueFor(batchHeaders, ScsbConstants.EXPORT_FROM_DATE));
+        values.put(ScsbConstants.EXPORT_FORMAT, dataExportHeaderUtil.getValueFor(batchHeaders, ScsbConstants.EXPORT_FORMAT));
+        values.put(ScsbConstants.TO_EMAIL_ID, dataExportHeaderUtil.getValueFor(batchHeaders, ScsbConstants.TO_EMAIL_ID));
+        values.put(ScsbConstants.IMS_DEPOSITORY, dataExportHeaderUtil.getValueFor(batchHeaders, ScsbConstants.IMS_DEPOSITORY));
         return values;
     }
 
     public String generateFailureReport(List<ReportEntity> reportEntities, String fileName, String reportQueue) {
         if (!CollectionUtils.isEmpty(reportEntities)) {
-            ReCAPCSVFailureRecord reCAPCSVFailureRecord = new ReCAPCSVFailureRecord();
-            List<FailureReportReCAPCSVRecord> failureReportReCAPCSVRecords = new ArrayList<>();
+            SCSBCSVFailureRecord SCSBCSVFailureRecord = new SCSBCSVFailureRecord();
+            List<FailureReportSCSBCSVRecord> failureReportSCSBCSVRecords = new ArrayList<>();
             for (ReportEntity reportEntity : reportEntities) {
-                FailureReportReCAPCSVRecord failureReportReCAPCSVRecord = new ReCAPCSVFailureRecordGenerator().prepareFailureReportReCAPCSVRecord(reportEntity);
-                failureReportReCAPCSVRecords.add(failureReportReCAPCSVRecord);
+                FailureReportSCSBCSVRecord failureReportSCSBCSVRecord = new SCSBCSVFailureRecordGenerator().prepareFailureReportReCAPCSVRecord(reportEntity);
+                failureReportSCSBCSVRecords.add(failureReportSCSBCSVRecord);
             }
             ReportEntity reportEntity = reportEntities.get(0);
-            reCAPCSVFailureRecord.setReportType(reportEntity.getType());
-            reCAPCSVFailureRecord.setInstitutionName(reportEntity.getInstitutionName());
-            reCAPCSVFailureRecord.setFileName(fileName);
-            reCAPCSVFailureRecord.setFailureReportReCAPCSVRecordList(failureReportReCAPCSVRecords);
-            producerTemplate.sendBody(reportQueue, reCAPCSVFailureRecord);
-            DateFormat df = new SimpleDateFormat(RecapCommonConstants.DATE_FORMAT_FOR_FILE_NAME);
-            return FilenameUtils.removeExtension(reCAPCSVFailureRecord.getFileName()) + "-" + reCAPCSVFailureRecord.getReportType() + "-" + df.format(new Date()) + ".csv";
+            SCSBCSVFailureRecord.setReportType(reportEntity.getType());
+            SCSBCSVFailureRecord.setInstitutionName(reportEntity.getInstitutionName());
+            SCSBCSVFailureRecord.setFileName(fileName);
+            SCSBCSVFailureRecord.setFailureReportSCSBCSVRecordList(failureReportSCSBCSVRecords);
+            producerTemplate.sendBody(reportQueue, SCSBCSVFailureRecord);
+            DateFormat df = new SimpleDateFormat(ScsbCommonConstants.DATE_FORMAT_FOR_FILE_NAME);
+            return FilenameUtils.removeExtension(SCSBCSVFailureRecord.getFileName()) + "-" + SCSBCSVFailureRecord.getReportType() + "-" + df.format(new Date()) + ".csv";
         }
         return null;
     }
 
     public HashMap<String, String> processReport(String batchHeaders, String requestId, DataExportHeaderUtil dataExportHeaderUtil) {
         HashMap<String, String> values = getValues(batchHeaders, dataExportHeaderUtil);
-        values.put(RecapConstants.FAILED_BIBS, RecapConstants.FAILED_BIBS);
-        values.put(RecapConstants.BATCH_EXPORT, RecapConstants.BATCH_EXPORT_FAILURE);
-        values.put(RecapCommonConstants.REQUEST_ID, requestId);
+        values.put(ScsbConstants.FAILED_BIBS, ScsbConstants.FAILED_BIBS);
+        values.put(ScsbConstants.BATCH_EXPORT, ScsbConstants.BATCH_EXPORT_FAILURE);
+        values.put(ScsbCommonConstants.REQUEST_ID, requestId);
         return values;
     }
 
@@ -137,24 +137,24 @@ public class CommonReportGenerator {
         fluentProducerTemplate
                 .to(reportQ)
                 .withBody(values)
-                .withHeader(RecapConstants.BATCH_HEADERS, exchange.getIn().getHeader(RecapConstants.BATCH_HEADERS))
-                .withHeader(RecapConstants.EXPORT_FORMAT, exchange.getIn().getHeader(RecapConstants.EXPORT_FORMAT))
-                .withHeader(RecapConstants.TRANSMISSION_TYPE, exchange.getIn().getHeader(RecapConstants.TRANSMISSION_TYPE));
+                .withHeader(ScsbConstants.BATCH_HEADERS, exchange.getIn().getHeader(ScsbConstants.BATCH_HEADERS))
+                .withHeader(ScsbConstants.EXPORT_FORMAT, exchange.getIn().getHeader(ScsbConstants.EXPORT_FORMAT))
+                .withHeader(ScsbConstants.TRANSMISSION_TYPE, exchange.getIn().getHeader(ScsbConstants.TRANSMISSION_TYPE));
         return fluentProducerTemplate;
     }
 
     public void process(Exchange exchange, String headerValue, ReportDetailRepository reportDetailRepository) {
-        String institutionName = (String) exchange.getProperty(RecapConstants.INST_NAME);
+        String institutionName = (String) exchange.getProperty(ScsbConstants.INST_NAME);
         if (StringUtils.isNotEmpty(institutionName)) {
             ReportEntity reportEntity = new ReportEntity();
             reportEntity.setCreatedDate(new Date());
-            GenericFile<Object> camelFileExchangeFile = (GenericFile) exchange.getProperty(RecapConstants.CAMEL_EXCHANGE_FILE);
+            GenericFile<Object> camelFileExchangeFile = (GenericFile) exchange.getProperty(ScsbConstants.CAMEL_EXCHANGE_FILE);
             reportEntity.setFileName(camelFileExchangeFile.getFileName());
-            reportEntity.setType(RecapConstants.XML_LOAD);
+            reportEntity.setType(ScsbConstants.XML_LOAD);
             reportEntity.setInstitutionName(institutionName);
 
             ReportDataEntity reportDataEntity = new ReportDataEntity();
-            reportDataEntity.setHeaderName(RecapConstants.FILE_LOAD_STATUS);
+            reportDataEntity.setHeaderName(ScsbConstants.FILE_LOAD_STATUS);
             reportDataEntity.setHeaderValue(headerValue);
 
             reportEntity.setReportDataEntities(Arrays.asList(reportDataEntity));
@@ -180,9 +180,9 @@ public class CommonReportGenerator {
 
     protected void setValues(HashMap values, Exchange exchange, String requestId)
     {
-        values.put(RecapConstants.NUM_BIBS_EXPORTED, RecapConstants.NUM_BIBS_EXPORTED);
-        values.put(RecapConstants.BATCH_EXPORT, RecapConstants.BATCH_EXPORT_SUCCESS);
-        values.put(RecapCommonConstants.REQUEST_ID, requestId);
-        values.put(RecapConstants.ITEM_EXPORTED_COUNT,exchange.getIn().getHeader(RecapConstants.ITEM_EXPORTED_COUNT));
+        values.put(ScsbConstants.NUM_BIBS_EXPORTED, ScsbConstants.NUM_BIBS_EXPORTED);
+        values.put(ScsbConstants.BATCH_EXPORT, ScsbConstants.BATCH_EXPORT_SUCCESS);
+        values.put(ScsbCommonConstants.REQUEST_ID, requestId);
+        values.put(ScsbConstants.ITEM_EXPORTED_COUNT,exchange.getIn().getHeader(ScsbConstants.ITEM_EXPORTED_COUNT));
     }
 }

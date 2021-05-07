@@ -7,7 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.ILSConfigProperties;
 import org.recap.model.export.DataDumpRequest;
 import org.recap.util.PropertyUtil;
@@ -84,7 +84,7 @@ public class DataDumpEmailServiceUT extends BaseTestCaseUT {
 
     @Test
     public void sendEmailForDumpNotification() {
-        DataDumpRequest[] dataDumpRequests = {getDataDumpRequest(RecapConstants.DATADUMP_FETCHTYPE_FULL, RecapConstants.DATADUMP_XML_FORMAT_MARC, RecapConstants.DATADUMP_TRANSMISSION_TYPE_S3), getDataDumpRequest(RecapConstants.DATADUMP_FETCHTYPE_INCREMENTAL, RecapConstants.DATADUMP_XML_FORMAT_SCSB, RecapConstants.DATADUMP_TRANSMISSION_TYPE_HTTP), getDataDumpRequest(RecapConstants.DATADUMP_FETCHTYPE_DELETED, RecapConstants.DATADUMP_DELETED_JSON_FORMAT, RecapConstants.DATADUMP_TRANSMISSION_TYPE_FILESYSTEM), getDataDumpRequest("Export", RecapConstants.DATADUMP_DELETED_JSON_FORMAT, RecapConstants.DATADUMP_TRANSMISSION_TYPE_FILESYSTEM)};
+        DataDumpRequest[] dataDumpRequests = {getDataDumpRequest(ScsbConstants.DATADUMP_FETCHTYPE_FULL, ScsbConstants.DATADUMP_XML_FORMAT_MARC, ScsbConstants.DATADUMP_TRANSMISSION_TYPE_S3), getDataDumpRequest(ScsbConstants.DATADUMP_FETCHTYPE_INCREMENTAL, ScsbConstants.DATADUMP_XML_FORMAT_SCSB, ScsbConstants.DATADUMP_TRANSMISSION_TYPE_HTTP), getDataDumpRequest(ScsbConstants.DATADUMP_FETCHTYPE_DELETED, ScsbConstants.DATADUMP_DELETED_JSON_FORMAT, ScsbConstants.DATADUMP_TRANSMISSION_TYPE_FILESYSTEM), getDataDumpRequest("Export", ScsbConstants.DATADUMP_DELETED_JSON_FORMAT, ScsbConstants.DATADUMP_TRANSMISSION_TYPE_FILESYSTEM)};
         for (DataDumpRequest dataDumpRequest : dataDumpRequests) {
             Mockito.when(dataDumpUtil.getFetchType(Mockito.anyString())).thenCallRealMethod();
             Mockito.when(dataDumpUtil.getOutputformat(Mockito.anyString())).thenCallRealMethod();

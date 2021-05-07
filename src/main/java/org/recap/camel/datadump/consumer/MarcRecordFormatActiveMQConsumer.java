@@ -5,8 +5,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.impl.engine.DefaultFluentProducerTemplate;
 import org.marc4j.marc.Record;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.report.CommonReportGenerator;
 import org.recap.util.datadump.DataExportHeaderUtil;
 import org.recap.camel.datadump.callable.MarcRecordPreparerCallable;
@@ -41,6 +41,8 @@ public class MarcRecordFormatActiveMQConsumer extends CommonReportGenerator {
     MarcXmlFormatterService marcXmlFormatterService;
     private ExecutorService executorService;
     private DataExportHeaderUtil dataExportHeaderUtil;
+    private Integer dataDumpMarcFormatThreadSize;
+    private Integer dataDumpMarcFormatBatchSize;
 
     /**
      * Instantiates a new Marc record format active mq consumer.
@@ -52,6 +54,19 @@ public class MarcRecordFormatActiveMQConsumer extends CommonReportGenerator {
     }
 
     /**
+     * Instantiates a new Marc record format active mq consumer.
+     *
+     * @param marcXmlFormatterService the marc xml formatter service
+     * @param dataDumpMarcFormatThreadSize the data Dump Marc Format Thread Size
+     * @param dataDumpMarcFormatBatchSize the data Dump Marc Format Batch Size
+     */
+    public MarcRecordFormatActiveMQConsumer(MarcXmlFormatterService marcXmlFormatterService, Integer dataDumpMarcFormatThreadSize, Integer dataDumpMarcFormatBatchSize) {
+        this.marcXmlFormatterService = marcXmlFormatterService;
+        this.dataDumpMarcFormatThreadSize = dataDumpMarcFormatThreadSize;
+        this.dataDumpMarcFormatBatchSize = dataDumpMarcFormatBatchSize;
+    }
+
+    /**
      * This method is invoked by the route to prepare marc records for data export.
      *
      * @param exchange the exchange
@@ -59,7 +74,7 @@ public class MarcRecordFormatActiveMQConsumer extends CommonReportGenerator {
      */
     public void processRecords(Exchange exchange) throws Exception {
         FluentProducerTemplate fluentProducerTemplate = DefaultFluentProducerTemplate.on(exchange.getContext());
-        String batchHeaders = (String) exchange.getIn().getHeader(RecapConstants.BATCH_HEADERS);
+        String batchHeaders = (String) exchange.getIn().getHeader(ScsbConstants.BATCH_HEADERS);
         String currentPageCountStr = new DataExportHeaderUtil().getValueFor(batchHeaders, "currentPageCount");
         logger.info("Current page in MarcRecordFormatActiveMQConsumer--->{}",currentPageCountStr);
 
@@ -72,7 +87,7 @@ public class MarcRecordFormatActiveMQConsumer extends CommonReportGenerator {
 
         List<Callable<Map<String, Object>>> callables = new ArrayList<>();
 
-        List<List<BibliographicEntity>> partitionList = Lists.partition(bibliographicEntities, 1000);
+        List<List<BibliographicEntity>> partitionList = Lists.partition(bibliographicEntities, dataDumpMarcFormatBatchSize);
 
         for (Iterator<List<BibliographicEntity>> iterator = partitionList.iterator(); iterator.hasNext(); ) {
             List<BibliographicEntity> bibliographicEntityList = iterator.next();
@@ -89,15 +104,15 @@ public class MarcRecordFormatActiveMQConsumer extends CommonReportGenerator {
         List failures = new ArrayList();
         for (Future future : collectedFutures) {
             Map<String, Object> results = (Map<String, Object>) future.get();
-            Collection<? extends Record> successRecords = (Collection<? extends Record>) results.get(RecapCommonConstants.SUCCESS);
+            Collection<? extends Record> successRecords = (Collection<? extends Record>) results.get(ScsbCommonConstants.SUCCESS);
             if (!CollectionUtils.isEmpty(successRecords)) {
                 records.addAll(successRecords);
             }
-            Collection failureRecords = (Collection) results.get(RecapCommonConstants.FAILURE);
+            Collection failureRecords = (Collection) results.get(ScsbCommonConstants.FAILURE);
             if (!CollectionUtils.isEmpty(failureRecords)) {
                 failures.addAll(failureRecords);
             }
-            Integer itemCount = (Integer) results.get(RecapConstants.ITEM_EXPORTED_COUNT);
+            Integer itemCount = (Integer) results.get(ScsbConstants.ITEM_EXPORTED_COUNT);
             if (itemCount !=0 && itemCount != null){
                 itemExportedCountList.add(itemCount);
             }
@@ -114,12 +129,12 @@ public class MarcRecordFormatActiveMQConsumer extends CommonReportGenerator {
         logger.info("Time taken to prepare {} marc records : {} seconds " , bibliographicEntities.size() , (endTime - startTime) / 1000);
 
         fluentProducerTemplate
-                .to(RecapConstants.MARC_RECORD_FOR_DATA_EXPORT_Q)
+                .to(ScsbConstants.MARC_RECORD_FOR_DATA_EXPORT_Q)
                 .withBody(records)
-                .withHeader(RecapConstants.BATCH_HEADERS, exchange.getIn().getHeader(RecapConstants.BATCH_HEADERS))
-                .withHeader(RecapConstants.EXPORT_FORMAT, exchange.getIn().getHeader(RecapConstants.EXPORT_FORMAT))
-                .withHeader(RecapConstants.TRANSMISSION_TYPE, exchange.getIn().getHeader(RecapConstants.TRANSMISSION_TYPE))
-                .withHeader(RecapConstants.ITEM_EXPORTED_COUNT,itemExportedCount);
+                .withHeader(ScsbConstants.BATCH_HEADERS, exchange.getIn().getHeader(ScsbConstants.BATCH_HEADERS))
+                .withHeader(ScsbConstants.EXPORT_FORMAT, exchange.getIn().getHeader(ScsbConstants.EXPORT_FORMAT))
+                .withHeader(ScsbConstants.TRANSMISSION_TYPE, exchange.getIn().getHeader(ScsbConstants.TRANSMISSION_TYPE))
+                .withHeader(ScsbConstants.ITEM_EXPORTED_COUNT,itemExportedCount);
         fluentProducerTemplate.send();
     }
 
@@ -157,10 +172,12 @@ public class MarcRecordFormatActiveMQConsumer extends CommonReportGenerator {
      */
     public ExecutorService getExecutorService() {
         if (null == executorService) {
-            executorService = Executors.newFixedThreadPool(10);
+            logger.info("Creating Thread Pool of Size : {}", dataDumpMarcFormatThreadSize);
+            executorService = Executors.newFixedThreadPool(dataDumpMarcFormatThreadSize);
         }
         if (executorService.isShutdown()) {
-            executorService = Executors.newFixedThreadPool(10);
+            logger.info("On Shutdown, Creating Thread Pool of Size : {}", dataDumpMarcFormatThreadSize);
+            executorService = Executors.newFixedThreadPool(dataDumpMarcFormatThreadSize);
         }
         return executorService;
     }

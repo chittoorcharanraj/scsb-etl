@@ -2,8 +2,8 @@ package org.recap.util;
 
 import org.junit.Test;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -21,22 +21,22 @@ public class DateUtilUT extends BaseTestCaseUT {
     public void getDateFromString() {
         Calendar cal = Calendar.getInstance();
         Date inputDate = cal.getTime();
-        DateFormat df = new SimpleDateFormat(RecapConstants.DATE_FORMAT_MMDDYYY);
+        DateFormat df = new SimpleDateFormat(ScsbConstants.DATE_FORMAT_MMDDYYY);
         String inputDateString = df.format(inputDate);
-        Date outputDate = DateUtil.getDateFromString(inputDateString, RecapConstants.DATE_FORMAT_MMDDYYY);
+        Date outputDate = DateUtil.getDateFromString(inputDateString, ScsbConstants.DATE_FORMAT_MMDDYYY);
         assertNotNull(outputDate);
     }
 
     @Test
     public void testgetDateTimeFromString() {
-        Date inputDate = DateUtil.getDateTimeFromString("2016-09-02 12:00", RecapCommonConstants.DATE_FORMAT_YYYYMMDDHHMM);
+        Date inputDate = DateUtil.getDateTimeFromString("2016-09-02 12:00", ScsbCommonConstants.DATE_FORMAT_YYYYMMDDHHMM);
         assertNotNull(inputDate);
     }
 
     @Test
     public void testgetDateTimeFromStringCase() {
         try {
-            Date inputDate = DateUtil.getDateTimeFromString("2016-09-02", RecapCommonConstants.DATE_FORMAT_YYYYMMDDHHMM);
+            Date inputDate = DateUtil.getDateTimeFromString("2016-09-02", ScsbCommonConstants.DATE_FORMAT_YYYYMMDDHHMM);
             assertNull(inputDate);
         } catch (Exception e) {
             e.printStackTrace();
@@ -49,7 +49,7 @@ public class DateUtilUT extends BaseTestCaseUT {
     public void getFormattedDateString() {
         Calendar cal = Calendar.getInstance();
         Date inputDate = cal.getTime();
-        DateFormat df = new SimpleDateFormat(RecapCommonConstants.DATE_FORMAT_YYYYMMDDHHMM);
+        DateFormat df = new SimpleDateFormat(ScsbCommonConstants.DATE_FORMAT_YYYYMMDDHHMM);
         String inputDateString = df.format(inputDate);
         String dateString = DateUtil.getFormattedDateString(inputDateString, inputDateString);
         assertNotNull(dateString);

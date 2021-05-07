@@ -1,8 +1,8 @@
 package org.recap.camel.datadump.consumer;
 
 import org.apache.camel.ProducerTemplate;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.csv.DataExportFailureReport;
 import org.recap.model.jparw.ReportDataEntity;
 import org.recap.model.jparw.ReportEntity;
@@ -42,24 +42,24 @@ public class DataExportReportActiveMQConsumer {
      * @return the report entity
      */
     public ReportEntity saveSuccessReportEntity(Map body){
-        String requestingInstitutionCode = (String) body.get(RecapConstants.REQUESTING_INST_CODE);
-        String institutionCodes = (String) body.get(RecapConstants.INSTITUTION_CODES);
-        String fetchType = (String) body.get(RecapConstants.FETCH_TYPE);
-        String collectionGroupIds = (String) body.get(RecapConstants.COLLECTION_GROUP_IDS);
-        String transmissionType = (String) body.get(RecapConstants.TRANSMISSION_TYPE);
-        String exportFormat = (String) body.get(RecapConstants.EXPORT_FORMAT);
-        String fromDate = body.get(RecapConstants.EXPORT_FROM_DATE) != null ? (String) body.get(RecapConstants.EXPORT_FROM_DATE) :"";
-        String toEmailId = (String) body.get(RecapConstants.TO_EMAIL_ID);
-        String type = (String) body.get(RecapConstants.BATCH_EXPORT);
-        String requestId = (String) (body.get(RecapCommonConstants.REQUEST_ID));
-        String numBibsExported = (String) body.get(RecapConstants.NUM_BIBS_EXPORTED);
-        String numRecords = (String) body.get(RecapConstants.NUM_RECORDS);
-        Integer exportedItemCount = (Integer) body.get(RecapConstants.ITEM_EXPORTED_COUNT);
-        String imsDepositoryCodes = (String) body.get(RecapConstants.IMS_DEPOSITORY);
+        String requestingInstitutionCode = (String) body.get(ScsbConstants.REQUESTING_INST_CODE);
+        String institutionCodes = (String) body.get(ScsbConstants.INSTITUTION_CODES);
+        String fetchType = (String) body.get(ScsbConstants.FETCH_TYPE);
+        String collectionGroupIds = (String) body.get(ScsbConstants.COLLECTION_GROUP_IDS);
+        String transmissionType = (String) body.get(ScsbConstants.TRANSMISSION_TYPE);
+        String exportFormat = (String) body.get(ScsbConstants.EXPORT_FORMAT);
+        String fromDate = body.get(ScsbConstants.EXPORT_FROM_DATE) != null ? (String) body.get(ScsbConstants.EXPORT_FROM_DATE) :"";
+        String toEmailId = (String) body.get(ScsbConstants.TO_EMAIL_ID);
+        String type = (String) body.get(ScsbConstants.BATCH_EXPORT);
+        String requestId = (String) (body.get(ScsbCommonConstants.REQUEST_ID));
+        String numBibsExported = (String) body.get(ScsbConstants.NUM_BIBS_EXPORTED);
+        String numRecords = (String) body.get(ScsbConstants.NUM_RECORDS);
+        Integer exportedItemCount = (Integer) body.get(ScsbConstants.ITEM_EXPORTED_COUNT);
+        String imsDepositoryCodes = (String) body.get(ScsbConstants.IMS_DEPOSITORY);
         logger.info("No. of bib exported for a single batch---->{}",numRecords);
         logger.info("No. of item exported for a single batch---->{}",exportedItemCount);
 
-        List<ReportEntity> byFileName = getReportDetailRepository().findByFileNameAndType(requestId, RecapConstants.BATCH_EXPORT_SUCCESS);
+        List<ReportEntity> byFileName = getReportDetailRepository().findByFileNameAndType(requestId, ScsbConstants.BATCH_EXPORT_SUCCESS);
 
         ReportEntity reportEntity;
         if (CollectionUtils.isEmpty(byFileName)) {
@@ -88,7 +88,7 @@ public class DataExportReportActiveMQConsumer {
 
             ReportDataEntity reportDataEntityFetchType = new ReportDataEntity();
             reportDataEntities.add(reportDataEntityFetchType);
-            reportDataEntityFetchType.setHeaderName(RecapConstants.HEADER_FETCH_TYPE);
+            reportDataEntityFetchType.setHeaderName(ScsbConstants.HEADER_FETCH_TYPE);
             reportDataEntityFetchType.setHeaderValue(fetchType);
 
             ReportDataEntity reportDataEntityFromDate = new ReportDataEntity();
@@ -118,11 +118,11 @@ public class DataExportReportActiveMQConsumer {
 
             ReportDataEntity reportDataEntityExportedItemCount = new ReportDataEntity();
             reportDataEntities.add(reportDataEntityExportedItemCount);
-            reportDataEntityExportedItemCount.setHeaderName(RecapConstants.EXPORTED_ITEM_COUNT);
+            reportDataEntityExportedItemCount.setHeaderName(ScsbConstants.EXPORTED_ITEM_COUNT);
             reportDataEntityExportedItemCount.setHeaderValue(String.valueOf(exportedItemCount));
 
             ReportDataEntity reportDataEntityImsDepository = new ReportDataEntity();
-            reportDataEntityImsDepository.setHeaderName(RecapConstants.IMS_DEPOSITORY);
+            reportDataEntityImsDepository.setHeaderName(ScsbConstants.IMS_DEPOSITORY);
             reportDataEntityImsDepository.setHeaderValue(imsDepositoryCodes);
             reportDataEntities.add(reportDataEntityImsDepository);
 
@@ -136,7 +136,7 @@ public class DataExportReportActiveMQConsumer {
                     logger.info("Updated bib count-->{}",(Integer.valueOf(reportDataEntity.getHeaderValue()) + Integer.valueOf(numRecords)));
                     reportDataEntity.setHeaderValue(String.valueOf(Integer.valueOf(reportDataEntity.getHeaderValue()) + Integer.valueOf(numRecords)));
                 }
-                if(reportDataEntity.getHeaderName().equals(RecapConstants.EXPORTED_ITEM_COUNT)){
+                if(reportDataEntity.getHeaderName().equals(ScsbConstants.EXPORTED_ITEM_COUNT)){
                     logger.info("Updated item count-->{}",(Integer.valueOf(reportDataEntity.getHeaderValue())+exportedItemCount));
                     reportDataEntity.setHeaderValue(String.valueOf(Integer.valueOf(reportDataEntity.getHeaderValue())+exportedItemCount));
                 }
@@ -156,23 +156,23 @@ public class DataExportReportActiveMQConsumer {
      */
     public ReportEntity saveFailureReportEntity(Map body){
 
-        String requestingInstitutionCode = (String) body.get(RecapConstants.REQUESTING_INST_CODE);
-        String institutionCodes = (String) body.get(RecapConstants.INSTITUTION_CODES);
-        String fetchType = (String) body.get(RecapConstants.FETCH_TYPE);
-        String collectionGroupIds = (String) body.get(RecapConstants.COLLECTION_GROUP_IDS);
-        String transmissionType = (String) body.get(RecapConstants.TRANSMISSION_TYPE);
-        String exportFormat = (String) body.get(RecapConstants.EXPORT_FORMAT);
-        String fromDate = body.get(RecapConstants.EXPORT_FROM_DATE) != null ? (String) body.get(RecapConstants.EXPORT_FROM_DATE) :"";
-        String toEmailId = (String) body.get(RecapConstants.TO_EMAIL_ID);
-        String type = (String) body.get(RecapConstants.BATCH_EXPORT);
-        String requestId = (String) (body.get(RecapCommonConstants.REQUEST_ID));
-        String failedBibs = (String) body.get(RecapConstants.FAILED_BIBS);
-        String numRecords = (String) body.get(RecapConstants.NUM_RECORDS);
-        String failureCause = (String) body.get(RecapConstants.FAILURE_CAUSE);
-        List<String> failureList = (List<String>) body.get(RecapConstants.FAILURE_LIST);
-        String imsDepositoryCodes = (String) body.get(RecapConstants.IMS_DEPOSITORY);
+        String requestingInstitutionCode = (String) body.get(ScsbConstants.REQUESTING_INST_CODE);
+        String institutionCodes = (String) body.get(ScsbConstants.INSTITUTION_CODES);
+        String fetchType = (String) body.get(ScsbConstants.FETCH_TYPE);
+        String collectionGroupIds = (String) body.get(ScsbConstants.COLLECTION_GROUP_IDS);
+        String transmissionType = (String) body.get(ScsbConstants.TRANSMISSION_TYPE);
+        String exportFormat = (String) body.get(ScsbConstants.EXPORT_FORMAT);
+        String fromDate = body.get(ScsbConstants.EXPORT_FROM_DATE) != null ? (String) body.get(ScsbConstants.EXPORT_FROM_DATE) :"";
+        String toEmailId = (String) body.get(ScsbConstants.TO_EMAIL_ID);
+        String type = (String) body.get(ScsbConstants.BATCH_EXPORT);
+        String requestId = (String) (body.get(ScsbCommonConstants.REQUEST_ID));
+        String failedBibs = (String) body.get(ScsbConstants.FAILED_BIBS);
+        String numRecords = (String) body.get(ScsbConstants.NUM_RECORDS);
+        String failureCause = (String) body.get(ScsbConstants.FAILURE_CAUSE);
+        List<String> failureList = (List<String>) body.get(ScsbConstants.FAILURE_LIST);
+        String imsDepositoryCodes = (String) body.get(ScsbConstants.IMS_DEPOSITORY);
 
-        List<ReportEntity> byFileName = getReportDetailRepository().findByFileNameAndType(requestId, RecapConstants.BATCH_EXPORT_FAILURE);
+        List<ReportEntity> byFileName = getReportDetailRepository().findByFileNameAndType(requestId, ScsbConstants.BATCH_EXPORT_FAILURE);
 
 
         ReportEntity reportEntity;
@@ -198,7 +198,7 @@ public class DataExportReportActiveMQConsumer {
 
             ReportDataEntity reportDataEntityFailureCause = new ReportDataEntity();
             reportDataEntities.add(reportDataEntityFailureCause);
-            reportDataEntityFailureCause.setHeaderName(RecapConstants.FAILURE_CAUSE);
+            reportDataEntityFailureCause.setHeaderName(ScsbConstants.FAILURE_CAUSE);
             reportDataEntityFailureCause.setHeaderValue(failureCause);
 
             ReportDataEntity reportDataEntityInstCodes = new ReportDataEntity();
@@ -208,7 +208,7 @@ public class DataExportReportActiveMQConsumer {
 
             ReportDataEntity reportDataEntityFetchType = new ReportDataEntity();
             reportDataEntities.add(reportDataEntityFetchType);
-            reportDataEntityFetchType.setHeaderName(RecapConstants.HEADER_FETCH_TYPE);
+            reportDataEntityFetchType.setHeaderName(ScsbConstants.HEADER_FETCH_TYPE);
             reportDataEntityFetchType.setHeaderValue(fetchType);
 
             ReportDataEntity reportDataEntityFromDate = new ReportDataEntity();
@@ -237,7 +237,7 @@ public class DataExportReportActiveMQConsumer {
             reportDataEntityMailedTo.setHeaderValue(toEmailId);
 
             ReportDataEntity reportDataEntityImsDepository = new ReportDataEntity();
-            reportDataEntityImsDepository.setHeaderName(RecapConstants.IMS_DEPOSITORY);
+            reportDataEntityImsDepository.setHeaderName(ScsbConstants.IMS_DEPOSITORY);
             reportDataEntityImsDepository.setHeaderValue(imsDepositoryCodes);
             reportDataEntities.add(reportDataEntityImsDepository);
 
@@ -246,7 +246,7 @@ public class DataExportReportActiveMQConsumer {
             List<ReportDataEntity> reportDataEntities = reportEntity.getReportDataEntities();
             for (Iterator<ReportDataEntity> iterator = reportDataEntities.iterator(); iterator.hasNext(); ) {
                 ReportDataEntity reportDataEntity = iterator.next();
-                if (reportDataEntity.getHeaderName().equals(RecapConstants.FAILED_BIBS)) {
+                if (reportDataEntity.getHeaderName().equals(ScsbConstants.FAILED_BIBS)) {
                     Integer exitingRecords = Integer.valueOf(reportDataEntity.getHeaderValue());
                     reportDataEntity.setHeaderValue(String.valueOf(exitingRecords + Integer.valueOf(numRecords)));
                 }
@@ -266,7 +266,7 @@ public class DataExportReportActiveMQConsumer {
             populateExportFailureRecords(requestId, dataExportFailureReportList, fetchTypeValue, failure,requestingInstitutionCode);
         }
 
-        producerTemplate.sendBodyAndHeader(RecapConstants.DATADUMP_FAILURE_REPORT_SFTP_Q, dataExportFailureReportList, RecapConstants.HEADER_FETCH_TYPE, fetchTypeValue);
+        producerTemplate.sendBodyAndHeader(ScsbConstants.DATADUMP_FAILURE_REPORT_SFTP_Q, dataExportFailureReportList, ScsbConstants.HEADER_FETCH_TYPE, fetchTypeValue);
     }
 
     public void populateExportFailureRecords(String requestId, List<DataExportFailureReport> dataExportFailureReportList, String fetchTypeValue, String failure,String requestingInstitutionCode) {

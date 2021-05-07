@@ -18,7 +18,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCase;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
+import org.recap.ScsbCommonConstants;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.CollectionGroupEntity;
 import org.recap.model.jpa.HoldingsEntity;
@@ -167,8 +167,8 @@ public class MarcXMLFormatActiveMQConsumerUT extends BaseTestCaseUT {
         Mockito.when(marcXmlFormatterService.prepareMarcRecords(Arrays.asList(bibliographicEntity))).thenCallRealMethod();
         Map<String, Object> successAndFailureFormattedList = marcXmlFormatterService.prepareMarcRecords(Arrays.asList(bibliographicEntity));
         try {
-            Mockito.when(marcXmlFormatterService.covertToMarcXmlString((List<Record>) successAndFailureFormattedList.get(RecapCommonConstants.SUCCESS))).thenCallRealMethod();
-            String marcXmlString = marcXmlFormatterService.covertToMarcXmlString((List<Record>) successAndFailureFormattedList.get(RecapCommonConstants.SUCCESS));
+            Mockito.when(marcXmlFormatterService.covertToMarcXmlString((List<Record>) successAndFailureFormattedList.get(ScsbCommonConstants.SUCCESS))).thenCallRealMethod();
+            String marcXmlString = marcXmlFormatterService.covertToMarcXmlString((List<Record>) successAndFailureFormattedList.get(ScsbCommonConstants.SUCCESS));
             List<Record> recordList = readMarcXml(marcXmlString);
             String dataHeader = ";requestId#1";
             CamelContext ctx = new DefaultCamelContext();

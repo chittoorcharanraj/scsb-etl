@@ -10,7 +10,7 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
+import org.recap.ScsbCommonConstants;
 import org.recap.model.jparw.ReportEntity;
 import org.recap.repositoryrw.ReportDetailRepository;
 
@@ -34,7 +34,7 @@ public class ReportProcessorUT extends BaseTestCaseUT {
         reportEntity = new ReportEntity();
         reportEntity.setFileName("test");
         reportEntity.setInstitutionName("NYPL");
-        reportEntity.setType(RecapCommonConstants.FAILURE);
+        reportEntity.setType(ScsbCommonConstants.FAILURE);
         reportEntity.setCreatedDate(new Date());
     }
 

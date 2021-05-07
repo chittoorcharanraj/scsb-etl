@@ -4,7 +4,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws.s3.S3Constants;
 import org.apache.camel.model.dataformat.BindyType;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.camel.datadump.FileNameProcessorForDataDumpFailure;
 import org.recap.camel.datadump.FileNameProcessorForDataDumpSuccess;
 import org.recap.model.csv.DataDumpFailureReport;
@@ -38,53 +38,53 @@ public class DataExportReportFtpRouteBuilder {
                 context.addRoutes(new RouteBuilder() {
                     @Override
                     public void configure() throws Exception {
-                        from(RecapConstants.DATADUMP_SUCCESS_REPORT_FTP_Q)
-                                .routeId(RecapConstants.DATADUMP_SUCCESS_REPORT_FTP_ROUTE_ID)
+                        from(ScsbConstants.DATADUMP_SUCCESS_REPORT_FTP_Q)
+                                .routeId(ScsbConstants.DATADUMP_SUCCESS_REPORT_FTP_ROUTE_ID)
                                 .process(new FileNameProcessorForDataDumpSuccess())
                                 .marshal().bindy(BindyType.Csv, DataDumpSuccessReport.class)
                                 .setHeader(S3Constants.KEY, simple(s3OnlyReportRemoteServer + "${in.header.directoryName}/${in.header.fileName}-${in.header.reportType}-${date:now:ddMMMyyyy}.csv"))
-                                .to(RecapConstants.SCSB_CAMEL_S3_TO_ENDPOINT);
+                                .to(ScsbConstants.SCSB_CAMEL_S3_TO_ENDPOINT);
                     }
                 });
 
                 context.addRoutes(new RouteBuilder() {
                     @Override
                     public void configure() throws Exception {
-                        from(RecapConstants.DATADUMP_FAILURE_REPORT_FTP_Q)
-                                .routeId(RecapConstants.DATADUMP_FAILURE_REPORT_FTP_ROUTE_ID)
+                        from(ScsbConstants.DATADUMP_FAILURE_REPORT_FTP_Q)
+                                .routeId(ScsbConstants.DATADUMP_FAILURE_REPORT_FTP_ROUTE_ID)
                                 .process(new FileNameProcessorForDataDumpFailure())
                                 .marshal().bindy(BindyType.Csv, DataDumpFailureReport.class)
                                 .setHeader(S3Constants.KEY, simple(s3OnlyReportRemoteServer + "${in.header.directoryName}/${in.header.fileName}-${in.header.reportType}-${date:now:ddMMMyyyy}.csv"))
-                                .to(RecapConstants.SCSB_CAMEL_S3_TO_ENDPOINT);
+                                .to(ScsbConstants.SCSB_CAMEL_S3_TO_ENDPOINT);
                     }
                 });
 
                 context.addRoutes(new RouteBuilder() {
                     @Override
                     public void configure() throws Exception {
-                        from(RecapConstants.DATAEXPORT_WITH_SUCCESS_REPORT_FTP_Q)
-                                .routeId(RecapConstants.DATAEXPORT_WITH_SUCCESS_REPORT_FTP_ROUTE_ID)
+                        from(ScsbConstants.DATAEXPORT_WITH_SUCCESS_REPORT_FTP_Q)
+                                .routeId(ScsbConstants.DATAEXPORT_WITH_SUCCESS_REPORT_FTP_ROUTE_ID)
                                 .process(new FileNameProcessorForDataDumpSuccess())
                                 .marshal().bindy(BindyType.Csv, DataDumpSuccessReport.class)
                                 .setHeader(S3Constants.KEY, simple(s3DumpWithReportRemoteServer + "${in.header.fileName}.csv"))
-                                .to(RecapConstants.SCSB_CAMEL_S3_TO_ENDPOINT);
+                                .to(ScsbConstants.SCSB_CAMEL_S3_TO_ENDPOINT);
                     }
                 });
 
                 context.addRoutes(new RouteBuilder() {
                     @Override
                     public void configure() throws Exception {
-                        from(RecapConstants.DATAEXPORT_WITH_FAILURE_REPORT_FTP_Q)
-                                .routeId(RecapConstants.DATAEXPORT_WITH_FAILURE_REPORT_FTP_ROUTE_ID)
+                        from(ScsbConstants.DATAEXPORT_WITH_FAILURE_REPORT_FTP_Q)
+                                .routeId(ScsbConstants.DATAEXPORT_WITH_FAILURE_REPORT_FTP_ROUTE_ID)
                                 .process(new FileNameProcessorForDataDumpFailure())
                                 .marshal().bindy(BindyType.Csv, DataDumpFailureReport.class)
                                 .setHeader(S3Constants.KEY, simple(s3DumpWithReportRemoteServer + "${in.header.fileName}.csv"))
-                                .to(RecapConstants.SCSB_CAMEL_S3_TO_ENDPOINT);
+                                .to(ScsbConstants.SCSB_CAMEL_S3_TO_ENDPOINT);
                     }
                 });
             }
         } catch (Exception e) {
-            logger.error(RecapConstants.ERROR, e);
+            logger.error(ScsbConstants.ERROR, e);
         }
     }
 }

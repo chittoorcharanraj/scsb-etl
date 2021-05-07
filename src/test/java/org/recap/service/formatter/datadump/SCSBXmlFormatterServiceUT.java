@@ -8,8 +8,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.TestUtil;
 import org.recap.camel.BibDataProcessor;
 import org.recap.model.jaxb.BibRecord;
@@ -176,7 +176,7 @@ public class SCSBXmlFormatterServiceUT extends BaseTestCaseUT {
         matchingBibInfoDetailList.add(getMatchingBibInfoDetail());
         Mockito.when(matchingBibInfoDetailRepository.findByRecordNum(Mockito.anyList())).thenReturn(matchingBibInfoDetailList);
         Map<String, Object> resultMap = scsbXmlFormatterService.prepareBibRecords(Arrays.asList(bibliographicEntity));
-        List<BibRecord> bibRecords = (List<BibRecord>) resultMap.get(RecapCommonConstants.SUCCESS);
+        List<BibRecord> bibRecords = (List<BibRecord>) resultMap.get(ScsbCommonConstants.SUCCESS);
         scsbXmlFormatterService.getSCSBXmlForBibRecords(bibRecords);
     }
 
@@ -190,8 +190,8 @@ public class SCSBXmlFormatterServiceUT extends BaseTestCaseUT {
         matchingBibInfoDetailList.add(getMatchingBibInfoDetail());
         Mockito.when(matchingBibInfoDetailRepository.findByRecordNum(Mockito.anyList())).thenReturn(matchingBibInfoDetailList);
         Map<String, Object> resultMap = scsbXmlFormatterService.prepareBibRecords(Arrays.asList(bibliographicEntity));
-        List<BibRecord> bibRecords = (List<BibRecord>) resultMap.get(RecapCommonConstants.SUCCESS);
-        boolean reteurntype=scsbXmlFormatterService.isInterested(RecapConstants.DATADUMP_XML_FORMAT_SCSB);
+        List<BibRecord> bibRecords = (List<BibRecord>) resultMap.get(ScsbCommonConstants.SUCCESS);
+        boolean reteurntype=scsbXmlFormatterService.isInterested(ScsbConstants.DATADUMP_XML_FORMAT_SCSB);
         scsbXmlFormatterService.getSCSBXmlForBibRecords(bibRecords);
         assertTrue(reteurntype);
 

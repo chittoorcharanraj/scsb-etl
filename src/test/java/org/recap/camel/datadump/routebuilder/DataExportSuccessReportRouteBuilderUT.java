@@ -4,8 +4,8 @@ import org.apache.camel.ProducerTemplate;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,11 +23,11 @@ public class DataExportSuccessReportRouteBuilderUT extends BaseTestCaseUT {
     @Test
     public void testRoute() throws Exception {
         Map values = new HashMap<>();
-        values.put(RecapConstants.REQUESTING_INST_CODE, "PUL");
-        values.put(RecapConstants.NUM_RECORDS, String.valueOf("12"));
-        values.put(RecapConstants.NUM_BIBS_EXPORTED, RecapConstants.NUM_BIBS_EXPORTED);
-        values.put(RecapConstants.BATCH_EXPORT, RecapConstants.BATCH_EXPORT);
-        values.put(RecapCommonConstants.REQUEST_ID, "112-1");
+        values.put(ScsbConstants.REQUESTING_INST_CODE, "PUL");
+        values.put(ScsbConstants.NUM_RECORDS, String.valueOf("12"));
+        values.put(ScsbConstants.NUM_BIBS_EXPORTED, ScsbConstants.NUM_BIBS_EXPORTED);
+        values.put(ScsbConstants.BATCH_EXPORT, ScsbConstants.BATCH_EXPORT);
+        values.put(ScsbCommonConstants.REQUEST_ID, "112-1");
         producerTemplate.sendBody("scsbactivemq:queue:dataExportSuccessQ", values);
         assertTrue(true);
     }

@@ -1,7 +1,7 @@
 package org.recap.service.email.datadump;
 
 import org.apache.camel.ProducerTemplate;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.camel.EmailPayLoad;
 import org.recap.model.ILSConfigProperties;
 import org.recap.util.PropertyUtil;
@@ -66,15 +66,15 @@ public class DataDumpEmailService {
             emailPayLoad.setTo(toEmailAddress);
             emailPayLoad.setItemCount(exportedItemCount);
             emailPayLoad.setImsDepositoryCodes(imsDepositoryCodes);
-            producer.sendBodyAndHeader(RecapConstants.EMAIL_Q, emailPayLoad, RecapConstants.DATADUMP_EMAILBODY_FOR, emailBodyFor);
+            producer.sendBodyAndHeader(ScsbConstants.EMAIL_Q, emailPayLoad, ScsbConstants.DATADUMP_EMAILBODY_FOR, emailBodyFor);
         }
-        else if(fetchType.equals(RecapConstants.DATADUMP_FETCHTYPE_INCREMENTAL)){
+        else if(fetchType.equals(ScsbConstants.DATADUMP_FETCHTYPE_INCREMENTAL)){
             setEmailForDatadump(transmissionType, emailBodyFor, dateTimeStringForFolder, toEmailAddress,
-                    requestingInstitutionCode, RecapConstants.SUBJECT_INCREMENTAL_DATA_DUMP, RecapConstants.EMAIL_INCREMENTAL_DATA_DUMP);
+                    requestingInstitutionCode, ScsbConstants.SUBJECT_INCREMENTAL_DATA_DUMP, ScsbConstants.EMAIL_INCREMENTAL_DATA_DUMP);
         }
-        else if(fetchType.equals(RecapConstants.DATADUMP_DELETED_JSON_FORMAT)){
+        else if(fetchType.equals(ScsbConstants.DATADUMP_DELETED_JSON_FORMAT)){
             setEmailForDatadump(transmissionType, emailBodyFor, dateTimeStringForFolder, toEmailAddress,
-                    requestingInstitutionCode, RecapConstants.SUBJECT_DELETION_DATA_DUMP, RecapConstants.EMAIL_DELETION_DATA_DUMP);
+                    requestingInstitutionCode, ScsbConstants.SUBJECT_DELETION_DATA_DUMP, ScsbConstants.EMAIL_DELETION_DATA_DUMP);
         }
     }
 
@@ -117,8 +117,8 @@ public class DataDumpEmailService {
         emailPayLoad.setLocation(getLocation(transmissionType, dateTimeStringForFolder));
         emailPayLoad.setTo(toEmailAddress);
         emailPayLoad.setCc(mailForCc(requestingInstitutionCode));
-        emailPayLoad.setSubject(emailBodyFor.equals(RecapConstants.DATADUMP_NO_DATA_AVAILABLE)?(subject + " : "+requestingInstitutionCode+"(No data)"):(subject + " : "+requestingInstitutionCode));
-        producer.sendBodyAndHeader(RecapConstants.EMAIL_Q, emailPayLoad, RecapConstants.DATADUMP_EMAILBODY_FOR, emailBodyFor.equals(RecapConstants.DATADUMP_NO_DATA_AVAILABLE)?emailBodyFor:emailBody);
+        emailPayLoad.setSubject(emailBodyFor.equals(ScsbConstants.DATADUMP_NO_DATA_AVAILABLE)?(subject + " : "+requestingInstitutionCode+"(No data)"):(subject + " : "+requestingInstitutionCode));
+        producer.sendBodyAndHeader(ScsbConstants.EMAIL_Q, emailPayLoad, ScsbConstants.DATADUMP_EMAILBODY_FOR, emailBodyFor.equals(ScsbConstants.DATADUMP_NO_DATA_AVAILABLE)?emailBodyFor:emailBody);
 
     }
 
@@ -141,7 +141,7 @@ public class DataDumpEmailService {
             emailPayLoad.setOutputFileFormat(outputformat);
             emailPayLoad.setImsDepositoryCodes(dataDumpRequest.getImsDepositoryCodes());
             emailPayLoad.setMessage(!transmissionType.equalsIgnoreCase("HTTP")?"Will send further notification upon completion.":"");
-            producer.sendBodyAndHeader(RecapConstants.EMAIL_Q, emailPayLoad, RecapConstants.DATADUMP_EMAILBODY_FOR, RecapConstants.DATADUMP_EXPORT_NOTIFICATION);
+            producer.sendBodyAndHeader(ScsbConstants.EMAIL_Q, emailPayLoad, ScsbConstants.DATADUMP_EMAILBODY_FOR, ScsbConstants.DATADUMP_EXPORT_NOTIFICATION);
         }
     }
 }

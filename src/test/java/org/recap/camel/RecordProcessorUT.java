@@ -10,7 +10,7 @@ import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jaxb.BibRecord;
 import org.recap.model.jaxb.Holding;
 import org.recap.model.jaxb.Holdings;
@@ -354,8 +354,8 @@ public class RecordProcessorUT {
     private ReportEntity getReportEntity() {
         ReportEntity reportEntity = new ReportEntity();
         org.recap.model.jparw.ReportDataEntity reportDataEntity = new ReportDataEntity();
-        reportDataEntity.setHeaderName(RecapConstants.HEADER_FETCH_TYPE);
-        reportDataEntity.setHeaderValue(RecapConstants.DATADUMP_FETCHTYPE_INCREMENTAL);
+        reportDataEntity.setHeaderName(ScsbConstants.HEADER_FETCH_TYPE);
+        reportDataEntity.setHeaderValue(ScsbConstants.DATADUMP_FETCHTYPE_INCREMENTAL);
         reportEntity.setReportDataEntities(Arrays.asList(reportDataEntity));
         reportEntity.setCreatedDate(new Date());
         return reportEntity;

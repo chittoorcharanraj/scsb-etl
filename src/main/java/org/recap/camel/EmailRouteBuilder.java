@@ -3,7 +3,7 @@ package org.recap.camel;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.commons.io.FileUtils;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +49,7 @@ public class EmailRouteBuilder {
      * @param smtpServer        the smtp server
      */
     @Autowired
-    public EmailRouteBuilder(CamelContext context, @Value("${email.smtp.server.data.dump.username}") String username, @Value("${email.smtp.server.data.dump.password.file}") String passwordDirectory,
+    public EmailRouteBuilder(CamelContext context, @Value("${email.smtp.server.username}") String username, @Value("${email.smtp.server.password.file}") String passwordDirectory,
                              @Value("${email.data.dump.from}") String from, @Value("${email.data.dump.subject}") String subject,@Value("${email.data.dump.nodata.subject}") String noDataSubject,
                              @Value("${email.smtp.server}") String smtpServer,@Value("${email.data.dump.cc}") String emailCC) {
         try {
@@ -61,13 +61,13 @@ public class EmailRouteBuilder {
                     loadEmailBodyTemplateForNoData();
                     loadEmailPassword();
 
-                    from(RecapConstants.EMAIL_Q)
-                            .routeId(RecapConstants.EMAIL_ROUTE_ID)
+                    from(ScsbConstants.EMAIL_Q)
+                            .routeId(ScsbConstants.EMAIL_ROUTE_ID)
                             .setHeader("emailPayLoad").body(EmailPayLoad.class)
                             .onCompletion().log("Email has been sent successfully.")
                             .end()
                                 .choice()
-                                    .when(header(RecapConstants.DATADUMP_EMAILBODY_FOR).isEqualTo(RecapConstants.DATADUMP_EXPORT_NOTIFICATION))
+                                    .when(header(ScsbConstants.DATADUMP_EMAILBODY_FOR).isEqualTo(ScsbConstants.DATADUMP_EXPORT_NOTIFICATION))
                                         .setHeader("from", simple(from))
                                         .setHeader("to", simple(EMAIL_PAYLOAD_TO))
                                         .setHeader("cc", simple(EMAIL_PAYLOAD_CC))
@@ -75,7 +75,7 @@ public class EmailRouteBuilder {
                                         .setBody(simple(emailForExportNotification))
                                         .log("Sending email notification for start of data dump process")
                                         .to(SMTPS + smtpServer + USERNAME + username + PASSWORD + emailPassword)
-                                    .when(header(RecapConstants.DATADUMP_EMAILBODY_FOR).isEqualTo(RecapConstants.DATADUMP_DATA_AVAILABLE))
+                                    .when(header(ScsbConstants.DATADUMP_EMAILBODY_FOR).isEqualTo(ScsbConstants.DATADUMP_DATA_AVAILABLE))
                                         .setHeader(SUBJECT, simple(subject))
                                         .setBody(simple(emailBody))
                                         .setHeader("from", simple(from))
@@ -83,7 +83,7 @@ public class EmailRouteBuilder {
                                         .setHeader("cc", simple(emailCC))
                                         .log("Sending email for data available")
                                         .to(SMTPS + smtpServer + USERNAME + username + PASSWORD + emailPassword)
-                                    .when(header(EMAIL_BODY_FOR).isEqualTo(RecapConstants.DATADUMP_NO_DATA_AVAILABLE))
+                                    .when(header(EMAIL_BODY_FOR).isEqualTo(ScsbConstants.DATADUMP_NO_DATA_AVAILABLE))
                                         .setHeader(SUBJECT, simple(EMAIL_PAYLOAD_SUBJECT))
                                         .setBody(simple(emailBodyForNoData))
                                         .setHeader("from", simple(from))
@@ -91,7 +91,7 @@ public class EmailRouteBuilder {
                                         .setHeader("cc", simple(EMAIL_PAYLOAD_CC))
                                         .log("Sending email for no data available")
                                         .to(SMTPS + smtpServer + USERNAME + username + PASSWORD + emailPassword)
-                                    .when(header(EMAIL_BODY_FOR).isEqualTo(RecapConstants.EMAIL_INCREMENTAL_DATA_DUMP))
+                                    .when(header(EMAIL_BODY_FOR).isEqualTo(ScsbConstants.EMAIL_INCREMENTAL_DATA_DUMP))
                                         .setHeader(SUBJECT, simple("${header.emailPayLoad.subject}"))
                                         .setBody(simple("The report is available in the ${header.emailPayLoad.location}"))
                                         .setHeader("from", simple(from))
@@ -99,7 +99,7 @@ public class EmailRouteBuilder {
                                         .setHeader("cc", simple(EMAIL_PAYLOAD_CC))
                                         .log("Email sent for Incremental DataDump")
                                         .to(SMTPS + smtpServer + USERNAME + username + PASSWORD + emailPassword)
-                                    .when(header(EMAIL_BODY_FOR).isEqualTo(RecapConstants.EMAIL_DELETION_DATA_DUMP))
+                                    .when(header(EMAIL_BODY_FOR).isEqualTo(ScsbConstants.EMAIL_DELETION_DATA_DUMP))
                                         .setHeader(SUBJECT, simple("${header.emailPayLoad.subject}"))
                                         .setBody(simple("The report is available in the ${header.emailPayLoad.location}"))
                                         .setHeader("from", simple(from))
@@ -134,13 +134,13 @@ public class EmailRouteBuilder {
                         try {
                             emailPassword = FileUtils.readFileToString(file, StandardCharsets.UTF_8).trim();
                         } catch (IOException e) {
-                            logger.error(RecapConstants.ERROR,e);
+                            logger.error(ScsbConstants.ERROR,e);
                         }
                     }
                 }
             });
         } catch (Exception e) {
-            logger.error(RecapConstants.ERROR,e);
+            logger.error(ScsbConstants.ERROR,e);
         }
     }
 
@@ -158,7 +158,7 @@ public class EmailRouteBuilder {
                             }
                         }
                     } catch (IOException e) {
-                        logger.error(RecapConstants.ERROR,e);
+                        logger.error(ScsbConstants.ERROR,e);
                     }
         return out;
     }

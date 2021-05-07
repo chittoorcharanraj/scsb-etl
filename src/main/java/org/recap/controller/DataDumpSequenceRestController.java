@@ -1,6 +1,6 @@
 package org.recap.controller;
 
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.camel.dynamicrouter.DynamicRouteBuilder;
 import org.recap.repository.InstitutionDetailsRepository;
 import org.recap.service.executor.datadump.DataDumpSchedulerExecutorService;
@@ -46,9 +46,9 @@ public class DataDumpSequenceRestController {
     public String exportDataDump(@RequestParam String date) {
         List<String> allInstitutionCodeExceptHTC = institutionDetailsRepository.findAllInstitutionCodeExceptHTC();
         Optional<String> firstInstitution = allInstitutionCodeExceptHTC.stream().findFirst();
-        RecapConstants.EXPORT_SCHEDULER_CALL = true;
-        RecapConstants.EXPORT_DATE_SCHEDULER = date;
-        RecapConstants.EXPORT_FETCH_TYPE_INSTITUTION = RecapConstants.EXPORT_INCREMENTAL+ (firstInstitution.isPresent() ? firstInstitution.get() : "");
+        ScsbConstants.EXPORT_SCHEDULER_CALL = true;
+        ScsbConstants.EXPORT_DATE_SCHEDULER = date;
+        ScsbConstants.EXPORT_FETCH_TYPE_INSTITUTION = ScsbConstants.EXPORT_INCREMENTAL+ (firstInstitution.isPresent() ? firstInstitution.get() : "");
         getDynamicRouteBuilder().addDataDumpExportRoutes();
         return dataDumpSchedulerExecutorService.initiateDataDumpForScheduler(date,  (firstInstitution.isPresent() ? firstInstitution.get() : ""), null);
     }

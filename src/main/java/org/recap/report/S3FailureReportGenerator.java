@@ -1,7 +1,7 @@
 package org.recap.report;
 
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jparw.ReportEntity;
 import org.springframework.stereotype.Component;
 import java.util.List;
@@ -20,7 +20,7 @@ public class S3FailureReportGenerator extends CommonReportGenerator implements R
      */
     @Override
     public boolean isInterested(String reportType) {
-        return reportType.equalsIgnoreCase(RecapCommonConstants.FAILURE);
+        return reportType.equalsIgnoreCase(ScsbCommonConstants.FAILURE);
     }
 
     /**
@@ -31,7 +31,7 @@ public class S3FailureReportGenerator extends CommonReportGenerator implements R
      */
     @Override
     public boolean isTransmitted(String transmissionType) {
-        return transmissionType.equalsIgnoreCase(RecapCommonConstants.FTP);
+        return transmissionType.equalsIgnoreCase(ScsbCommonConstants.FTP);
     }
 
     /**
@@ -42,7 +42,7 @@ public class S3FailureReportGenerator extends CommonReportGenerator implements R
      */
     @Override
     public boolean isOperationType(String operationType) {
-        return operationType.equalsIgnoreCase(RecapConstants.OPERATION_TYPE_ETL);
+        return operationType.equalsIgnoreCase(ScsbConstants.OPERATION_TYPE_ETL);
     }
 
     /**
@@ -54,6 +54,6 @@ public class S3FailureReportGenerator extends CommonReportGenerator implements R
      */
     @Override
     public String generateReport(List<ReportEntity> reportEntities, String fileName) {
-        return generateFailureReport(reportEntities, fileName, RecapConstants.FTP_FAILURE_Q);
+        return generateFailureReport(reportEntities, fileName, ScsbConstants.FTP_FAILURE_Q);
     }
 }

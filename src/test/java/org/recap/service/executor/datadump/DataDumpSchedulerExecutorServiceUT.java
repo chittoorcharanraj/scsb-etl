@@ -5,8 +5,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.ILSConfigProperties;
 import org.recap.service.DataExportValidateService;
 import org.recap.service.preprocessor.DataDumpExportService;
@@ -45,29 +45,29 @@ public class DataDumpSchedulerExecutorServiceUT extends BaseTestCaseUT {
     @Test
     public void testInitiateDataDumpForScheduler() {
         Map<String, String> requestParameterMap = new HashMap<>();
-        requestParameterMap.put(RecapConstants.FETCH_TYPE, RecapConstants.FETCH_TYPE);
-        Mockito.when(jobDataParameterUtil.buildJobRequestParameterMap(RecapConstants.EXPORT_FETCH_TYPE_INSTITUTION)).thenReturn(requestParameterMap);
+        requestParameterMap.put(ScsbConstants.FETCH_TYPE, ScsbConstants.FETCH_TYPE);
+        Mockito.when(jobDataParameterUtil.buildJobRequestParameterMap(ScsbConstants.EXPORT_FETCH_TYPE_INSTITUTION)).thenReturn(requestParameterMap);
         Mockito.doNothing().when(dataDumpUtil).setDataDumpRequest(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(),any());
         ILSConfigProperties ilsConfigProperties = new ILSConfigProperties();
         ilsConfigProperties.setEmailDataDumpTo("to");
         Mockito.when(propertyUtil.getILSConfigProperties(Mockito.anyString())).thenReturn(ilsConfigProperties);
-        Mockito.when(dataExportValidateService.validateIncomingRequest(any())).thenReturn(RecapCommonConstants.SUCCESS);
+        Mockito.when(dataExportValidateService.validateIncomingRequest(any())).thenReturn(ScsbCommonConstants.SUCCESS);
         String initiateDataDumpForScheduler = dataDumpSchedulerExecutorService.initiateDataDumpForScheduler(new Date().toString(), "PUL", "");
-        assertEquals(RecapCommonConstants.SUCCESS, initiateDataDumpForScheduler);
+        assertEquals(ScsbCommonConstants.SUCCESS, initiateDataDumpForScheduler);
     }
 
     @Test
     public void testInitiateDataDumpForSchedulerStart() {
         Map<String, String> requestParameterMap = new HashMap<>();
-        requestParameterMap.put(RecapConstants.FETCH_TYPE, RecapConstants.FETCH_TYPE);
-        Mockito.when(jobDataParameterUtil.buildJobRequestParameterMap(RecapConstants.EXPORT_FETCH_TYPE_INSTITUTION)).thenReturn(requestParameterMap);
+        requestParameterMap.put(ScsbConstants.FETCH_TYPE, ScsbConstants.FETCH_TYPE);
+        Mockito.when(jobDataParameterUtil.buildJobRequestParameterMap(ScsbConstants.EXPORT_FETCH_TYPE_INSTITUTION)).thenReturn(requestParameterMap);
         Mockito.doNothing().when(dataDumpUtil).setDataDumpRequest(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(),any());
         ILSConfigProperties ilsConfigProperties = new ILSConfigProperties();
         ilsConfigProperties.setEmailDataDumpTo("to");
         Mockito.when(propertyUtil.getILSConfigProperties(anyString())).thenReturn(ilsConfigProperties);
         Mockito.when(dataExportValidateService.validateIncomingRequest(any())).thenReturn(null);
-        Mockito.when(dataDumpExportService.startDataDumpProcess(any())).thenReturn(RecapCommonConstants.SUCCESS);
+        Mockito.when(dataDumpExportService.startDataDumpProcess(any())).thenReturn(ScsbCommonConstants.SUCCESS);
         String initiateDataDumpForScheduler = dataDumpSchedulerExecutorService.initiateDataDumpForScheduler(new Date().toString(), "PUL", "");
-        assertEquals(RecapCommonConstants.SUCCESS, initiateDataDumpForScheduler);
+        assertEquals(ScsbCommonConstants.SUCCESS, initiateDataDumpForScheduler);
     }
 }

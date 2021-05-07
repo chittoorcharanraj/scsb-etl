@@ -4,7 +4,7 @@ import org.apache.camel.ProducerTemplate;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.io.File;
@@ -44,7 +44,7 @@ public class EmailRouteBuilderUT extends BaseTestCaseUT {
         emailPayLoad.setTo(dataDumpEmailNyplTo);
         emailPayLoad.setFailedCount(1);
         emailPayLoad.setTo("1");
-        producer.sendBody(RecapConstants.EMAIL_Q, emailPayLoad);
+        producer.sendBody(ScsbConstants.EMAIL_Q, emailPayLoad);
         assertNotNull(emailPayLoad.getFailedCount());
         assertNotNull(emailPayLoad.getTo());
     }

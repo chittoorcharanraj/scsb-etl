@@ -9,8 +9,8 @@ import org.apache.camel.component.aws.s3.S3Constants;
 import org.apache.camel.processor.aggregate.zipfile.ZipAggregationStrategy;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.util.datadump.DataExportHeaderUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,10 +85,10 @@ public class ZipFileProcessor implements Processor {
              dataExportEmailProcessor.setEltRequestId(Integer.valueOf(getValueFor(batchHeaders, "etlRequestId")));
         }
 
-        Route ftpRoute = exchange.getContext().getRoute(RecapConstants.FTP_ROUTE);
+        Route ftpRoute = exchange.getContext().getRoute(ScsbConstants.FTP_ROUTE);
         if (null != ftpRoute) {
-            exchange.getContext().removeRoute(RecapConstants.FTP_ROUTE);
-            logger.info(RecapConstants.FTP_ROUTE + " Removed");
+            exchange.getContext().removeRoute(ScsbConstants.FTP_ROUTE);
+            logger.info(ScsbConstants.FTP_ROUTE + " Removed");
         }
 
         exchange.getContext().addRoutes(new RouteBuilder() {
@@ -96,20 +96,20 @@ public class ZipFileProcessor implements Processor {
             public void configure() throws Exception {
                 onCompletion()
                         .choice()
-                        .when(exchangeProperty(RecapCommonConstants.CAMEL_BATCH_COMPLETE))
+                        .when(exchangeProperty(ScsbCommonConstants.CAMEL_BATCH_COMPLETE))
                         .log("Sending Email After S3 Zipping")
                         .process(dataExportEmailProcessor)
                         .log("Data dump zipping completed.")
                         .bean(new ZipFileProcessor(exchange.getContext().createProducerTemplate(), exchange), "ftpOnCompletion")
                         .end();
                 from("file:" + s3StagingDir + File.separator + folderName + "?noop=true&antInclude=*.xml,*.json")
-                        .routeId(RecapConstants.FTP_ROUTE)
+                        .routeId(ScsbConstants.FTP_ROUTE)
                         .aggregate(new ZipAggregationStrategy(true, true))
                         .constant(true)
                         .completionFromBatchConsumer()
                         .eagerCheckCompletion()
                         .setHeader(S3Constants.KEY, simple(s3DataDumpRemoteServer+ folderName + ".zip"))
-                        .to(RecapConstants.SCSB_CAMEL_S3_TO_ENDPOINT);
+                        .to(ScsbConstants.SCSB_CAMEL_S3_TO_ENDPOINT);
             }
         });
     }
@@ -132,11 +132,11 @@ public class ZipFileProcessor implements Processor {
         String batchHeaders = (String) exchange.getIn().getHeader("batchHeaders");
         String reqestingInst = getValueFor(batchHeaders, "requestingInstitutionCode");
         logger.info("Req Inst -> {}" , reqestingInst);
-        if (RecapConstants.EXPORT_SCHEDULER_CALL) {
-            producer.sendBody(RecapConstants.DATA_DUMP_COMPLETION_FROM, reqestingInst);
+        if (ScsbConstants.EXPORT_SCHEDULER_CALL) {
+            producer.sendBody(ScsbConstants.DATA_DUMP_COMPLETION_FROM, reqestingInst);
         }
         String dataDumpTypeCompletionMessage = getDataDumpTypeCompletionMessage(batchHeaders);
-        producer.sendBody(RecapConstants.DATA_DUMP_COMPLETION_TOPIC,buildJsonResponseForTopics(batchHeaders,reqestingInst,dataDumpTypeCompletionMessage));
+        producer.sendBody(ScsbConstants.DATA_DUMP_COMPLETION_TOPIC,buildJsonResponseForTopics(batchHeaders,reqestingInst,dataDumpTypeCompletionMessage));
     }
 
 
@@ -144,24 +144,24 @@ public class ZipFileProcessor implements Processor {
         JSONObject jsonObject = new JSONObject();
         String[] messageSplit = dataDumpTypeCompletionMessage.split("-");
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-        String fileNameWithPath = getValueFor(batchHeaders, RecapConstants.FILENAME);
-        String fileName = "DeletedDataDump".equalsIgnoreCase(messageSplit[0]) ? fileNameWithPath.split("/")[2].concat(RecapConstants.ZIP_FILE_FORMAT) : fileNameWithPath.split("/")[3].concat(RecapConstants.ZIP_FILE_FORMAT);
-        jsonObject.put(RecapCommonConstants.INSTITUTION,requestingInstitutionCode);
-        jsonObject.put(RecapConstants.FILENAME,fileName);
-        jsonObject.put(RecapConstants.EXPORTED_DATE,simpleDateFormat.format(new Date()));
-        jsonObject.put(RecapConstants.DATA_DUMP_TYPE,messageSplit[0]);
-        jsonObject.put(RecapConstants.MESSAGE,messageSplit[1]);
+        String fileNameWithPath = getValueFor(batchHeaders, ScsbConstants.FILENAME);
+        String fileName = "DeletedDataDump".equalsIgnoreCase(messageSplit[0]) ? fileNameWithPath.split("/")[2].concat(ScsbConstants.ZIP_FILE_FORMAT) : fileNameWithPath.split("/")[3].concat(ScsbConstants.ZIP_FILE_FORMAT);
+        jsonObject.put(ScsbCommonConstants.INSTITUTION,requestingInstitutionCode);
+        jsonObject.put(ScsbConstants.FILENAME,fileName);
+        jsonObject.put(ScsbConstants.EXPORTED_DATE,simpleDateFormat.format(new Date()));
+        jsonObject.put(ScsbConstants.DATA_DUMP_TYPE,messageSplit[0]);
+        jsonObject.put(ScsbConstants.MESSAGE,messageSplit[1]);
         return jsonObject;
     }
 
     private String getDataDumpTypeCompletionMessage(String batchHeaders) {
-        Integer fetchType = Integer.valueOf(getValueFor(batchHeaders, RecapConstants.FETCH_TYPE));
+        Integer fetchType = Integer.valueOf(getValueFor(batchHeaders, ScsbConstants.FETCH_TYPE));
         if (fetchType == 1){
-            return "IncrementalDataDump-"+RecapConstants.DATA_DUMP_COMPLETION_TOPIC_MESSAGE;
+            return "IncrementalDataDump-"+ ScsbConstants.DATA_DUMP_COMPLETION_TOPIC_MESSAGE;
         }else if (fetchType == 2){
-            return "DeletedDataDump-"+RecapConstants.DELETED_DATA_DUMP_COMPLETION_TOPIC_MESSAGE;
+            return "DeletedDataDump-"+ ScsbConstants.DELETED_DATA_DUMP_COMPLETION_TOPIC_MESSAGE;
         }else {
-            return "FullDataDump-"+RecapConstants.FULL_DATA_DUMP_COMPLETION_TOPIC_MESSAGE;
+            return "FullDataDump-"+ ScsbConstants.FULL_DATA_DUMP_COMPLETION_TOPIC_MESSAGE;
         }
     }
 }

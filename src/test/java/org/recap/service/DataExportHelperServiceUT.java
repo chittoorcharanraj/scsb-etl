@@ -5,7 +5,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.camel.dynamicrouter.DynamicRouteBuilder;
 import org.recap.model.export.DataDumpRequest;
 import org.recap.model.jpa.ETLRequestLogEntity;
@@ -41,38 +41,38 @@ public class DataExportHelperServiceUT extends BaseTestCaseUT {
     public void checkForExistingRequestAndStartForDATADUMPInprogress(){
 
         DataDumpRequest dataDumpRequest = getDataDumpRequest();
-        dataDumpRequest.setTransmissionType(RecapConstants.DATADUMP_TRANSMISSION_TYPE_S3);
+        dataDumpRequest.setTransmissionType(ScsbConstants.DATADUMP_TRANSMISSION_TYPE_S3);
         ExportStatusEntity exportStatusEntity = getExportStatusEntity();
         ETLRequestLogEntity etlRequestLogEntity = getEtlRequestLogEntity();
-        Mockito.when(dataExportDBService.findByExportStatusCode(RecapConstants.IN_PROGRESS)).thenReturn(exportStatusEntity);
+        Mockito.when(dataExportDBService.findByExportStatusCode(ScsbConstants.IN_PROGRESS)).thenReturn(exportStatusEntity);
         Mockito.when(dataExportDBService.findAllStatusById(exportStatusEntity.getId())).thenReturn(Arrays.asList(etlRequestLogEntity));
         Mockito.when(dataDumpUtil.prepareRequestForAwaiting(any(),any())).thenReturn(etlRequestLogEntity);
         Mockito.when(dataExportDBService.saveETLRequestToDB(any())).thenReturn(etlRequestLogEntity);
         String result = dataExportHelperService.checkForExistingRequestAndStart(dataDumpRequest);
         assertNotNull(result);
-        assertEquals(RecapConstants.EXPORT_MESSAGE,result);
+        assertEquals(ScsbConstants.EXPORT_MESSAGE,result);
     }
     @Test
     public void checkForExistingRequestAndStartForDATADUMPAwaiting(){
 
         DataDumpRequest dataDumpRequest = getDataDumpRequest();
-        dataDumpRequest.setTransmissionType(RecapConstants.DATADUMP_TRANSMISSION_TYPE_S3);
+        dataDumpRequest.setTransmissionType(ScsbConstants.DATADUMP_TRANSMISSION_TYPE_S3);
         ExportStatusEntity exportStatusEntity = getExportStatusEntity();
         ExportStatusEntity exportStatusEntity2 = new ExportStatusEntity();
         exportStatusEntity2.setId(2);
         ETLRequestLogEntity etlRequestLogEntity = getEtlRequestLogEntity();
-        Mockito.when(dataExportDBService.findByExportStatusCode(RecapConstants.IN_PROGRESS)).thenReturn(exportStatusEntity2);
-        Mockito.when(dataExportDBService.findByExportStatusCode(RecapConstants.AWAITING)).thenReturn(exportStatusEntity);
-        Mockito.when(dataExportDBService.findByExportStatusIdAndTransmissionType(exportStatusEntity.getId(),RecapConstants.DATADUMP_TRANSMISSION_TYPE_S3)).thenReturn(Arrays.asList(etlRequestLogEntity));
-        Mockito.when(dataExportDBService.findByExportStatusIdAndTransmissionType(exportStatusEntity2.getId(),RecapConstants.DATADUMP_TRANSMISSION_TYPE_S3)).thenReturn(Collections.EMPTY_LIST);
+        Mockito.when(dataExportDBService.findByExportStatusCode(ScsbConstants.IN_PROGRESS)).thenReturn(exportStatusEntity2);
+        Mockito.when(dataExportDBService.findByExportStatusCode(ScsbConstants.AWAITING)).thenReturn(exportStatusEntity);
+        Mockito.when(dataExportDBService.findByExportStatusIdAndTransmissionType(exportStatusEntity.getId(), ScsbConstants.DATADUMP_TRANSMISSION_TYPE_S3)).thenReturn(Arrays.asList(etlRequestLogEntity));
+        Mockito.when(dataExportDBService.findByExportStatusIdAndTransmissionType(exportStatusEntity2.getId(), ScsbConstants.DATADUMP_TRANSMISSION_TYPE_S3)).thenReturn(Collections.EMPTY_LIST);
         Mockito.when(dataDumpUtil.prepareRequestForAwaiting(any(),any())).thenReturn(etlRequestLogEntity);
         Mockito.when(dataExportDBService.saveETLRequestToDB(any())).thenReturn(etlRequestLogEntity);
         Mockito.doNothing().when(dynamicRouteBuilder).addDataDumpExportRoutes();
         Mockito.when(dataDumpUtil.prepareRequestForExistingAwaiting()).thenReturn(dataDumpRequest);
-        Mockito.when(dataDumpExportService.startDataDumpProcess(any())).thenReturn(RecapConstants.EXPORT_MESSAGE);
+        Mockito.when(dataDumpExportService.startDataDumpProcess(any())).thenReturn(ScsbConstants.EXPORT_MESSAGE);
         String result = dataExportHelperService.checkForExistingRequestAndStart(dataDumpRequest);
         assertNotNull(result);
-        assertEquals(RecapConstants.EXPORT_MESSAGE,result);
+        assertEquals(ScsbConstants.EXPORT_MESSAGE,result);
     }
     @Test
     public void checkForExistingRequestAndStartWithoutTransmission(){
@@ -84,12 +84,12 @@ public class DataExportHelperServiceUT extends BaseTestCaseUT {
         Mockito.when(dataDumpUtil.prepareRequestForAwaiting(any(),any())).thenReturn(etlRequestLogEntity);
         Mockito.when(dataExportDBService.saveETLRequestToDB(any())).thenReturn(etlRequestLogEntity);
        // Mockito.doNothing().when(dynamicRouteBuilder).addDataDumpExportRoutes();
-        Mockito.when(dataDumpExportService.startDataDumpProcess(any())).thenReturn(RecapConstants.EXPORT_MESSAGE);
-        Mockito.when(dataExportDBService.findByExportStatusCode(RecapConstants.IN_PROGRESS)).thenReturn(exportStatusEntity);
+        Mockito.when(dataDumpExportService.startDataDumpProcess(any())).thenReturn(ScsbConstants.EXPORT_MESSAGE);
+        Mockito.when(dataExportDBService.findByExportStatusCode(ScsbConstants.IN_PROGRESS)).thenReturn(exportStatusEntity);
         Mockito.when(dataExportDBService.findAllStatusById(exportStatusEntity.getId())).thenReturn(Arrays.asList(etlRequestLogEntity));
         String result = dataExportHelperService.checkForExistingRequestAndStart(dataDumpRequest);
         assertNotNull(result);
-        assertEquals(RecapConstants.EXPORT_MESSAGE,result);
+        assertEquals(ScsbConstants.EXPORT_MESSAGE,result);
     }
 
     private DataDumpRequest getDataDumpRequest() {
@@ -105,14 +105,14 @@ public class DataExportHelperServiceUT extends BaseTestCaseUT {
         institutionCodes.add("NYPL");
         dataDumpRequest.setInstitutionCodes(institutionCodes);
         dataDumpRequest.setTransmissionType("2");
-        dataDumpRequest.setOutputFileFormat(RecapConstants.XML_FILE_FORMAT);
+        dataDumpRequest.setOutputFileFormat(ScsbConstants.XML_FILE_FORMAT);
         dataDumpRequest.setDateTimeString(getDateTimeString());
         dataDumpRequest.setEtlRequestId(1);
         return dataDumpRequest;
     }
     private String getDateTimeString() {
         Date date = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat(RecapConstants.DATE_FORMAT_DDMMMYYYYHHMM);
+        SimpleDateFormat sdf = new SimpleDateFormat(ScsbConstants.DATE_FORMAT_DDMMMYYYYHHMM);
         return sdf.format(date);
     }
     private ExportStatusEntity getExportStatusEntity() {

@@ -1,8 +1,8 @@
 package org.recap.util;
 
 import org.apache.commons.lang3.StringUtils;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +58,7 @@ public class DateUtil {
             LocalDateTime parsedDateTime = LocalDateTime.parse(inputDateTimeString, formatter);
             outputDateTime = Date.from(parsedDateTime.atZone(ZoneId.systemDefault()).toInstant());
         }catch (Exception e){
-            logger.error(RecapConstants.ERROR,e);
+            logger.error(ScsbConstants.ERROR,e);
         }
         return outputDateTime;
     }
@@ -70,15 +70,15 @@ public class DateUtil {
      * @return the formatted date string
      */
     public static String getFormattedDateString(String inputDateString, String inputToDateString) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(RecapCommonConstants.DATE_FORMAT_YYYYMMDDHHMM);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(ScsbCommonConstants.DATE_FORMAT_YYYYMMDDHHMM);
         String dateString = null;
         try {
-            DateFormat format = new SimpleDateFormat(RecapCommonConstants.UTC_DATE_FORMAT);
-            format.setTimeZone(TimeZone.getTimeZone(RecapCommonConstants.UTC));
+            DateFormat format = new SimpleDateFormat(ScsbCommonConstants.UTC_DATE_FORMAT);
+            format.setTimeZone(TimeZone.getTimeZone(ScsbCommonConstants.UTC));
 
             Date fromDate = simpleDateFormat.parse(inputDateString);
             String fromDateStr = format.format(fromDate);
-            dateString = fromDateStr + RecapCommonConstants.SOLR_DATE_RANGE_TO_NOW;
+            dateString = fromDateStr + ScsbCommonConstants.SOLR_DATE_RANGE_TO_NOW;
             if (StringUtils.isNotBlank(inputToDateString)) {
                 Date toDate = simpleDateFormat.parse(inputToDateString);
                 String toDateStr = format.format(toDate);
@@ -93,7 +93,7 @@ public class DateUtil {
 
     public static String getDateTimeString() {
         Date date = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat(RecapConstants.DATE_FORMAT_DDMMMYYYYHHMM);
+        SimpleDateFormat sdf = new SimpleDateFormat(ScsbConstants.DATE_FORMAT_DDMMMYYYYHHMM);
         return sdf.format(date);
     }
 }

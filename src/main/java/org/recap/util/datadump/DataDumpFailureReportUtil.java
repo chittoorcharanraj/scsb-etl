@@ -1,6 +1,6 @@
 package org.recap.util.datadump;
 
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.export.DataDumpRequest;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jparw.ReportDataEntity;
@@ -28,13 +28,13 @@ public class DataDumpFailureReportUtil {
         StringBuilder formatError = new StringBuilder();
         int count = 0;
         for(Map<String,Object>  successAndFailureFormattedList:successAndFailureFormattedFullList){
-            List<BibliographicEntity> failureList = (List<BibliographicEntity>)successAndFailureFormattedList.get(RecapConstants.DATADUMP_SUCCESSLIST);
+            List<BibliographicEntity> failureList = (List<BibliographicEntity>)successAndFailureFormattedList.get(ScsbConstants.DATADUMP_SUCCESSLIST);
             totalNoOfBibsFailedExported = totalNoOfBibsFailedExported+failureList.size();
             if(count>0 && formatError.length()>0){
                 formatError.append(",");
             }
-            if(successAndFailureFormattedList.get(RecapConstants.DATADUMP_FORMATERROR) != null){
-                formatError.append((String)successAndFailureFormattedList.get(RecapConstants.DATADUMP_FORMATERROR));
+            if(successAndFailureFormattedList.get(ScsbConstants.DATADUMP_FORMATERROR) != null){
+                formatError.append((String)successAndFailureFormattedList.get(ScsbConstants.DATADUMP_FORMATERROR));
             }
             count++;
         }

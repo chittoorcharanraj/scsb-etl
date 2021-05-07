@@ -4,8 +4,8 @@ import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.io.FileUtils;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.export.DataDumpRequest;
 import org.recap.service.email.datadump.DataDumpEmailService;
 import org.recap.service.executor.datadump.DataDumpExecutorService;
@@ -53,24 +53,24 @@ public class DataDumpExportService {
                 try {
                     dataDumpExecutorService.generateDataDump(dataDumpRequest);
                 } catch (Exception e) {
-                    logger.error(RecapConstants.ERROR,e);
+                    logger.error(ScsbConstants.ERROR,e);
                 }
             }).start();
 
             outputString = sendEmailAndGetResponse(dataDumpRequest);
             responseMessage = getResponseMessage(outputString, dataDumpRequest);
         } catch (Exception e) {
-            logger.error(RecapConstants.ERROR,e);
-            responseMessage = RecapConstants.DATADUMP_EXPORT_FAILURE;
+            logger.error(ScsbConstants.ERROR,e);
+            responseMessage = ScsbConstants.DATADUMP_EXPORT_FAILURE;
         }
         return responseMessage;
     }
 
     private String sendEmailAndGetResponse(DataDumpRequest dataDumpRequest) {
         String outputString;
-        if(dataDumpRequest.getTransmissionType().equals(RecapConstants.DATADUMP_TRANSMISSION_TYPE_HTTP)){
+        if(dataDumpRequest.getTransmissionType().equals(ScsbConstants.DATADUMP_TRANSMISSION_TYPE_HTTP)){
             String message = getMessageFromIsRecordAvailableQ();
-            if (message.equals(RecapConstants.DATADUMP_RECORDS_AVAILABLE_FOR_PROCESS)) {
+            if (message.equals(ScsbConstants.DATADUMP_RECORDS_AVAILABLE_FOR_PROCESS)) {
                 outputString = getMessageFromHttpQ();
                 dataDumpEmailService.sendEmailNotification(dataDumpRequest);
             } else{
@@ -84,10 +84,10 @@ public class DataDumpExportService {
     }
 
     private void sendEmailForS3FetchType(DataDumpRequest dataDumpRequest, String outputString) {
-        if(!outputString.equals(RecapConstants.DATADUMP_RECORDS_AVAILABLE_FOR_PROCESS)){
+        if(!outputString.equals(ScsbConstants.DATADUMP_RECORDS_AVAILABLE_FOR_PROCESS)){
             sendEmailForNoDataAvailable(dataDumpRequest);
-            if (RecapConstants.EXPORT_SCHEDULER_CALL) {
-                producerTemplate.sendBody(RecapConstants.DATA_DUMP_COMPLETION_FROM, dataDumpRequest.getRequestingInstitutionCode());
+            if (ScsbConstants.EXPORT_SCHEDULER_CALL) {
+                producerTemplate.sendBody(ScsbConstants.DATA_DUMP_COMPLETION_FROM, dataDumpRequest.getRequestingInstitutionCode());
             }
         }
         else {
@@ -102,7 +102,7 @@ public class DataDumpExportService {
                 dataDumpRequest.getTransmissionType(),
                 null,
                 dataDumpRequest.getToEmailAddress(),
-                RecapConstants.DATADUMP_NO_DATA_AVAILABLE,
+                ScsbConstants.DATADUMP_NO_DATA_AVAILABLE,
                 Integer.valueOf(0),
                 dataDumpRequest.getFetchType(), dataDumpRequest.getRequestingInstitutionCode(), dataDumpRequest.getImsDepositoryCodes());
     }
@@ -112,7 +112,7 @@ public class DataDumpExportService {
      * @return
      */
     private String getMessageFromHttpQ(){
-        return getMessageFrom(consumerTemplate, RecapConstants.DATADUMP_HTTP_Q);
+        return getMessageFrom(consumerTemplate, ScsbConstants.DATADUMP_HTTP_Q);
     }
 
     /**
@@ -120,7 +120,7 @@ public class DataDumpExportService {
      * @return
      */
     private String getMessageFromIsRecordAvailableQ(){
-        return getMessageFrom(consumerTemplate, RecapConstants.DATADUMP_IS_RECORD_AVAILABLE_Q);
+        return getMessageFrom(consumerTemplate, ScsbConstants.DATADUMP_IS_RECORD_AVAILABLE_Q);
     }
 
   /**
@@ -132,18 +132,18 @@ public class DataDumpExportService {
         try {
             if (file.exists()) {
                 String dataDumpStatus = FileUtils.readFileToString(file, Charset.defaultCharset());
-                if (dataDumpStatus.contains(RecapConstants.COMPLETED)) {
-                    writeStatusToFile(file, RecapConstants.IN_PROGRESS);
+                if (dataDumpStatus.contains(ScsbConstants.COMPLETED)) {
+                    writeStatusToFile(file, ScsbConstants.IN_PROGRESS);
                 }
             } else {
                 parentFile.mkdirs();
                 boolean newFile = file.createNewFile();
                 if(newFile) {
-                    writeStatusToFile(file, RecapConstants.IN_PROGRESS);
+                    writeStatusToFile(file, ScsbConstants.IN_PROGRESS);
                 }
             }
         } catch (IOException e) {
-            logger.error(RecapConstants.ERROR,e);
+            logger.error(ScsbConstants.ERROR,e);
             logger.error("Exception while creating or updating the file : " + e.getMessage());
         }
     }
@@ -159,7 +159,7 @@ public class DataDumpExportService {
             fileWriter.append(status);
             fileWriter.flush();
         } catch (IOException e) {
-            logger.error(RecapConstants.EXCEPTION, e);
+            logger.error(ScsbConstants.EXCEPTION, e);
         }
     }
 
@@ -173,29 +173,29 @@ public class DataDumpExportService {
     private String getResponseMessage(String outputString, DataDumpRequest dataDumpRequest) throws Exception {
         HttpHeaders responseHeaders = new HttpHeaders();
         String date = new Date().toString();
-        if (dataDumpRequest.getTransmissionType().equals(RecapConstants.DATADUMP_TRANSMISSION_TYPE_S3)) {
-            if (outputString.equals(RecapConstants.DATADUMP_RECORDS_AVAILABLE_FOR_PROCESS)) {
+        if (dataDumpRequest.getTransmissionType().equals(ScsbConstants.DATADUMP_TRANSMISSION_TYPE_S3)) {
+            if (outputString.equals(ScsbConstants.DATADUMP_RECORDS_AVAILABLE_FOR_PROCESS)) {
                 logger.info("Writing to data-dump status file as 'In Progress' on Dump-Type:{} Requesting Inst : {} and Request ID : {} ",dataDumpRequest.getFetchType(),dataDumpRequest.getRequestingInstitutionCode(),dataDumpRequest.getEtlRequestId());
                 if(!dataDumpRequest.isRequestFromSwagger()){
                     setDataExportCurrentStatus();
                 }
                 else{
-                    dataDumpUtil.updateStatusInETLRequestLog(dataDumpRequest,RecapConstants.IN_PROGRESS);
+                    dataDumpUtil.updateStatusInETLRequestLog(dataDumpRequest, ScsbConstants.IN_PROGRESS);
                 }
-                    outputString = RecapConstants.DATADUMP_PROCESS_STARTED;
+                    outputString = ScsbConstants.DATADUMP_PROCESS_STARTED;
             }
-            responseHeaders.add(RecapCommonConstants.RESPONSE_DATE, date);
+            responseHeaders.add(ScsbCommonConstants.RESPONSE_DATE, date);
             return outputString;
-        }else if (dataDumpRequest.getTransmissionType().equals(RecapConstants.DATADUMP_TRANSMISSION_TYPE_HTTP) && outputString != null) {
-            responseHeaders.add(RecapCommonConstants.RESPONSE_DATE, date);
+        }else if (dataDumpRequest.getTransmissionType().equals(ScsbConstants.DATADUMP_TRANSMISSION_TYPE_HTTP) && outputString != null) {
+            responseHeaders.add(ScsbCommonConstants.RESPONSE_DATE, date);
             if(dataDumpRequest.isRequestFromSwagger()){
-            dataDumpUtil.updateStatusInETLRequestLog(dataDumpRequest,outputString.contains("100")?outputString:RecapConstants.COMPLETED);}
+            dataDumpUtil.updateStatusInETLRequestLog(dataDumpRequest,outputString.contains("100")?outputString: ScsbConstants.COMPLETED);}
             return outputString;
         } else {
             if(dataDumpRequest.isRequestFromSwagger()){
-            dataDumpUtil.updateStatusInETLRequestLog(dataDumpRequest,RecapConstants.DATADUMP_EXPORT_FAILURE);}
-            responseHeaders.add(RecapCommonConstants.RESPONSE_DATE, date);
-            return RecapConstants.DATADUMP_EXPORT_FAILURE;
+            dataDumpUtil.updateStatusInETLRequestLog(dataDumpRequest, ScsbConstants.DATADUMP_EXPORT_FAILURE);}
+            responseHeaders.add(ScsbCommonConstants.RESPONSE_DATE, date);
+            return ScsbConstants.DATADUMP_EXPORT_FAILURE;
         }
     }
 

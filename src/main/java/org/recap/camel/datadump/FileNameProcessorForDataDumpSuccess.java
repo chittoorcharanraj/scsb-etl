@@ -3,8 +3,8 @@ package org.recap.camel.datadump;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.commons.io.FilenameUtils;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.csv.DataDumpSuccessReport;
 
 import java.util.List;
@@ -25,9 +25,9 @@ public class FileNameProcessorForDataDumpSuccess implements Processor {
         DataDumpSuccessReport dataDumpSuccessReport = (DataDumpSuccessReport) exchange.getIn().getBody();
         List<DataDumpSuccessReport> dataDumpSuccessReportList = dataDumpSuccessReport.getDataDumpSuccessReportList();
         String fileName = FilenameUtils.removeExtension(dataDumpSuccessReport.getFileName());
-        exchange.getIn().setHeader(RecapCommonConstants.REPORT_FILE_NAME, fileName);
-        exchange.getIn().setHeader(RecapConstants.REPORT_TYPE, dataDumpSuccessReport.getReportType());
-        exchange.getIn().setHeader(RecapConstants.DIRECTORY_NAME, dataDumpSuccessReport.getInstitutionName());
+        exchange.getIn().setHeader(ScsbCommonConstants.REPORT_FILE_NAME, fileName);
+        exchange.getIn().setHeader(ScsbConstants.REPORT_TYPE, dataDumpSuccessReport.getReportType());
+        exchange.getIn().setHeader(ScsbConstants.DIRECTORY_NAME, dataDumpSuccessReport.getInstitutionName());
         exchange.getIn().setBody(dataDumpSuccessReportList);
     }
 }

@@ -1,8 +1,8 @@
 package org.recap.camel;
 
 import org.apache.camel.ProducerTemplate;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.HoldingsEntity;
 import org.recap.model.jpa.ItemEntity;
@@ -72,10 +72,10 @@ public class BibDataProcessor {
                     processRecordWhenDuplicateBarcodeException(bibliographicEntityList, pe);
                 } catch(Exception e) {
                     logger.info("exception while eliminating..");
-                    logger.error(RecapConstants.ERROR,e);
+                    logger.error(ScsbConstants.ERROR,e);
                 }
             } catch (Exception e) {
-                logger.error(RecapConstants.ERROR,e);
+                logger.error(ScsbConstants.ERROR,e);
                 etlDataLoadDAOService.clearSession();
                 dbReportUtil.setCollectionGroupMap(etlExchange.getCollectionGroupMap());
                 dbReportUtil.setInstitutionEntitiesMap(etlExchange.getInstitutionEntityMap());
@@ -83,14 +83,14 @@ public class BibDataProcessor {
                     try {
                         etlDataLoadDAOService.saveBibliographicEntity(bibliographicEntity);
                     } catch (Exception ex) {
-                        logger.error(RecapConstants.ERROR,ex);
+                        logger.error(ScsbConstants.ERROR,ex);
                         etlDataLoadDAOService.clearSession();
                         reportEntity = processBibHoldingsItems(dbReportUtil, bibliographicEntity);
                     }
                 }
             }
             if (null != reportEntity) {
-                producer.sendBody(RecapConstants.ETL_REPORT_Q, reportEntity);
+                producer.sendBody(ScsbConstants.ETL_REPORT_Q, reportEntity);
             }
         }
     }
@@ -101,7 +101,7 @@ public class BibDataProcessor {
         for(BibliographicEntity bibliographicEntity:bibliographicEntityList){
             List<ReportEntity> reportEntityList = processDuplicatedRecord(bibliographicEntity);
             for(ReportEntity reportEntity1:reportEntityList){
-                producer.sendBody(RecapConstants.ETL_REPORT_Q, reportEntity1);
+                producer.sendBody(ScsbConstants.ETL_REPORT_Q, reportEntity1);
             }
         }
     }
@@ -229,23 +229,23 @@ public class BibDataProcessor {
                             ItemEntity savedItemEntity = bibliographicRepositoryDAO.saveOrUpdateItemEntity(itemEntity);
                             savedItemEntities.add(savedItemEntity);
                         } catch (Exception itemEx) {
-                            logger.error(RecapConstants.ERROR,itemEx);
+                            logger.error(ScsbConstants.ERROR,itemEx);
                             etlDataLoadDAOService.clearSession();
                             setItemFailureReportInfo(dbReportUtil, bibliographicEntity, reportEntity, holdingsEntity, itemEntity, itemEx,null);
                         }
                     }
                 } catch (Exception holdingsEx) {
-                    logger.error(RecapConstants.ERROR,holdingsEx);
+                    logger.error(ScsbConstants.ERROR,holdingsEx);
                     etlDataLoadDAOService.clearSession();
                     List<ReportDataEntity> reportDataEntities = dbReportUtil.generateBibHoldingsFailureReportEntity(bibliographicEntity, holdingsEntity);
                     reportEntity.setReportDataEntities(reportDataEntities);
                     ReportDataEntity exceptionReportDataEntity = new ReportDataEntity();
-                    exceptionReportDataEntity.setHeaderName(RecapConstants.EXCEPTION_MESSAGE);
+                    exceptionReportDataEntity.setHeaderName(ScsbConstants.EXCEPTION_MESSAGE);
                     exceptionReportDataEntity.setHeaderValue(holdingsEx.getCause().getCause().getMessage());
                     reportDataEntities.add(exceptionReportDataEntity);
                     reportEntity.setFileName(xmlFileName);
                     reportEntity.setCreatedDate(new Date());
-                    reportEntity.setType(RecapCommonConstants.FAILURE);
+                    reportEntity.setType(ScsbCommonConstants.FAILURE);
                     reportEntity.setInstitutionName(institutionName);
                 }
             }
@@ -253,12 +253,12 @@ public class BibDataProcessor {
             bibliographicEntity.setItemEntities(savedItemEntities);
             etlDataLoadDAOService.saveBibliographicEntity(bibliographicEntity);
         } catch (Exception bibEx) {
-            logger.error(RecapConstants.ERROR,bibEx);
+            logger.error(ScsbConstants.ERROR,bibEx);
             etlDataLoadDAOService.clearSession();
             List<ReportDataEntity> reportDataEntities = dbReportUtil.generateBibFailureReportEntity(bibliographicEntity);
 
             ReportDataEntity exceptionReportDataEntity = new ReportDataEntity();
-            exceptionReportDataEntity.setHeaderName(RecapConstants.EXCEPTION_MESSAGE);
+            exceptionReportDataEntity.setHeaderName(ScsbConstants.EXCEPTION_MESSAGE);
 
             if(bibEx.getCause() != null && bibEx.getCause().getCause() != null) {
                 exceptionReportDataEntity.setHeaderValue(bibEx.getCause().getCause().getMessage());
@@ -268,7 +268,7 @@ public class BibDataProcessor {
             reportDataEntities.add(exceptionReportDataEntity);
             reportEntity.setFileName(xmlFileName);
             reportEntity.setCreatedDate(new Date());
-            reportEntity.setType(RecapCommonConstants.FAILURE);
+            reportEntity.setType(ScsbCommonConstants.FAILURE);
             reportEntity.setInstitutionName(institutionName);
         }
         return reportEntity;
@@ -279,17 +279,17 @@ public class BibDataProcessor {
         List<ReportDataEntity> reportDataEntities = dbReportUtil.generateBibHoldingsAndItemsFailureReportEntities(bibliographicEntity, holdingsEntity, itemEntity);
         ReportDataEntity exceptionReportDataEntity = new ReportDataEntity();
         if (failureMessage!=null) {
-            exceptionReportDataEntity.setHeaderName(RecapCommonConstants.ERROR_DESCRIPTION);
+            exceptionReportDataEntity.setHeaderName(ScsbCommonConstants.ERROR_DESCRIPTION);
             exceptionReportDataEntity.setHeaderValue(failureMessage);
         } else {
-            exceptionReportDataEntity.setHeaderName(RecapConstants.EXCEPTION_MESSAGE);
+            exceptionReportDataEntity.setHeaderName(ScsbConstants.EXCEPTION_MESSAGE);
             exceptionReportDataEntity.setHeaderValue(itemEx.getCause().getCause().getMessage());
         }
         reportDataEntities.add(exceptionReportDataEntity);
         reportEntity.setReportDataEntities(reportDataEntities);
         reportEntity.setFileName(xmlFileName);
         reportEntity.setCreatedDate(new Date());
-        reportEntity.setType(RecapCommonConstants.FAILURE);
+        reportEntity.setType(ScsbCommonConstants.FAILURE);
         reportEntity.setInstitutionName(institutionName);
     }
 

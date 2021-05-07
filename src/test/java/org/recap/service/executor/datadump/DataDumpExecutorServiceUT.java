@@ -7,7 +7,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
+import org.recap.ScsbCommonConstants;
 import org.recap.model.export.DataDumpRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -62,13 +62,13 @@ public class DataDumpExecutorServiceUT extends BaseTestCaseUT {
         dataDumpExecutorInterfaceList.add(dataDumpExecutorInterface);
         ReflectionTestUtils.setField(dataDumpExecutorService,"dataDumpExecutorInterfaceList",dataDumpExecutorInterfaceList);
         Mockito.when(dataDumpExecutorInterface.isInterested(Mockito.any())).thenReturn(true);
-        Mockito.when(dataDumpExecutorInterface.process(Mockito.any())).thenReturn(RecapCommonConstants.SUCCESS);
+        Mockito.when(dataDumpExecutorInterface.process(Mockito.any())).thenReturn(ScsbCommonConstants.SUCCESS);
         try {
             res = dataDumpExecutorService.generateDataDump(dataDumpRequest);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        assertEquals(RecapCommonConstants.SUCCESS,res);
+        assertEquals(ScsbCommonConstants.SUCCESS,res);
     }
     @Test
     public void getExecutor(){

@@ -2,8 +2,8 @@ package org.recap.camel;
 
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.lang3.StringUtils;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.etl.BibPersisterCallable;
 import org.recap.model.jaxb.BibRecord;
 import org.recap.model.jaxb.Holding;
@@ -26,6 +26,7 @@ import org.recap.util.MarcUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -96,6 +97,9 @@ public class RecordProcessor {
     @Autowired
     private MarcUtil marcUtil;
 
+    @Value("${etl.initial.data.load.thread.size}")
+    private Integer dataLoadThreadSize;
+
 
     /**
      * This method processes the xml record entities in scsb format and builds bibliographic entities to persist.
@@ -117,9 +121,9 @@ public class RecordProcessor {
                 object = future.get();
             } catch (InterruptedException  e) {
                 Thread.currentThread().interrupt();
-                logger.error(RecapConstants.ERROR,e);
+                logger.error(ScsbConstants.ERROR,e);
             } catch  (ExecutionException e) {
-                logger.error(RecapConstants.ERROR,e);
+                logger.error(ScsbConstants.ERROR,e);
             }
 
             processFutureResults(object, bibliographicEntities, reportEntities);
@@ -138,7 +142,7 @@ public class RecordProcessor {
 
         if (!CollectionUtils.isEmpty(reportEntities)) {
             for(ReportEntity reportEntity : reportEntities) {
-                producer.sendBody(RecapConstants.ETL_REPORT_Q, reportEntity);
+                producer.sendBody(ScsbConstants.ETL_REPORT_Q, reportEntity);
             }
         }
 
@@ -208,32 +212,32 @@ public class RecordProcessor {
                 }
 
             } catch (Exception e) {
-                logger.error(RecapConstants.ERROR,e);
+                logger.error(ScsbConstants.ERROR,e);
                 ReportEntity reportEntity = new ReportEntity();
                 List<ReportDataEntity> reportDataEntities = new ArrayList<>();
                 String owningInst = xmlRecordEntity.getOwningInst();
                 reportEntity.setCreatedDate(new Date());
-                reportEntity.setType(RecapCommonConstants.FAILURE);
+                reportEntity.setType(ScsbCommonConstants.FAILURE);
                 reportEntity.setFileName(xmlRecordEntity.getXmlFileName());
                 reportEntity.setInstitutionName(owningInst);
 
                 if(StringUtils.isNotBlank(owningInst)) {
                     ReportDataEntity reportDataEntity = new ReportDataEntity();
-                    reportDataEntity.setHeaderName(RecapCommonConstants.OWNING_INSTITUTION);
+                    reportDataEntity.setHeaderName(ScsbCommonConstants.OWNING_INSTITUTION);
                     reportDataEntity.setHeaderValue(String.valueOf(getInstitutionEntityMap().get(owningInst)));
                     reportDataEntities.add(reportDataEntity);
                 }
 
                 if(StringUtils.isNotBlank(xmlRecordEntity.getOwningInstBibId())) {
                     ReportDataEntity reportDataEntity = new ReportDataEntity();
-                    reportDataEntity.setHeaderName(RecapCommonConstants.OWNING_INSTITUTION_BIB_ID);
+                    reportDataEntity.setHeaderName(ScsbCommonConstants.OWNING_INSTITUTION_BIB_ID);
                     reportDataEntity.setHeaderValue(xmlRecordEntity.getOwningInstBibId());
                     reportDataEntities.add(reportDataEntity);
                 }
 
                 if(e.getCause() != null) {
                     ReportDataEntity reportDataEntity = new ReportDataEntity();
-                    reportDataEntity.setHeaderName(RecapConstants.EXCEPTION_MESSAGE);
+                    reportDataEntity.setHeaderName(ScsbConstants.EXCEPTION_MESSAGE);
                     reportDataEntity.setHeaderValue(e.getCause().getMessage());
                     reportDataEntities.add(reportDataEntity);
                 }
@@ -248,7 +252,7 @@ public class RecordProcessor {
             futures = getExecutorService().invokeAll(callables);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            logger.error(RecapConstants.ERROR,e);
+            logger.error(ScsbConstants.ERROR,e);
         }
         if(futures !=null) {
             futures
@@ -276,26 +280,26 @@ public class RecordProcessor {
         List<ReportDataEntity> reportDataEntities = new ArrayList<>();
         String owningInst = xmlRecordEntity.getOwningInst();
         reportEntity.setCreatedDate(new Date());
-        reportEntity.setType(RecapCommonConstants.FAILURE);
+        reportEntity.setType(ScsbCommonConstants.FAILURE);
         reportEntity.setFileName(xmlRecordEntity.getXmlFileName());
         reportEntity.setInstitutionName(owningInst);
 
         if(StringUtils.isNotBlank(owningInst)) {
             ReportDataEntity reportDataEntity = new ReportDataEntity();
-            reportDataEntity.setHeaderName(RecapCommonConstants.OWNING_INSTITUTION);
+            reportDataEntity.setHeaderName(ScsbCommonConstants.OWNING_INSTITUTION);
             reportDataEntity.setHeaderValue(String.valueOf(getInstitutionEntityMap().get(owningInst)));
             reportDataEntities.add(reportDataEntity);
         }
 
         if(StringUtils.isNotBlank(xmlRecordEntity.getOwningInstBibId())) {
             ReportDataEntity reportDataEntity = new ReportDataEntity();
-            reportDataEntity.setHeaderName(RecapCommonConstants.OWNING_INSTITUTION_BIB_ID);
+            reportDataEntity.setHeaderName(ScsbCommonConstants.OWNING_INSTITUTION_BIB_ID);
             reportDataEntity.setHeaderValue(xmlRecordEntity.getOwningInstBibId());
             reportDataEntities.add(reportDataEntity);
         }
 
         ReportDataEntity reportDataEntity = new ReportDataEntity();
-        reportDataEntity.setHeaderName(RecapConstants.EXCEPTION_MESSAGE);
+        reportDataEntity.setHeaderName(ScsbConstants.EXCEPTION_MESSAGE);
         reportDataEntity.setHeaderValue(message);
         reportDataEntities.add(reportDataEntity);
 
@@ -426,7 +430,7 @@ public class RecordProcessor {
      */
     public ExecutorService getExecutorService() {
         if (null == executorService || executorService.isShutdown()) {
-            executorService = Executors.newFixedThreadPool(50);
+            executorService = Executors.newFixedThreadPool(dataLoadThreadSize);
         }
         return executorService;
     }

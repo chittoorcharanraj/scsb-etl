@@ -9,8 +9,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.TestUtil;
 import org.recap.model.ILSConfigProperties;
 import org.recap.model.jpa.BibliographicEntity;
@@ -309,7 +309,7 @@ public class MarcXmlFormatterServiceUT extends BaseTestCaseUT {
     public void generateMarcXml() throws Exception {
         Mockito.when(propertyUtil.getILSConfigProperties(Mockito.anyString())).thenReturn(getIlsConfigProperties());
         Map<String, Object> successAndFailureFormattedList = marcXmlFormatterService.prepareMarcRecords(Arrays.asList(getBibliographicEntity(bibContent.getBytes())));
-        String marcXmlString = marcXmlFormatterService.covertToMarcXmlString((List<Record>)successAndFailureFormattedList.get(RecapCommonConstants.SUCCESS));
+        String marcXmlString = marcXmlFormatterService.covertToMarcXmlString((List<Record>)successAndFailureFormattedList.get(ScsbCommonConstants.SUCCESS));
         List<Record> recordList = readMarcXml(marcXmlString);
         assertNotNull(recordList);
         assertEquals("SCSB-100", recordList.get(0).getControlFields().get(0).getData());
@@ -324,7 +324,7 @@ public class MarcXmlFormatterServiceUT extends BaseTestCaseUT {
     public void generateMarcXmlupdate001Field() throws Exception {
         Mockito.when(propertyUtil.getILSConfigProperties(Mockito.anyString())).thenReturn(getIlsConfigProperties());
         Map<String, Object> successAndFailureFormattedList = marcXmlFormatterService.prepareMarcRecords(Arrays.asList(getBibliographicEntity(bibContent1.getBytes())));
-        String marcXmlString = marcXmlFormatterService.covertToMarcXmlString((List<Record>)successAndFailureFormattedList.get(RecapCommonConstants.SUCCESS));
+        String marcXmlString = marcXmlFormatterService.covertToMarcXmlString((List<Record>)successAndFailureFormattedList.get(ScsbCommonConstants.SUCCESS));
         List<Record> recordList = readMarcXml(marcXmlString);
         assertNotNull(recordList);
         assertEquals("SCSB-100", recordList.get(0).getControlFields().get(0).getData());
@@ -344,12 +344,12 @@ public class MarcXmlFormatterServiceUT extends BaseTestCaseUT {
     public void generateMarcXmlForMalformedBibContent() throws IOException, URISyntaxException {
         BibliographicEntity bibliographicEntity = getMalformedBibliographicEntity();
         Map<String, Object> successAndFailureFormattedList = marcXmlFormatterService.prepareMarcRecords(Arrays.asList(bibliographicEntity));
-        List<String> marcXmlString = (List<String>) successAndFailureFormattedList.get(RecapCommonConstants.SUCCESS);
+        List<String> marcXmlString = (List<String>) successAndFailureFormattedList.get(ScsbCommonConstants.SUCCESS);
         assertEquals(marcXmlString.size(),0);
-        List<String> failures = (List<String>) successAndFailureFormattedList.get(RecapCommonConstants.FAILURE);
+        List<String> failures = (List<String>) successAndFailureFormattedList.get(ScsbCommonConstants.FAILURE);
         String failureMessage = failures.get(0);
         assertNotNull(failureMessage);
-        boolean returnType=marcXmlFormatterService.isInterested(RecapConstants.DATADUMP_XML_FORMAT_MARC);
+        boolean returnType=marcXmlFormatterService.isInterested(ScsbConstants.DATADUMP_XML_FORMAT_MARC);
         assertTrue(returnType);
     }
 
@@ -483,7 +483,7 @@ public class MarcXmlFormatterServiceUT extends BaseTestCaseUT {
         Optional<BibliographicEntity> bibliographicEntity = Optional.ofNullable(saveBibSingleHoldingsSingleItem("100", "330033001"));
         Mockito.when(propertyUtil.getILSConfigProperties(Mockito.anyString())).thenReturn(getIlsConfigProperties());
         Map<String, Object> recordMap = marcXmlFormatterService.prepareMarcRecord(bibliographicEntity.get());
-        Record record = (Record) recordMap.get(RecapCommonConstants.SUCCESS);
+        Record record = (Record) recordMap.get(ScsbCommonConstants.SUCCESS);
         assertNotNull(record);
     }
 

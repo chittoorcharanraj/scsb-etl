@@ -4,7 +4,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.aggregate.UseOriginalAggregationStrategy;
 import org.apache.commons.lang3.StringUtils;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jpa.XmlRecordEntity;
 import org.recap.repository.XmlRecordRepository;
 import org.slf4j.Logger;
@@ -84,7 +84,7 @@ public class XmlProcessor implements Processor {
             if(value instanceof UseOriginalAggregationStrategy) {
                 UseOriginalAggregationStrategy useOriginalAggregationStrategy = (UseOriginalAggregationStrategy) value;
                 Exchange originalExchange = useOriginalAggregationStrategy.aggregate(exchange, null);
-                originalExchange.getProperties().put(RecapConstants.INST_NAME,owningInstitutionId);
+                originalExchange.getProperties().put(ScsbConstants.INST_NAME,owningInstitutionId);
             }
         }
     }

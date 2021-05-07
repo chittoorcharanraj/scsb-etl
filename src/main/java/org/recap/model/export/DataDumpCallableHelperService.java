@@ -1,6 +1,6 @@
 package org.recap.model.export;
 
-import org.recap.RecapCommonConstants;
+import org.recap.ScsbCommonConstants;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.repository.BibliographicDetailsRepository;
 import org.recap.util.DateUtil;
@@ -46,7 +46,7 @@ public class DataDumpCallableHelperService {
      * @return the incremental data dump records
      */
     public List<BibliographicEntity> getIncrementalDataDumpRecords(int page, int size, DataDumpRequest dataDumpRequest, BibliographicDetailsRepository bibliographicDetailsRepository) {
-        Date inputDate = DateUtil.getDateFromString(dataDumpRequest.getDate(), RecapCommonConstants.DATE_FORMAT_YYYYMMDDHHMM);
+        Date inputDate = DateUtil.getDateFromString(dataDumpRequest.getDate(), ScsbCommonConstants.DATE_FORMAT_YYYYMMDDHHMM);
         Page<BibliographicEntity> bibliographicEntities;
         bibliographicEntities = bibliographicDetailsRepository.getRecordsForIncrementalDump(PageRequest.of(page, size)
                     , dataDumpRequest.getCollectionGroupIds(), dataDumpRequest.getInstitutionCodes(), inputDate);
@@ -64,7 +64,7 @@ public class DataDumpCallableHelperService {
      */
     public List<BibliographicEntity> getDeletedRecords(int page, int size, DataDumpRequest dataDumpRequest, BibliographicDetailsRepository bibliographicDetailsRepository) {
         Page<BibliographicEntity> bibliographicEntities;
-        Date inputDate = DateUtil.getDateFromString(dataDumpRequest.getDate(), RecapCommonConstants.DATE_FORMAT_YYYYMMDDHHMM);
+        Date inputDate = DateUtil.getDateFromString(dataDumpRequest.getDate(), ScsbCommonConstants.DATE_FORMAT_YYYYMMDDHHMM);
         if(dataDumpRequest.getDate()==null){
             bibliographicEntities = bibliographicDetailsRepository.getDeletedRecordsForFullDump(PageRequest.of(page, size)
                     , dataDumpRequest.getCollectionGroupIds(), dataDumpRequest.getInstitutionCodes());

@@ -13,7 +13,7 @@ import java.util.List;
  */
 @Data
 @CsvRecord(generateHeaderColumns = true, separator = ",", quoting = true, crlf = "UNIX", skipFirstLine = true)
-public class ReCAPCSVSuccessRecord implements Serializable {
+public class SCSBCSVSuccessRecord implements Serializable {
     @DataField(pos = 1, columnName = "File Name")
     private String fileName;
     @DataField(pos = 2, columnName = "Total Records In File")
@@ -36,6 +36,6 @@ public class ReCAPCSVSuccessRecord implements Serializable {
     /**
      * The Success report re capcsv record list.
      */
-    @OneToMany(mappedTo = "org.recap.model.csv.SuccessReportReCAPCSVRecord")
-    private List<SuccessReportReCAPCSVRecord> successReportReCAPCSVRecordList;
+    @OneToMany(mappedTo = "org.recap.model.csv.SuccessReportSCSBCSVRecord")
+    private List<SuccessReportSCSBCSVRecord> successReportSCSBCSVRecordList;
 }

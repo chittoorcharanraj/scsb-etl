@@ -11,7 +11,7 @@ import java.io.Serializable;
  */
 @Data
 @CsvRecord(generateHeaderColumns = true, separator = ",", quoting = true, crlf = "UNIX")
-public class FailureReportReCAPCSVRecord implements Serializable {
+public class FailureReportSCSBCSVRecord implements Serializable {
     @DataField(pos = 1)
     private String owningInstitution;
     @DataField(pos = 2)

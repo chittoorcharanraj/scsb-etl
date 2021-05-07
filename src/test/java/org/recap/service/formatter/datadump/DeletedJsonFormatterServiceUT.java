@@ -5,7 +5,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
+import org.recap.ScsbCommonConstants;
 import org.recap.model.export.DeletedRecord;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.HoldingsEntity;
@@ -45,7 +45,7 @@ public class DeletedJsonFormatterServiceUT extends BaseTestCaseUT {
         itemEntity.setItemAvailabilityStatusId(123);
         Mockito.when(bibliographicDetailsRepository.findByOwningInstitutionIdAndOwningInstitutionBibId(Mockito.anyInt(),Mockito.anyString())).thenReturn(getBibliographicEntityList().get(0));
         Map<String,Object> successAndFailureFormattedList = deletedJsonFormatterService.prepareDeletedRecords(getBibliographicEntityList());
-        List<DeletedRecord> deletedRecordList = (List<DeletedRecord>)successAndFailureFormattedList.get(RecapCommonConstants.SUCCESS);
+        List<DeletedRecord> deletedRecordList = (List<DeletedRecord>)successAndFailureFormattedList.get(ScsbCommonConstants.SUCCESS);
         String outputString = (String) deletedJsonFormatterService.getJsonForDeletedRecords(deletedRecordList);
         ReflectionTestUtils.invokeMethod(deletedJsonFormatterService,"isChangedToPrivateCGD",itemEntity);
         assertNotNull(outputString);
@@ -65,7 +65,7 @@ public class DeletedJsonFormatterServiceUT extends BaseTestCaseUT {
 
         Mockito.when(bibliographicDetailsRepository.findByOwningInstitutionIdAndOwningInstitutionBibId(Mockito.anyInt(),Mockito.anyString())).thenReturn(bibliographicEntity);
         Map<String,Object> successAndFailureFormattedList = deletedJsonFormatterService.prepareDeletedRecords(getBibliographicEntityList());
-        List<DeletedRecord> deletedRecordList = (List<DeletedRecord>)successAndFailureFormattedList.get(RecapCommonConstants.SUCCESS);
+        List<DeletedRecord> deletedRecordList = (List<DeletedRecord>)successAndFailureFormattedList.get(ScsbCommonConstants.SUCCESS);
         String outputString = (String) deletedJsonFormatterService.getJsonForDeletedRecords(deletedRecordList);
         ReflectionTestUtils.invokeMethod(deletedJsonFormatterService,"isChangedToPrivateCGD",itemEntity);
         assertNotNull(outputString);

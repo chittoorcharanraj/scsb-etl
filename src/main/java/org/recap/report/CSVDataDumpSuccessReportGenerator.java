@@ -1,8 +1,8 @@
 package org.recap.report;
 
 import org.apache.commons.io.FilenameUtils;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.csv.DataDumpSuccessReport;
 import org.recap.model.jparw.ReportEntity;
 import org.recap.util.datadump.DataDumpSuccessReportGenerator;
@@ -29,7 +29,7 @@ public class CSVDataDumpSuccessReportGenerator extends CommonReportGenerator  im
      */
     @Override
     public boolean isInterested(String reportType) {
-        return reportType.equalsIgnoreCase(RecapConstants.BATCH_EXPORT_SUCCESS);
+        return reportType.equalsIgnoreCase(ScsbConstants.BATCH_EXPORT_SUCCESS);
     }
 
     /**
@@ -40,7 +40,7 @@ public class CSVDataDumpSuccessReportGenerator extends CommonReportGenerator  im
      */
     @Override
     public boolean isTransmitted(String transmissionType) {
-        return transmissionType.equalsIgnoreCase(RecapCommonConstants.FILE_SYSTEM);
+        return transmissionType.equalsIgnoreCase(ScsbCommonConstants.FILE_SYSTEM);
     }
 
     /**
@@ -51,7 +51,7 @@ public class CSVDataDumpSuccessReportGenerator extends CommonReportGenerator  im
      */
     @Override
     public boolean isOperationType(String operationType) {
-        return operationType.equalsIgnoreCase(RecapConstants.BATCH_EXPORT);
+        return operationType.equalsIgnoreCase(ScsbConstants.BATCH_EXPORT);
     }
 
     /**
@@ -75,8 +75,8 @@ public class CSVDataDumpSuccessReportGenerator extends CommonReportGenerator  im
             dataDumpSuccessReport.setInstitutionName(reportEntity.getInstitutionName());
             dataDumpSuccessReport.setFileName(fileName);
             dataDumpSuccessReport.setDataDumpSuccessReportList(dataDumpSuccessReportList);
-            producerTemplate.sendBody(RecapConstants.DATADUMP_SUCCESS_REPORT_CSV_Q, dataDumpSuccessReport);
-            DateFormat df = new SimpleDateFormat(RecapCommonConstants.DATE_FORMAT_FOR_FILE_NAME);
+            producerTemplate.sendBody(ScsbConstants.DATADUMP_SUCCESS_REPORT_CSV_Q, dataDumpSuccessReport);
+            DateFormat df = new SimpleDateFormat(ScsbCommonConstants.DATE_FORMAT_FOR_FILE_NAME);
             return FilenameUtils.removeExtension(dataDumpSuccessReport.getFileName()) + "-" + dataDumpSuccessReport.getReportType() + "-" + df.format(new Date()) + ".csv";
         }
         return null;

@@ -2,7 +2,7 @@ package org.recap.camel;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.report.CommonReportGenerator;
 import org.recap.repositoryrw.ReportDetailRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +28,6 @@ public class XMLFileLoadReportProcessor implements Processor {
     @Override
     public void process(Exchange exchange) throws Exception {
         CommonReportGenerator commonReportGenerator = new CommonReportGenerator();
-        commonReportGenerator.process(exchange, RecapConstants.FILE_LOADED, reportDetailRepository);
+        commonReportGenerator.process(exchange, ScsbConstants.FILE_LOADED, reportDetailRepository);
     }
 }

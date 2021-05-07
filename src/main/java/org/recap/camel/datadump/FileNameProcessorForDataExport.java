@@ -1,7 +1,7 @@
 package org.recap.camel.datadump;
 
 import org.apache.camel.Exchange;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.camel.datadump.routebuilder.BaseProcessor;
 import org.recap.util.datadump.DataExportHeaderUtil;
 import org.slf4j.Logger;
@@ -28,7 +28,7 @@ public class FileNameProcessorForDataExport extends BaseProcessor {
         String fileName = getValueFor(batchHeaders, "fileName");
         logger.info("fileName for data export--->{}", fileName);
         String exportFormat = getValueFor(batchHeaders, "exportFormat");
-        if (exportFormat.equals(RecapConstants.DATADUMP_DELETED_JSON_FORMAT)) {
+        if (exportFormat.equals(ScsbConstants.DATADUMP_DELETED_JSON_FORMAT)) {
             exchange.getMessage().setHeader(Exchange.FILE_NAME, fileName + ".json");
         } else {
             exchange.getMessage().setHeader(Exchange.FILE_NAME, fileName + ".xml");

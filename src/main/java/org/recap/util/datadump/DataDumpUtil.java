@@ -1,8 +1,8 @@
 package org.recap.util.datadump;
 
 import org.apache.commons.lang3.StringUtils;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.export.DataDumpRequest;
 import org.recap.model.jpa.CollectionGroupEntity;
 import org.recap.model.jpa.ETLRequestLogEntity;
@@ -51,14 +51,14 @@ public class DataDumpUtil {
     public String getFetchType(String fetchTypeNumber) {
         String fetchType ="";
         switch (fetchTypeNumber) {
-            case RecapConstants.DATADUMP_FETCHTYPE_FULL:
-                fetchType= RecapConstants.EXPORT_TYPE_FULL;
+            case ScsbConstants.DATADUMP_FETCHTYPE_FULL:
+                fetchType= ScsbConstants.EXPORT_TYPE_FULL;
                 break;
-            case RecapConstants.DATADUMP_FETCHTYPE_INCREMENTAL:
-                fetchType= RecapConstants.INCREMENTAL;
+            case ScsbConstants.DATADUMP_FETCHTYPE_INCREMENTAL:
+                fetchType= ScsbConstants.INCREMENTAL;
                 break;
-            case RecapConstants.DATADUMP_FETCHTYPE_DELETED:
-                fetchType= RecapConstants.DELETED;
+            case ScsbConstants.DATADUMP_FETCHTYPE_DELETED:
+                fetchType= ScsbConstants.DELETED;
                 break;
             default:
                 fetchType= "Export";
@@ -69,14 +69,14 @@ public class DataDumpUtil {
     public String getOutputformat(String outputFileFormat) {
         String format ="";
         switch (outputFileFormat) {
-            case RecapConstants.DATADUMP_XML_FORMAT_MARC:
-                format= RecapConstants.MARC;
+            case ScsbConstants.DATADUMP_XML_FORMAT_MARC:
+                format= ScsbConstants.MARC;
                 break;
-            case RecapConstants.DATADUMP_XML_FORMAT_SCSB:
-                format= RecapConstants.SCSB;
+            case ScsbConstants.DATADUMP_XML_FORMAT_SCSB:
+                format= ScsbConstants.SCSB;
                 break;
-            case RecapConstants.DATADUMP_DELETED_JSON_FORMAT:
-                format= RecapConstants.JSON;
+            case ScsbConstants.DATADUMP_DELETED_JSON_FORMAT:
+                format= ScsbConstants.JSON;
                 break;
         }
         return format;
@@ -85,13 +85,13 @@ public class DataDumpUtil {
     public String getTransmissionType(String transmissionType) {
         String type ="";
         switch (transmissionType) {
-            case RecapConstants.DATADUMP_TRANSMISSION_TYPE_S3:
+            case ScsbConstants.DATADUMP_TRANSMISSION_TYPE_S3:
                 type= "S3";
                 break;
-            case RecapConstants.DATADUMP_TRANSMISSION_TYPE_HTTP:
+            case ScsbConstants.DATADUMP_TRANSMISSION_TYPE_HTTP:
                 type= "HTTP";
                 break;
-            case RecapConstants.DATADUMP_TRANSMISSION_TYPE_FILESYSTEM:
+            case ScsbConstants.DATADUMP_TRANSMISSION_TYPE_FILESYSTEM:
                 type= "Filesystem";
                 break;
         }
@@ -125,7 +125,7 @@ public class DataDumpUtil {
             dataDumpRequest.setImsDepositoryCodes(imsDepositoryCodesList);
         }
         else {
-            ImsLocationEntity imsLocationEntity = imsLocationDetailsRepository.findByImsLocationCode(RecapConstants.IMS_DEPOSITORY_RECAP);
+            ImsLocationEntity imsLocationEntity = imsLocationDetailsRepository.findByImsLocationCode(ScsbConstants.IMS_DEPOSITORY_RECAP);
             dataDumpRequest.setImsDepositoryCodes(Arrays.asList(imsLocationEntity.getImsLocationCode()));
         }
         if (date != null && !"".equals(date)) {
@@ -139,16 +139,16 @@ public class DataDumpUtil {
             dataDumpRequest.setCollectionGroupIds(collectionGroupIdList);
         } else {
             List<Integer> collectionGroupIdList = new ArrayList<>();
-            CollectionGroupEntity collectionGroupEntityShared = collectionGroupDetailsRepository.findByCollectionGroupCode(RecapConstants.COLLECTION_GROUP_SHARED);
+            CollectionGroupEntity collectionGroupEntityShared = collectionGroupDetailsRepository.findByCollectionGroupCode(ScsbConstants.COLLECTION_GROUP_SHARED);
             collectionGroupIdList.add(collectionGroupEntityShared.getId());
-            CollectionGroupEntity collectionGroupEntityOpen = collectionGroupDetailsRepository.findByCollectionGroupCode(RecapConstants.COLLECTION_GROUP_OPEN);
+            CollectionGroupEntity collectionGroupEntityOpen = collectionGroupDetailsRepository.findByCollectionGroupCode(ScsbConstants.COLLECTION_GROUP_OPEN);
             collectionGroupIdList.add(collectionGroupEntityOpen.getId());
             dataDumpRequest.setCollectionGroupIds(collectionGroupIdList);
         }
         if (transmissionType != null && !"".equals(transmissionType)) {
             dataDumpRequest.setTransmissionType(transmissionType);
         } else {
-            dataDumpRequest.setTransmissionType(RecapConstants.DATADUMP_TRANSMISSION_TYPE_S3);
+            dataDumpRequest.setTransmissionType(ScsbConstants.DATADUMP_TRANSMISSION_TYPE_S3);
         }
         if (requestingInstitutionCode != null) {
             dataDumpRequest.setRequestingInstitutionCode(requestingInstitutionCode);
@@ -161,11 +161,11 @@ public class DataDumpUtil {
             dataDumpRequest.setOutputFileFormat(outputFormat);
         }
 
-        dataDumpRequest.setUserName(!userName.isEmpty()?userName:RecapConstants.SWAGGER);
+        dataDumpRequest.setUserName(!userName.isEmpty()?userName: ScsbConstants.SWAGGER);
 
         dataDumpRequest.setDateTimeString(DateUtil.getDateTimeString());
 
-        dataDumpRequest.setRequestId(new SimpleDateFormat(RecapCommonConstants.DATE_FORMAT_YYYYMMDDHHMM).format(new Date())+
+        dataDumpRequest.setRequestId(new SimpleDateFormat(ScsbCommonConstants.DATE_FORMAT_YYYYMMDDHHMM).format(new Date())+
                 "-"+dataDumpRequest.getInstitutionCodes()+"-"+dataDumpRequest.getRequestingInstitutionCode()+"-"+dataDumpRequest.getFetchType());
     }
 
@@ -208,7 +208,7 @@ public class DataDumpUtil {
         etlRequestLogEntity.setExportStatusEntity(exportStatusEntity);
         String collectionGroupIds = dataDumpRequest.getCollectionGroupIds().stream().map(String::valueOf)
                 .collect(Collectors.joining(","));
-        String defaultCgds = Arrays.asList(RecapConstants.DATADUMP_CGD_SHARED, RecapConstants.DATADUMP_CGD_OPEN).stream().map(String::valueOf).collect(Collectors.joining(","));
+        String defaultCgds = Arrays.asList(ScsbConstants.DATADUMP_CGD_SHARED, ScsbConstants.DATADUMP_CGD_OPEN).stream().map(String::valueOf).collect(Collectors.joining(","));
         etlRequestLogEntity.setCollectionGroupIds(collectionGroupIds!=null?collectionGroupIds:defaultCgds );
         etlRequestLogEntity.setEmailIds(dataDumpRequest.getToEmailAddress());
         etlRequestLogEntity.setRequestedTime(new Date());
@@ -217,9 +217,9 @@ public class DataDumpUtil {
         etlRequestLogEntity.setRequestingInstCode(dataDumpRequest.getRequestingInstitutionCode());
         etlRequestLogEntity.setInstCodeToExport(String.join(",",dataDumpRequest.getInstitutionCodes()));
         etlRequestLogEntity.setTransmissionType(dataDumpRequest.getTransmissionType()!=null? dataDumpRequest.getTransmissionType() : "0");
-        etlRequestLogEntity.setImsRepositoryCodes(dataDumpRequest.getImsDepositoryCodes()!=null?String.join(",",dataDumpRequest.getImsDepositoryCodes()): RecapConstants.IMS_DEPOSITORY_RECAP);
+        etlRequestLogEntity.setImsRepositoryCodes(dataDumpRequest.getImsDepositoryCodes()!=null?String.join(",",dataDumpRequest.getImsDepositoryCodes()): ScsbConstants.IMS_DEPOSITORY_RECAP);
         etlRequestLogEntity.setUserName(dataDumpRequest.getUserName());
-        etlRequestLogEntity.setProvidedDate(dataDumpRequest.getDate()!=null?DateUtil.getDateFromString(dataDumpRequest.getDate(),RecapCommonConstants.DATE_FORMAT_YYYYMMDDHHMM):null);
+        etlRequestLogEntity.setProvidedDate(dataDumpRequest.getDate()!=null?DateUtil.getDateFromString(dataDumpRequest.getDate(),ScsbCommonConstants.DATE_FORMAT_YYYYMMDDHHMM):null);
         return etlRequestLogEntity;
     }
 
@@ -228,15 +228,15 @@ public class DataDumpUtil {
         logger.info("ETL Request ID to update: {}",dataDumpRequest.getEtlRequestId());
         Optional<ETLRequestLogEntity> etlRequestLogEntity = etlRequestLogDetailsRepository.findById(dataDumpRequest.getEtlRequestId());
         etlRequestLogEntity.ifPresent(exportLog ->{
-            if(outputString.contains(RecapConstants.DATADUMP_EXPORT_FAILURE) ){
-                ExportStatusEntity exportStatusEntity = exportStatusDetailsRepository.findByExportStatusCode(RecapConstants.INVALID);
+            if(outputString.contains(ScsbConstants.DATADUMP_EXPORT_FAILURE) ){
+                ExportStatusEntity exportStatusEntity = exportStatusDetailsRepository.findByExportStatusCode(ScsbConstants.INVALID);
                 exportLog.setExportStatusId(exportStatusEntity.getId());
                 exportLog.setExportStatusEntity(exportStatusEntity);
                 exportLog.setMessage(outputString);
                 exportLog.setCompleteTime(new Date());
             }
             else if(outputString.contains("100")){
-                ExportStatusEntity exportStatusEntity = exportStatusDetailsRepository.findByExportStatusCode(RecapConstants.COMPLETED);
+                ExportStatusEntity exportStatusEntity = exportStatusDetailsRepository.findByExportStatusCode(ScsbConstants.COMPLETED);
                 exportLog.setExportStatusId(exportStatusEntity.getId());
                 exportLog.setExportStatusEntity(exportStatusEntity);
                 exportLog.setMessage("Diplayed the result in the response");
@@ -246,8 +246,8 @@ public class DataDumpUtil {
                     dataDumpExportService.startDataDumpProcess(awaitingRequest);
                 }
             }
-            else if(outputString.contains(RecapConstants.IN_PROGRESS)){
-                ExportStatusEntity exportStatusEntity = exportStatusDetailsRepository.findByExportStatusCode(RecapConstants.IN_PROGRESS);
+            else if(outputString.contains(ScsbConstants.IN_PROGRESS)){
+                ExportStatusEntity exportStatusEntity = exportStatusDetailsRepository.findByExportStatusCode(ScsbConstants.IN_PROGRESS);
                 exportLog.setExportStatusId(exportStatusEntity.getId());
                 exportLog.setExportStatusEntity(exportStatusEntity);
             }
@@ -284,7 +284,7 @@ public class DataDumpUtil {
     }
 
     public DataDumpRequest checkAndPrepareAwaitingReqIfAny() {
-        ExportStatusEntity awaitingStatusEntity = dataExportDBService.findByExportStatusCode(RecapConstants.AWAITING);
+        ExportStatusEntity awaitingStatusEntity = dataExportDBService.findByExportStatusCode(ScsbConstants.AWAITING);
         List<ETLRequestLogEntity> etlRequestsAwaitingForExport = dataExportDBService.findAllStatusById(awaitingStatusEntity.getId());
         if(!etlRequestsAwaitingForExport.isEmpty()){
             return prepareRequestForExistingAwaiting();
@@ -293,7 +293,7 @@ public class DataDumpUtil {
     }
 
     public DataDumpRequest prepareRequestForExistingAwaiting() {
-        ExportStatusEntity exportStatusEntity = dataExportDBService.findByExportStatusCode(RecapConstants.AWAITING);
+        ExportStatusEntity exportStatusEntity = dataExportDBService.findByExportStatusCode(ScsbConstants.AWAITING);
         List<ETLRequestLogEntity> allByStatusOrderByRequestedTime = dataExportDBService.findAllStatusById(exportStatusEntity.getId());
         return prepareDataDumpReq(allByStatusOrderByRequestedTime.get(0));
     }

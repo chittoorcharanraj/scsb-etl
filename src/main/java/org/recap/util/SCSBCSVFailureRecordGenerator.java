@@ -1,8 +1,8 @@
 package org.recap.util;
 
 import org.apache.commons.beanutils.PropertyUtilsBean;
-import org.recap.RecapConstants;
-import org.recap.model.csv.FailureReportReCAPCSVRecord;
+import org.recap.ScsbConstants;
+import org.recap.model.csv.FailureReportSCSBCSVRecord;
 import org.recap.model.jparw.ReportDataEntity;
 import org.recap.model.jparw.ReportEntity;
 import org.slf4j.Logger;
@@ -18,9 +18,9 @@ import java.util.List;
 /**
  * Created by SheikS on 8/8/2016.
  */
-public class ReCAPCSVFailureRecordGenerator {
+public class SCSBCSVFailureRecordGenerator {
 
-    private static final Logger logger = LoggerFactory.getLogger(ReCAPCSVFailureRecordGenerator.class);
+    private static final Logger logger = LoggerFactory.getLogger(SCSBCSVFailureRecordGenerator.class);
 
     /**
      * Prepare failure records csv report for initial data load.
@@ -28,11 +28,11 @@ public class ReCAPCSVFailureRecordGenerator {
      * @param reportEntity the report entity
      * @return the failure report re capcsv record
      */
-    public FailureReportReCAPCSVRecord prepareFailureReportReCAPCSVRecord(ReportEntity reportEntity) {
+    public FailureReportSCSBCSVRecord prepareFailureReportReCAPCSVRecord(ReportEntity reportEntity) {
 
         List<ReportDataEntity> reportDataEntities = reportEntity.getReportDataEntities();
 
-        FailureReportReCAPCSVRecord failureReportReCAPCSVRecord = new FailureReportReCAPCSVRecord();
+        FailureReportSCSBCSVRecord failureReportSCSBCSVRecord = new FailureReportSCSBCSVRecord();
 
         for (Iterator<ReportDataEntity> iterator = reportDataEntities.iterator(); iterator.hasNext(); ) {
             ReportDataEntity report =  iterator.next();
@@ -41,13 +41,13 @@ public class ReCAPCSVFailureRecordGenerator {
             Method setterMethod = getSetterMethod(headerName);
             if(null != setterMethod){
                 try {
-                    setterMethod.invoke(failureReportReCAPCSVRecord, headerValue);
+                    setterMethod.invoke(failureReportSCSBCSVRecord, headerValue);
                 } catch (IllegalAccessException | InvocationTargetException e) {
-                    logger.error(RecapConstants.ERROR,e);
+                    logger.error(ScsbConstants.ERROR,e);
                 }
             }
         }
-        return failureReportReCAPCSVRecord;
+        return failureReportSCSBCSVRecord;
     }
 
     /**
@@ -59,9 +59,9 @@ public class ReCAPCSVFailureRecordGenerator {
     public Method getSetterMethod(String propertyName) {
         PropertyUtilsBean propertyUtilsBean = new PropertyUtilsBean();
         try {
-            return propertyUtilsBean.getWriteMethod(new PropertyDescriptor(propertyName, FailureReportReCAPCSVRecord.class));
+            return propertyUtilsBean.getWriteMethod(new PropertyDescriptor(propertyName, FailureReportSCSBCSVRecord.class));
         } catch (IntrospectionException e) {
-            logger.error(RecapConstants.ERROR,e);
+            logger.error(ScsbConstants.ERROR,e);
         }
         return null;
     }
@@ -75,9 +75,9 @@ public class ReCAPCSVFailureRecordGenerator {
     public Method getGetterMethod(String propertyName) {
         PropertyUtilsBean propertyUtilsBean = new PropertyUtilsBean();
         try {
-            return propertyUtilsBean.getReadMethod(new PropertyDescriptor(propertyName, FailureReportReCAPCSVRecord.class));
+            return propertyUtilsBean.getReadMethod(new PropertyDescriptor(propertyName, FailureReportSCSBCSVRecord.class));
         } catch (IntrospectionException e) {
-            logger.error(RecapConstants.ERROR,e);
+            logger.error(ScsbConstants.ERROR,e);
         }
         return null;
     }

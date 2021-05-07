@@ -5,7 +5,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.impl.engine.DefaultFluentProducerTemplate;
 import org.apache.commons.collections.CollectionUtils;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.camel.datadump.callable.BibEntityPreparerCallable;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.repository.BibliographicDetailsRepository;
@@ -35,6 +35,8 @@ public class BibEntityGeneratorActiveMQConsumer {
     private BibliographicDetailsRepository bibliographicDetailsRepository;
     private ExecutorService executorService;
     private static String batchHeaderName = "batchHeaders";
+    private Integer dataDumpBibEntityThreadSize;
+    private Integer dataDumpBibEntityBatchSize;
 
     /**
      * Instantiates a new Bib entity generator active mq consumer.
@@ -43,6 +45,19 @@ public class BibEntityGeneratorActiveMQConsumer {
      */
     public BibEntityGeneratorActiveMQConsumer(BibliographicDetailsRepository bibliographicDetailsRepository) {
         this.bibliographicDetailsRepository = bibliographicDetailsRepository;
+    }
+
+    /**
+     * Instantiates a new Bib entity generator active mq consumer.
+     *
+     * @param bibliographicDetailsRepository the bibliographic details repository
+     * @param dataDumpBibEntityThreadSize the data dump bib entity thread size
+     * @param dataDumpBibEntityBatchSize the data dump bib entity batch size
+     */
+    public BibEntityGeneratorActiveMQConsumer(BibliographicDetailsRepository bibliographicDetailsRepository, Integer dataDumpBibEntityThreadSize, Integer dataDumpBibEntityBatchSize) {
+        this.bibliographicDetailsRepository = bibliographicDetailsRepository;
+        this.dataDumpBibEntityThreadSize = dataDumpBibEntityThreadSize;
+        this.dataDumpBibEntityBatchSize = dataDumpBibEntityBatchSize;
     }
 
     /**
@@ -78,7 +93,7 @@ public class BibEntityGeneratorActiveMQConsumer {
             List<Callable<BibliographicEntity>> callables = new ArrayList<>();
             List<BibliographicEntity> bibliographicEntityList=new ArrayList<>();
 
-            List<List<Integer>> partition = Lists.partition(bibIdList, 1000);
+            List<List<Integer>> partition = Lists.partition(bibIdList, dataDumpBibEntityBatchSize);
             for (List<Integer> integers : partition) {
                 List<BibliographicEntity> bibliographicEntityList1 = bibliographicDetailsRepository.getBibliographicEntityList(integers);
                 bibliographicEntityList.addAll(bibliographicEntityList1);
@@ -104,13 +119,14 @@ public class BibEntityGeneratorActiveMQConsumer {
 
         logger.info("Time taken to prepare {} bib entities is : {} seconds, solr result size {}" , bibliographicEntities.size() , (endTime - startTime) / 1000,dataDumpSearchResults.size());
 
-            getExecutorService().shutdown();
+        getExecutorService().shutdown();
+
         logger.info("sending page count {} to marcrecord formatter route",currentPageCountStr);
             String currentPageCountStrbeforesendingToNxt = new DataExportHeaderUtil().getValueFor(batchHeaders, "currentPageCount");
             logger.info("currentPageCountStrbeforesendingToNxt--->{}",currentPageCountStrbeforesendingToNxt);
             FluentProducerTemplate fluentProducerTemplate = DefaultFluentProducerTemplate.on(exchange.getContext());
             fluentProducerTemplate
-                    .to(RecapConstants.BIB_ENTITY_FOR_DATA_EXPORT_Q)
+                    .to(ScsbConstants.BIB_ENTITY_FOR_DATA_EXPORT_Q)
                     .withBody(bibliographicEntities)
                     .withHeader(batchHeaderName, exchange.getIn().getHeader(batchHeaderName))
                     .withHeader("exportFormat", exchange.getIn().getHeader("exportFormat"))
@@ -139,10 +155,12 @@ public class BibEntityGeneratorActiveMQConsumer {
      */
     public ExecutorService getExecutorService() {
         if (null == executorService) {
-            executorService = Executors.newFixedThreadPool(500);
+            logger.info("Creating Thread Pool of Size : {}", dataDumpBibEntityThreadSize);
+            executorService = Executors.newFixedThreadPool(dataDumpBibEntityThreadSize);
         }
         if (executorService.isShutdown()) {
-            executorService = Executors.newFixedThreadPool(500);
+            logger.info("On Shutdown, Creating Thread Pool of Size : {}", dataDumpBibEntityThreadSize);
+            executorService = Executors.newFixedThreadPool(dataDumpBibEntityThreadSize);
         }
         return executorService;
     }

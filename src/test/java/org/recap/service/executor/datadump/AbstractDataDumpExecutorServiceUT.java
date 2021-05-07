@@ -8,7 +8,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.export.DataDumpRequest;
 import org.recap.model.jpa.CollectionGroupEntity;
 import org.recap.model.search.SearchRecordsRequest;
@@ -67,9 +67,9 @@ public class AbstractDataDumpExecutorServiceUT extends BaseTestCaseUT {
         institutionCodes.add("NYPL");
 
         dataDumpRequest.setInstitutionCodes(institutionCodes);
-        dataDumpRequest.setFetchType(RecapConstants.DATADUMP_FETCHTYPE_DELETED);
+        dataDumpRequest.setFetchType(ScsbConstants.DATADUMP_FETCHTYPE_DELETED);
         dataDumpRequest.setOutputFileFormat("2");
-        dataDumpRequest.setDateTimeString(new SimpleDateFormat(RecapConstants.DATE_FORMAT_DDMMMYYYYHHMM).format(new Date()));
+        dataDumpRequest.setDateTimeString(new SimpleDateFormat(ScsbConstants.DATE_FORMAT_DDMMMYYYYHHMM).format(new Date()));
         dataDumpRequest.setTransmissionType("1");
         List<Integer> cgIds = new ArrayList<>();
         cgIds.add(1);

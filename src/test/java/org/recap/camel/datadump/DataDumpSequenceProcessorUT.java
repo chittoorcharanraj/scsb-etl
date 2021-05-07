@@ -10,7 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.ILSConfigProperties;
 import org.recap.repository.InstitutionDetailsRepository;
 import org.recap.service.executor.datadump.DataDumpSchedulerExecutorService;
@@ -50,7 +50,7 @@ public class DataDumpSequenceProcessorUT extends BaseTestCaseUT {
         inNypl.setBody("PUL");
         exCul.setIn(inNypl);
         ILSConfigProperties ilsConfigProperties=new ILSConfigProperties();
-        ilsConfigProperties.setEtlIncrementalDump(RecapConstants.EXPORT_FETCH_TYPE_INSTITUTION);
+        ilsConfigProperties.setEtlIncrementalDump(ScsbConstants.EXPORT_FETCH_TYPE_INSTITUTION);
         Mockito.when(propertyUtil.getILSConfigProperties(Mockito.anyString())).thenReturn(ilsConfigProperties);
         try {
             dataDumpSequenceProcessor.process(exPul);
@@ -77,10 +77,10 @@ public class DataDumpSequenceProcessorUT extends BaseTestCaseUT {
         Message in = ex.getIn();
         in.setBody("PUL");
         ex.setIn(in);
-        RecapConstants.EXPORT_DATE_SCHEDULER = "IncrementalRecordsExportNypl";
+        ScsbConstants.EXPORT_DATE_SCHEDULER = "IncrementalRecordsExportNypl";
         ILSConfigProperties ilsConfigProperties=new ILSConfigProperties();
         ilsConfigProperties.setEtlIncrementalDump("1");
-        ilsConfigProperties.setEtlDeletedDump(RecapConstants.EXPORT_FETCH_TYPE_INSTITUTION);
+        ilsConfigProperties.setEtlDeletedDump(ScsbConstants.EXPORT_FETCH_TYPE_INSTITUTION);
         Mockito.when(propertyUtil.getILSConfigProperties(Mockito.anyString())).thenReturn(ilsConfigProperties);
         Mockito.when(institutionDetailsRepository.findAllInstitutionCodeExceptHTC()).thenReturn(Arrays.asList("1"));
         try {
@@ -98,7 +98,7 @@ public class DataDumpSequenceProcessorUT extends BaseTestCaseUT {
         Message in = ex.getIn();
         in.setBody("CUL");
         ex.setIn(in);
-        RecapConstants.EXPORT_DATE_SCHEDULER = "IncrementalRecordsExportCul";
+        ScsbConstants.EXPORT_DATE_SCHEDULER = "IncrementalRecordsExportCul";
         ILSConfigProperties ilsConfigProperties=new ILSConfigProperties();
         ilsConfigProperties.setEtlIncrementalDump("1");
         ilsConfigProperties.setEtlDeletedDump("2");

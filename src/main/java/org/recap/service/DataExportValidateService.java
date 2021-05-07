@@ -2,8 +2,8 @@ package org.recap.service;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.ILSConfigProperties;
 import org.recap.model.export.DataDumpRequest;
 import org.recap.repository.ImsLocationDetailsRepository;
@@ -58,48 +58,48 @@ public class DataExportValidateService {
         if (!dataDumpRequest.getInstitutionCodes().isEmpty()) {
             for (String institutionCode : dataDumpRequest.getInstitutionCodes()) {
                 if(!allInstitutionCodeExceptHTC.contains(institutionCode)){
-                    errorMessageMap.put(errorcount, RecapConstants.DATADUMP_VALID_INST_CODES_ERR_MSG+" : "+propertyUtil.getAllInstitutions().toString());
+                    errorMessageMap.put(errorcount, ScsbConstants.DATADUMP_VALID_INST_CODES_ERR_MSG+" : "+propertyUtil.getAllInstitutions().toString());
                     errorcount++;
                 }
             }
             if(dataDumpRequest.getInstitutionCodes().size() != 1 && dataDumpRequest.getFetchType().equals(fetchTypeFull)) {
-                errorMessageMap.put(errorcount, RecapConstants.DATADUMP_MULTIPLE_INST_CODES_ERR_MSG+ " : "+propertyUtil.getAllInstitutions().toString());
+                errorMessageMap.put(errorcount, ScsbConstants.DATADUMP_MULTIPLE_INST_CODES_ERR_MSG+ " : "+propertyUtil.getAllInstitutions().toString());
                 errorcount++;
             }
         }
         if(dataDumpRequest.getRequestingInstitutionCode() != null && !allInstitutionCodeExceptHTC.contains(dataDumpRequest.getRequestingInstitutionCode())){
-            errorMessageMap.put(errorcount, RecapConstants.DATADUMP_VALID_REQ_INST_CODE_ERR_MSG+" : "+propertyUtil.getAllInstitutions().toString());
+            errorMessageMap.put(errorcount, ScsbConstants.DATADUMP_VALID_REQ_INST_CODE_ERR_MSG+" : "+propertyUtil.getAllInstitutions().toString());
             errorcount++;
         }
         List<String> imsLocationCodes = imsLocationDetailsRepository.findAllImsLocationCodeExceptUnknown();
         for (String imsDepositoryCode : dataDumpRequest.getImsDepositoryCodes()){
             if(!imsLocationCodes.contains(imsDepositoryCode)){
-                errorMessageMap.put(errorcount, RecapConstants.DATADUMP_VALID_IMS_DEPOSITORY_CODE_ERR_MSG);
+                errorMessageMap.put(errorcount, ScsbConstants.DATADUMP_VALID_IMS_DEPOSITORY_CODE_ERR_MSG);
                 errorcount++;
                 break;
             }
         }
         if (!dataDumpRequest.getFetchType().equals(fetchTypeFull) &&
-                !dataDumpRequest.getFetchType().equals(RecapConstants.DATADUMP_FETCHTYPE_INCREMENTAL)
-                && !dataDumpRequest.getFetchType().equals(RecapConstants.DATADUMP_FETCHTYPE_DELETED)) {
-            errorMessageMap.put(errorcount, RecapConstants.DATADUMP_VALID_FETCHTYPE_ERR_MSG);
+                !dataDumpRequest.getFetchType().equals(ScsbConstants.DATADUMP_FETCHTYPE_INCREMENTAL)
+                && !dataDumpRequest.getFetchType().equals(ScsbConstants.DATADUMP_FETCHTYPE_DELETED)) {
+            errorMessageMap.put(errorcount, ScsbConstants.DATADUMP_VALID_FETCHTYPE_ERR_MSG);
             errorcount++;
         }
-        if (!dataDumpRequest.getTransmissionType().equals(RecapConstants.DATADUMP_TRANSMISSION_TYPE_S3)
-                && !dataDumpRequest.getTransmissionType().equals(RecapConstants.DATADUMP_TRANSMISSION_TYPE_HTTP)
+        if (!dataDumpRequest.getTransmissionType().equals(ScsbConstants.DATADUMP_TRANSMISSION_TYPE_S3)
+                && !dataDumpRequest.getTransmissionType().equals(ScsbConstants.DATADUMP_TRANSMISSION_TYPE_HTTP)
         ) {
-            errorMessageMap.put(errorcount, RecapConstants.DATADUMP_TRANS_TYPE_ERR_MSG);
+            errorMessageMap.put(errorcount, ScsbConstants.DATADUMP_TRANS_TYPE_ERR_MSG);
             errorcount++;
         }
         if (dataDumpRequest.getFetchType().equals(fetchTypeFull) && dataDumpRequest.getInstitutionCodes() == null) {
-            errorMessageMap.put(errorcount, RecapConstants.DATADUMP_INSTITUTIONCODE_ERR_MSG);
+            errorMessageMap.put(errorcount, ScsbConstants.DATADUMP_INSTITUTIONCODE_ERR_MSG);
             errorcount++;
         }
-        if (dataDumpRequest.getFetchType().equals(RecapConstants.DATADUMP_FETCHTYPE_INCREMENTAL) && dataDumpRequest.getDate() == null || "".equals(dataDumpRequest.getDate())) {
-            errorMessageMap.put(errorcount, RecapConstants.DATADUMP_DATE_ERR_MSG);
+        if (dataDumpRequest.getFetchType().equals(ScsbConstants.DATADUMP_FETCHTYPE_INCREMENTAL) && dataDumpRequest.getDate() == null || "".equals(dataDumpRequest.getDate())) {
+            errorMessageMap.put(errorcount, ScsbConstants.DATADUMP_DATE_ERR_MSG);
             errorcount++;
         }
-        if(dataDumpRequest.getFetchType().equals(RecapConstants.DATADUMP_FETCHTYPE_INCREMENTAL) || dataDumpRequest.getFetchType().equals(RecapConstants.DATADUMP_FETCHTYPE_DELETED)) {
+        if(dataDumpRequest.getFetchType().equals(ScsbConstants.DATADUMP_FETCHTYPE_INCREMENTAL) || dataDumpRequest.getFetchType().equals(ScsbConstants.DATADUMP_FETCHTYPE_DELETED)) {
             String dataDumpRequestDateString = dataDumpRequest.getDate();
             List<String> institutionCodes = dataDumpRequest.getInstitutionCodes();
             if(StringUtils.isNotBlank(dataDumpRequestDateString)) {
@@ -114,7 +114,7 @@ public class DataExportValidateService {
 
                             errorcount = checkForIncrementalDateLimit(currentDate, errorMessageMap, errorcount, dataDumpRequestDateString, imsLocationCode);
                         } else {
-                            errorMessageMap.put(errorcount, MessageFormat.format(RecapConstants.INVALID_DATE_FORMAT, RecapCommonConstants.DATE_FORMAT_YYYYMMDDHHMM));
+                            errorMessageMap.put(errorcount, MessageFormat.format(ScsbConstants.INVALID_DATE_FORMAT, ScsbCommonConstants.DATE_FORMAT_YYYYMMDDHHMM));
                             errorcount++;
                         }
                     }
@@ -124,24 +124,24 @@ public class DataExportValidateService {
                 }
             }
         }
-        if (dataDumpRequest.getTransmissionType().equals(RecapConstants.DATADUMP_TRANSMISSION_TYPE_S3)) {
+        if (dataDumpRequest.getTransmissionType().equals(ScsbConstants.DATADUMP_TRANSMISSION_TYPE_S3)) {
             if (StringUtils.isEmpty(dataDumpRequest.getToEmailAddress())) {
-                errorMessageMap.put(errorcount, RecapConstants.DATADUMP_EMAIL_TO_ADDRESS_REQUIRED);
+                errorMessageMap.put(errorcount, ScsbConstants.DATADUMP_EMAIL_TO_ADDRESS_REQUIRED);
                 errorcount++;
             } else {
                 boolean isValid = validateEmailAddress(dataDumpRequest.getToEmailAddress());
                 if (!isValid) {
-                    errorMessageMap.put(errorcount, RecapConstants.INVALID_EMAIL_ADDRESS);
+                    errorMessageMap.put(errorcount, ScsbConstants.INVALID_EMAIL_ADDRESS);
                     errorcount++;
                 }
             }
         }
-        if(RecapConstants.DATADUMP_TYPES.contains(dataDumpRequest.getFetchType())&& dataDumpRequest.getTransmissionType().equals(RecapConstants.DATADUMP_TRANSMISSION_TYPE_S3) && !dataDumpRequest.isRequestFromSwagger()) {
+        if(ScsbConstants.DATADUMP_TYPES.contains(dataDumpRequest.getFetchType())&& dataDumpRequest.getTransmissionType().equals(ScsbConstants.DATADUMP_TRANSMISSION_TYPE_S3) && !dataDumpRequest.isRequestFromSwagger()) {
             String dataExportStatus = getDataExportCurrentStatus();
             String status = Optional.ofNullable(dataExportStatus).orElse("No file created");
             logger.info("Validating datadump status file for requested Dump-Type {} by {} . Status : {}",dataDumpRequest.getFetchType(),dataDumpRequest.getRequestingInstitutionCode(),status);
-            if(dataExportStatus != null && dataExportStatus.contains(RecapConstants.IN_PROGRESS)){
-                errorMessageMap.put(errorcount, RecapConstants.INPROGRESS_ERR_MSG);
+            if(dataExportStatus != null && dataExportStatus.contains(ScsbConstants.IN_PROGRESS)){
+                errorMessageMap.put(errorcount, ScsbConstants.INPROGRESS_ERR_MSG);
                 errorcount++;
             }
         }
@@ -156,7 +156,7 @@ public class DataExportValidateService {
         if(dateStringArray.length == 1) {
             return false;
         } else {
-            Date formattedDate = getFormattedDate(RecapCommonConstants.DATE_FORMAT_YYYYMMDDHHMM, dataDumpRequestDateString);
+            Date formattedDate = getFormattedDate(ScsbCommonConstants.DATE_FORMAT_YYYYMMDDHHMM, dataDumpRequestDateString);
             if(formattedDate == null) {
                 return false;
             }
@@ -197,7 +197,7 @@ public class DataExportValidateService {
                 dataDumpStatus = FileUtils.readFileToString(file, Charset.defaultCharset());
             }
         } catch (IOException e) {
-            logger.error(RecapConstants.ERROR,e);
+            logger.error(ScsbConstants.ERROR,e);
             logger.error("Exception while creating or updating the file : {}", e.getMessage());
         }
         return dataDumpStatus;
@@ -209,7 +209,7 @@ public class DataExportValidateService {
      * @return
      */
     private boolean validateEmailAddress(String toEmailAddress) {
-        String regex = RecapCommonConstants.REGEX_FOR_EMAIL_ADDRESS;
+        String regex = ScsbCommonConstants.REGEX_FOR_EMAIL_ADDRESS;
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(toEmailAddress);
         return matcher.matches();
@@ -217,17 +217,17 @@ public class DataExportValidateService {
 
     private Integer checkToRestrictFullDumpViaIncremental(Map<Integer, String> errorMessageMap, Integer errorcount, String dataDumpRequestDateString, String initialDataLoadDateString, String institutionCode, String imsLocationCode) {
         if(StringUtils.isBlank(initialDataLoadDateString)) {
-            errorMessageMap.put(errorcount, MessageFormat.format(RecapConstants.INITIAL_DATA_LOAD_DATE_MISSING_ERR_MSG, institutionCode, propertyUtil.getPropertyByImsLocationAndKey(imsLocationCode, RecapConstants.LAS_EMAIL_ASSIST_TO)));
+            errorMessageMap.put(errorcount, MessageFormat.format(ScsbConstants.INITIAL_DATA_LOAD_DATE_MISSING_ERR_MSG, institutionCode, propertyUtil.getPropertyByImsLocationAndKey(imsLocationCode, ScsbConstants.LAS_EMAIL_ASSIST_TO)));
             errorcount++;
         } else {
-            Date dataDumpRequestDate = getFormattedDate(RecapConstants.DATE_FORMAT_YYYYMMDD, dataDumpRequestDateString);
-            Date initialDataLoadDate = getFormattedDate(RecapConstants.DATE_FORMAT_YYYYMMDD, initialDataLoadDateString);
+            Date dataDumpRequestDate = getFormattedDate(ScsbConstants.DATE_FORMAT_YYYYMMDD, dataDumpRequestDateString);
+            Date initialDataLoadDate = getFormattedDate(ScsbConstants.DATE_FORMAT_YYYYMMDD, initialDataLoadDateString);
             if(initialDataLoadDate==null){
-                errorMessageMap.put(errorcount, MessageFormat.format(RecapConstants.INITIAL_DATA_LOAD_DATE_INVALID_FORMAT, institutionCode, propertyUtil.getPropertyByImsLocationAndKey(imsLocationCode, RecapConstants.LAS_EMAIL_ASSIST_TO)));
+                errorMessageMap.put(errorcount, MessageFormat.format(ScsbConstants.INITIAL_DATA_LOAD_DATE_INVALID_FORMAT, institutionCode, propertyUtil.getPropertyByImsLocationAndKey(imsLocationCode, ScsbConstants.LAS_EMAIL_ASSIST_TO)));
                 errorcount++;
             }
             else if(initialDataLoadDate.after(dataDumpRequestDate) || initialDataLoadDate.equals(dataDumpRequestDate)) {
-                errorMessageMap.put(errorcount, MessageFormat.format(RecapConstants.RESTRICT_FULLDUMP_VIA_INCREMENTAL_ERROR_MSG, institutionCode, propertyUtil.getPropertyByImsLocationAndKey(imsLocationCode, RecapConstants.LAS_EMAIL_ASSIST_TO)));
+                errorMessageMap.put(errorcount, MessageFormat.format(ScsbConstants.RESTRICT_FULLDUMP_VIA_INCREMENTAL_ERROR_MSG, institutionCode, propertyUtil.getPropertyByImsLocationAndKey(imsLocationCode, ScsbConstants.LAS_EMAIL_ASSIST_TO)));
                 errorcount++;
             }
         }
@@ -235,20 +235,20 @@ public class DataExportValidateService {
     }
 
     private Integer checkForIncrementalDateLimit(Date currentDate, Map<Integer, String> errorMessageMap, Integer errorcount, String dataDumpRequestDateString, String imsLocationCode) {
-        Date dataDumpRequestDateTime = getFormattedDate(RecapCommonConstants.DATE_FORMAT_YYYYMMDDHHMM, dataDumpRequestDateString);
+        Date dataDumpRequestDateTime = getFormattedDate(ScsbCommonConstants.DATE_FORMAT_YYYYMMDDHHMM, dataDumpRequestDateString);
         if(dataDumpRequestDateTime==null){
-            errorMessageMap.put(errorcount, RecapConstants.INITIAL_DATA_LOAD_DATE_INVALID_FORMAT);
+            errorMessageMap.put(errorcount, ScsbConstants.INITIAL_DATA_LOAD_DATE_INVALID_FORMAT);
             errorcount++;
         }
         else{
             long dateDifference = currentDate.getTime() - dataDumpRequestDateTime.getTime();
             long days = TimeUnit.DAYS.convert(dateDifference, TimeUnit.MILLISECONDS);
             if(StringUtils.isBlank(incrementalDateLimit)) {
-                errorMessageMap.put(errorcount, MessageFormat.format(RecapConstants.INCREMENTAL_DATE_LIMIT_EMPTY_ERR_MSG, propertyUtil.getPropertyByImsLocationAndKey(imsLocationCode, RecapConstants.LAS_EMAIL_ASSIST_TO)));
+                errorMessageMap.put(errorcount, MessageFormat.format(ScsbConstants.INCREMENTAL_DATE_LIMIT_EMPTY_ERR_MSG, propertyUtil.getPropertyByImsLocationAndKey(imsLocationCode, ScsbConstants.LAS_EMAIL_ASSIST_TO)));
                 errorcount++;
             } else {
                 if(Math.toIntExact(days) > Integer.valueOf(incrementalDateLimit)) {
-                    errorMessageMap.put(errorcount, MessageFormat.format(RecapConstants.DATADUMP_DAYS_LIMIT_EXCEEDED_ERROR_MSG, incrementalDateLimit, propertyUtil.getPropertyByImsLocationAndKey(imsLocationCode, RecapConstants.LAS_EMAIL_ASSIST_TO)));
+                    errorMessageMap.put(errorcount, MessageFormat.format(ScsbConstants.DATADUMP_DAYS_LIMIT_EXCEEDED_ERROR_MSG, incrementalDateLimit, propertyUtil.getPropertyByImsLocationAndKey(imsLocationCode, ScsbConstants.LAS_EMAIL_ASSIST_TO)));
                     errorcount++;
                 }
             }

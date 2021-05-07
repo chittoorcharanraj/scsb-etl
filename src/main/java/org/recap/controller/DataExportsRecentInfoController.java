@@ -1,6 +1,6 @@
 package org.recap.controller;
 
-import org.recap.RecapCommonConstants;
+import org.recap.ScsbCommonConstants;
 import org.recap.model.export.S3RecentDataExportInfo;
 import org.recap.model.export.S3RecentDataExportInfoList;
 import org.recap.repository.InstitutionDetailsRepository;
@@ -45,7 +45,7 @@ public class DataExportsRecentInfoController {
                 }
             }
         } catch (Exception e) {
-            logger.error(RecapCommonConstants.LOG_ERROR, e);
+            logger.error(ScsbCommonConstants.LOG_ERROR, e);
         }
         return s3RecentDataExportInfoList;
     }
