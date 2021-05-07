@@ -1,7 +1,7 @@
 package org.recap.service.executor.datadump;
 
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.export.DataDumpRequest;
 import org.recap.model.search.SearchRecordsRequest;
 import org.recap.util.DateUtil;
@@ -23,7 +23,7 @@ public class IncrementalDataDumpExecutorService extends AbstractDataDumpExecutor
      */
     @Override
     public boolean isInterested(String fetchType) {
-        return fetchType.equals(RecapConstants.DATADUMP_FETCHTYPE_INCREMENTAL);
+        return fetchType.equals(ScsbConstants.DATADUMP_FETCHTYPE_INCREMENTAL);
     }
 
     /**
@@ -34,7 +34,7 @@ public class IncrementalDataDumpExecutorService extends AbstractDataDumpExecutor
      */
     @Override
     public void populateSearchRequest(SearchRecordsRequest searchRecordsRequest, DataDumpRequest dataDumpRequest) {
-        searchRecordsRequest.setFieldName(RecapCommonConstants.BIBITEM_LASTUPDATED_DATE);
+        searchRecordsRequest.setFieldName(ScsbCommonConstants.BIBITEM_LASTUPDATED_DATE);
         searchRecordsRequest.setFieldValue(DateUtil.getFormattedDateString(dataDumpRequest.getDate(), dataDumpRequest.getToDate()));
         searchRecordsRequest.setRequestingInstitution(dataDumpRequest.getRequestingInstitutionCode());
     }

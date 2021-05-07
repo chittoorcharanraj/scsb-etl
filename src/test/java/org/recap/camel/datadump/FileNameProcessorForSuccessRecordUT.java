@@ -8,7 +8,6 @@ import org.recap.*;
 import org.recap.camel.*;
 import org.recap.model.csv.*;
 
-import java.text.*;
 import java.util.*;
 
 import static org.junit.Assert.*;
@@ -19,21 +18,21 @@ public class FileNameProcessorForSuccessRecordUT {
 
     @Test
     public void testProcess() {
-        SuccessReportReCAPCSVRecord  successReportReCAPCSVRecord = new SuccessReportReCAPCSVRecord();
-        successReportReCAPCSVRecord.setFileName("test");
-        successReportReCAPCSVRecord.setTotalRecordsInFile("test");
-        successReportReCAPCSVRecord.setTotalBibsLoaded("10");
-        successReportReCAPCSVRecord.setTotalHoldingsLoaded("10");
-        successReportReCAPCSVRecord.setTotalBibHoldingsLoaded("10");
-        successReportReCAPCSVRecord.setTotalItemsLoaded("10");
-        successReportReCAPCSVRecord.setTotalBibItemsLoaded("10");
+        SuccessReportSCSBCSVRecord successReportSCSBCSVRecord = new SuccessReportSCSBCSVRecord();
+        successReportSCSBCSVRecord.setFileName("test");
+        successReportSCSBCSVRecord.setTotalRecordsInFile("test");
+        successReportSCSBCSVRecord.setTotalBibsLoaded("10");
+        successReportSCSBCSVRecord.setTotalHoldingsLoaded("10");
+        successReportSCSBCSVRecord.setTotalBibHoldingsLoaded("10");
+        successReportSCSBCSVRecord.setTotalItemsLoaded("10");
+        successReportSCSBCSVRecord.setTotalBibItemsLoaded("10");
 
-        ReCAPCSVSuccessRecord  reCAPCSVSuccessRecord = new ReCAPCSVSuccessRecord();
-        reCAPCSVSuccessRecord.setFileName("test.xml");
-        reCAPCSVSuccessRecord.setInstitutionName("PUL");
-        reCAPCSVSuccessRecord.setReportType(RecapCommonConstants.FAILURE);
-        reCAPCSVSuccessRecord.setSuccessReportReCAPCSVRecordList(Arrays.asList(successReportReCAPCSVRecord));
-        reCAPCSVSuccessRecord.setReportFileName("test");
+        SCSBCSVSuccessRecord SCSBCSVSuccessRecord = new SCSBCSVSuccessRecord();
+        SCSBCSVSuccessRecord.setFileName("test.xml");
+        SCSBCSVSuccessRecord.setInstitutionName("PUL");
+        SCSBCSVSuccessRecord.setReportType(ScsbCommonConstants.FAILURE);
+        SCSBCSVSuccessRecord.setSuccessReportSCSBCSVRecordList(Arrays.asList(successReportSCSBCSVRecord));
+        SCSBCSVSuccessRecord.setReportFileName("test");
 
         String dataHeader="test";
         CamelContext ctx = new DefaultCamelContext();
@@ -42,7 +41,7 @@ public class FileNameProcessorForSuccessRecordUT {
         ex.setProperty("CamelAggregationStrategy",mapData);
         Message in = ex.getIn();
         ex.setMessage(in);
-        in.setBody(reCAPCSVSuccessRecord);
+        in.setBody(SCSBCSVSuccessRecord);
         ex.setIn(in);
         Map<String,Object> mapdata = new HashMap<>();
         mapdata.put("CamelFileName",dataHeader);

@@ -3,9 +3,9 @@ package org.recap.camel;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.commons.io.FilenameUtils;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
-import org.recap.model.csv.ReCAPCSVFailureRecord;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
+import org.recap.model.csv.SCSBCSVFailureRecord;
 
 /**
  * Created by peris on 8/16/16.
@@ -20,11 +20,11 @@ public class FileNameProcessorForFailureRecord implements Processor {
      */
     @Override
     public void process(Exchange exchange) throws Exception {
-        ReCAPCSVFailureRecord reCAPCSVFailureRecord = (ReCAPCSVFailureRecord) exchange.getIn().getBody();
-        String fileName = FilenameUtils.removeExtension(reCAPCSVFailureRecord.getFileName());
-        exchange.getIn().setHeader(RecapCommonConstants.REPORT_FILE_NAME, fileName);
-        exchange.getIn().setHeader(RecapConstants.DIRECTORY_NAME, reCAPCSVFailureRecord.getInstitutionName());
-        exchange.getIn().setHeader(RecapConstants.REPORT_TYPE, reCAPCSVFailureRecord.getReportType());
+        SCSBCSVFailureRecord SCSBCSVFailureRecord = (SCSBCSVFailureRecord) exchange.getIn().getBody();
+        String fileName = FilenameUtils.removeExtension(SCSBCSVFailureRecord.getFileName());
+        exchange.getIn().setHeader(ScsbCommonConstants.REPORT_FILE_NAME, fileName);
+        exchange.getIn().setHeader(ScsbConstants.DIRECTORY_NAME, SCSBCSVFailureRecord.getInstitutionName());
+        exchange.getIn().setHeader(ScsbConstants.REPORT_TYPE, SCSBCSVFailureRecord.getReportType());
 
     }
 }

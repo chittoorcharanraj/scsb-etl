@@ -5,7 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.export.DataDumpRequest;
 import org.recap.service.DataExportHelperService;
 import org.recap.service.DataExportValidateService;
@@ -49,7 +49,7 @@ public class DataDumpRestController {
     @GetMapping(value="/exportDataDump")
     @ApiOperation(value = "exportDataDump",
             notes = "Export datadumps to institutions", nickname = "exportDataDump", position = 0)
-    @ApiResponses(value = {@ApiResponse(code = 200, message = RecapConstants.DATADUMP_PROCESS_STARTED)})
+    @ApiResponses(value = {@ApiResponse(code = 200, message = ScsbConstants.DATADUMP_PROCESS_STARTED)})
     @ResponseBody
     public String exportDataDump(@ApiParam(value = "${swagger.values.institutionCodes}" , required = true, name = "institutionCodes") @RequestParam String institutionCodes,
                                          @ApiParam(value = "${swagger.values.requestingInstitutionCode}",required=true, name = "requestingInstitutionCode") @RequestParam String requestingInstitutionCode,
@@ -63,7 +63,7 @@ public class DataDumpRestController {
                                          @ApiParam(value = "Email address to whom we need to send an email" , name = "emailToAddress")@RequestParam(required=false) String emailToAddress,
                                          @RequestParam(required=false) String userName
     ){
-        RecapConstants.EXPORT_SCHEDULER_CALL = false;
+        ScsbConstants.EXPORT_SCHEDULER_CALL = false;
         DataDumpRequest dataDumpRequest = new DataDumpRequest();
         dataDumpRequest.setRequestFromSwagger(true);
         dataDumpUtil.setDataDumpRequest(dataDumpRequest,fetchType,institutionCodes,date, toDate, collectionGroupIds,transmissionType,requestingInstitutionCode,emailToAddress,outputFormat,imsDepositoryCodes,userName);

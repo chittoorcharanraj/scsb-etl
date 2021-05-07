@@ -5,7 +5,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.TestUtil;
 import org.recap.camel.dynamicrouter.DynamicRouteBuilder;
 import org.recap.repository.InstitutionDetailsRepository;
@@ -32,8 +32,8 @@ public class DataDumpSequenceRestControllerUT extends BaseTestCaseUT {
     @Test
     public void testExportDataDump() {
         Mockito.when(institutionDetailsRepository.findAllInstitutionCodeExceptHTC()).thenReturn(TestUtil.getInstitutionCodeExceptHTC());
-        Mockito.when(dataDumpSchedulerExecutorService.initiateDataDumpForScheduler(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(RecapConstants.DATADUMP_PROCESS_STARTED);
+        Mockito.when(dataDumpSchedulerExecutorService.initiateDataDumpForScheduler(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(ScsbConstants.DATADUMP_PROCESS_STARTED);
         String exportDataDump = dataDumpSequenceRestController.exportDataDump(new Date().toString());
-        assertEquals(RecapConstants.DATADUMP_PROCESS_STARTED, exportDataDump);
+        assertEquals(ScsbConstants.DATADUMP_PROCESS_STARTED, exportDataDump);
     }
 }

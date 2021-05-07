@@ -2,7 +2,7 @@ package org.recap.camel.datadump;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.ILSConfigProperties;
 import org.recap.repository.InstitutionDetailsRepository;
 import org.recap.service.executor.datadump.DataDumpSchedulerExecutorService;
@@ -40,7 +40,7 @@ public class DataDumpSequenceProcessor implements Processor {
     @Override
     public void process(Exchange exchange) throws Exception {
         String institution = (String) exchange.getIn().getBody();
-        String fetchTypeString = RecapConstants.EXPORT_FETCH_TYPE_INSTITUTION.contains(RecapConstants.INCREMENTAL) ? RecapConstants.INCREMENTAL : RecapConstants.DELETED;
+        String fetchTypeString = ScsbConstants.EXPORT_FETCH_TYPE_INSTITUTION.contains(ScsbConstants.INCREMENTAL) ? ScsbConstants.INCREMENTAL : ScsbConstants.DELETED;
         logger.info("Completed {} export for {} institution", fetchTypeString, institution);
 
         List<String> allInstitutionCodeExceptHTC = institutionDetailsRepository.findAllInstitutionCodeExceptHTC();
@@ -48,17 +48,17 @@ public class DataDumpSequenceProcessor implements Processor {
         String nextInstitution =(i<allInstitutionCodeExceptHTC.size()-1) ? allInstitutionCodeExceptHTC.get(i + 1) : "";
         ILSConfigProperties ilsConfigProperties = propertyUtil.getILSConfigProperties(institution);
 
-            if (ilsConfigProperties.getEtlIncrementalDump().equalsIgnoreCase(RecapConstants.EXPORT_FETCH_TYPE_INSTITUTION)) {
-                RecapConstants.EXPORT_FETCH_TYPE_INSTITUTION = ilsConfigProperties.getEtlDeletedDump();
-                dataDumpSchedulerExecutorService.initiateDataDumpForScheduler(RecapConstants.EXPORT_DATE_SCHEDULER, institution, RecapConstants.DATADUMP_FETCHTYPE_DELETED);
-            } else if(!nextInstitution.isEmpty() && ilsConfigProperties.getEtlDeletedDump().equalsIgnoreCase(RecapConstants.EXPORT_FETCH_TYPE_INSTITUTION) ) {
-                RecapConstants.EXPORT_FETCH_TYPE_INSTITUTION = RecapConstants.EXPORT_INCREMENTAL+nextInstitution;
-                dataDumpSchedulerExecutorService.initiateDataDumpForScheduler(RecapConstants.EXPORT_DATE_SCHEDULER, nextInstitution, null);
+            if (ilsConfigProperties.getEtlIncrementalDump().equalsIgnoreCase(ScsbConstants.EXPORT_FETCH_TYPE_INSTITUTION)) {
+                ScsbConstants.EXPORT_FETCH_TYPE_INSTITUTION = ilsConfigProperties.getEtlDeletedDump();
+                dataDumpSchedulerExecutorService.initiateDataDumpForScheduler(ScsbConstants.EXPORT_DATE_SCHEDULER, institution, ScsbConstants.DATADUMP_FETCHTYPE_DELETED);
+            } else if(!nextInstitution.isEmpty() && ilsConfigProperties.getEtlDeletedDump().equalsIgnoreCase(ScsbConstants.EXPORT_FETCH_TYPE_INSTITUTION) ) {
+                ScsbConstants.EXPORT_FETCH_TYPE_INSTITUTION = ScsbConstants.EXPORT_INCREMENTAL+nextInstitution;
+                dataDumpSchedulerExecutorService.initiateDataDumpForScheduler(ScsbConstants.EXPORT_DATE_SCHEDULER, nextInstitution, null);
             }
             else  {
-                RecapConstants.EXPORT_SCHEDULER_CALL = false;
-                RecapConstants.EXPORT_DATE_SCHEDULER = "";
-                RecapConstants.EXPORT_FETCH_TYPE_INSTITUTION = "";
+                ScsbConstants.EXPORT_SCHEDULER_CALL = false;
+                ScsbConstants.EXPORT_DATE_SCHEDULER = "";
+                ScsbConstants.EXPORT_FETCH_TYPE_INSTITUTION = "";
             }
     }
 }

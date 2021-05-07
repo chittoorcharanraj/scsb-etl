@@ -3,7 +3,7 @@ package org.recap.service.transmission.datadump;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.zipfile.ZipAggregationStrategy;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.export.DataDumpRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,7 +31,7 @@ public class DataDumpFileSystemTranmissionService implements DataDumpTransmissio
      */
     @Override
     public boolean isInterested(DataDumpRequest dataDumpRequest) {
-        return dataDumpRequest.getTransmissionType().equals(RecapConstants.DATADUMP_TRANSMISSION_TYPE_FILESYSTEM);
+        return dataDumpRequest.getTransmissionType().equals(ScsbConstants.DATADUMP_TRANSMISSION_TYPE_FILESYSTEM);
     }
 
     /**
@@ -41,14 +41,14 @@ public class DataDumpFileSystemTranmissionService implements DataDumpTransmissio
      */
     @Override
     public void transmitDataDump(Map<String, String> routeMap) throws Exception {
-        String requestingInstitutionCode = routeMap.get(RecapConstants.REQUESTING_INST_CODE);
-        String dateTimeFolder = routeMap.get(RecapConstants.DATETIME_FOLDER);
-        String fileName = routeMap.get(RecapConstants.FILENAME);
+        String requestingInstitutionCode = routeMap.get(ScsbConstants.REQUESTING_INST_CODE);
+        String dateTimeFolder = routeMap.get(ScsbConstants.DATETIME_FOLDER);
+        String fileName = routeMap.get(ScsbConstants.FILENAME);
         camelContext.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("file:"+ dumpDirectoryPath + File.separator + requestingInstitutionCode + File.separator + dateTimeFolder + "?antInclude=*.xml")
-                        .routeId(RecapConstants.DATADUMP_ZIP_FILESYSTEM_ROUTE_ID)
+                        .routeId(ScsbConstants.DATADUMP_ZIP_FILESYSTEM_ROUTE_ID)
                         .aggregate(new ZipAggregationStrategy())
                         .constant(true)
                         .completionFromBatchConsumer()

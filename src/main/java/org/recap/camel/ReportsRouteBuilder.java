@@ -2,8 +2,8 @@ package org.recap.camel;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,13 +28,13 @@ public class ReportsRouteBuilder {
             camelContext.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from(RecapConstants.ETL_REPORT_Q)
-                            .routeId(RecapCommonConstants.REPORT_ROUTE_ID)
+                    from(ScsbConstants.ETL_REPORT_Q)
+                            .routeId(ScsbCommonConstants.REPORT_ROUTE_ID)
                             .process(reportProcessor);
                 }
             });
         } catch (Exception e) {
-            logger.error(RecapConstants.ERROR,e);
+            logger.error(ScsbConstants.ERROR,e);
         }
     }
 }

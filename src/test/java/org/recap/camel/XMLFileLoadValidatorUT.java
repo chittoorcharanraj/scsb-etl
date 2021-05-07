@@ -9,7 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jparw.ReportDataEntity;
 import org.recap.model.jparw.ReportEntity;
 import org.recap.repositoryrw.ReportDetailRepository;
@@ -40,8 +40,8 @@ public class XMLFileLoadValidatorUT extends BaseTestCaseUT {
     private ReportEntity getReportEntity() {
         ReportEntity reportEntity = new ReportEntity();
         ReportDataEntity reportDataEntity = new ReportDataEntity();
-        reportDataEntity.setHeaderName(RecapConstants.HEADER_FETCH_TYPE);
-        reportDataEntity.setHeaderValue(RecapConstants.DATADUMP_FETCHTYPE_INCREMENTAL);
+        reportDataEntity.setHeaderName(ScsbConstants.HEADER_FETCH_TYPE);
+        reportDataEntity.setHeaderValue(ScsbConstants.DATADUMP_FETCHTYPE_INCREMENTAL);
         reportEntity.setReportDataEntities(Arrays.asList(reportDataEntity));
         reportEntity.setCreatedDate(new Date());
         return reportEntity;

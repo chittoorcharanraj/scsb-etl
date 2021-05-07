@@ -8,10 +8,10 @@ import org.apache.camel.support.DefaultExchange;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
+import org.recap.ScsbCommonConstants;
 import org.recap.camel.FileNameProcessorForFailureRecord;
-import org.recap.model.csv.FailureReportReCAPCSVRecord;
-import org.recap.model.csv.ReCAPCSVFailureRecord;
+import org.recap.model.csv.FailureReportSCSBCSVRecord;
+import org.recap.model.csv.SCSBCSVFailureRecord;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -29,26 +29,26 @@ public class FileNameProcessorForFailureRecordUT extends BaseTestCaseUT {
 
     @Test
     public void testProcess() {
-        FailureReportReCAPCSVRecord failureReportReCAPCSVRecord = new FailureReportReCAPCSVRecord();
-        failureReportReCAPCSVRecord.setOwningInstitution("PUL");
-        failureReportReCAPCSVRecord.setOwningInstitutionBibId("1111");
-        failureReportReCAPCSVRecord.setOwningInstitutionHoldingsId("2222");
-        failureReportReCAPCSVRecord.setLocalItemId("333333333");
-        failureReportReCAPCSVRecord.setItemBarcode("4444");
-        failureReportReCAPCSVRecord.setCustomerCode("PA");
-        failureReportReCAPCSVRecord.setTitle("History, of Science");
-        failureReportReCAPCSVRecord.setCollectionGroupDesignation("open");
-        failureReportReCAPCSVRecord.setCreateDateItem(new SimpleDateFormat("mm-dd-yyyy").format(new Date()));
-        failureReportReCAPCSVRecord.setLastUpdatedDateItem(new SimpleDateFormat("mm-dd-yyyy").format(new Date()));
-        failureReportReCAPCSVRecord.setExceptionMessage("exception");
-        failureReportReCAPCSVRecord.setErrorDescription("error");
-        ReCAPCSVFailureRecord reCAPCSVFailureRecord = new ReCAPCSVFailureRecord();
-        reCAPCSVFailureRecord.setFileName("test.xml");
-        reCAPCSVFailureRecord.setInstitutionName("PUL");
-        reCAPCSVFailureRecord.setReportType(RecapCommonConstants.FAILURE);
-        assertNotNull(failureReportReCAPCSVRecord.getCreateDateItem());
-        assertNotNull(failureReportReCAPCSVRecord.getLastUpdatedDateItem());
-        reCAPCSVFailureRecord.setFailureReportReCAPCSVRecordList(Arrays.asList(failureReportReCAPCSVRecord));
+        FailureReportSCSBCSVRecord failureReportSCSBCSVRecord = new FailureReportSCSBCSVRecord();
+        failureReportSCSBCSVRecord.setOwningInstitution("PUL");
+        failureReportSCSBCSVRecord.setOwningInstitutionBibId("1111");
+        failureReportSCSBCSVRecord.setOwningInstitutionHoldingsId("2222");
+        failureReportSCSBCSVRecord.setLocalItemId("333333333");
+        failureReportSCSBCSVRecord.setItemBarcode("4444");
+        failureReportSCSBCSVRecord.setCustomerCode("PA");
+        failureReportSCSBCSVRecord.setTitle("History, of Science");
+        failureReportSCSBCSVRecord.setCollectionGroupDesignation("open");
+        failureReportSCSBCSVRecord.setCreateDateItem(new SimpleDateFormat("mm-dd-yyyy").format(new Date()));
+        failureReportSCSBCSVRecord.setLastUpdatedDateItem(new SimpleDateFormat("mm-dd-yyyy").format(new Date()));
+        failureReportSCSBCSVRecord.setExceptionMessage("exception");
+        failureReportSCSBCSVRecord.setErrorDescription("error");
+        SCSBCSVFailureRecord SCSBCSVFailureRecord = new SCSBCSVFailureRecord();
+        SCSBCSVFailureRecord.setFileName("test.xml");
+        SCSBCSVFailureRecord.setInstitutionName("PUL");
+        SCSBCSVFailureRecord.setReportType(ScsbCommonConstants.FAILURE);
+        assertNotNull(failureReportSCSBCSVRecord.getCreateDateItem());
+        assertNotNull(failureReportSCSBCSVRecord.getLastUpdatedDateItem());
+        SCSBCSVFailureRecord.setFailureReportSCSBCSVRecordList(Arrays.asList(failureReportSCSBCSVRecord));
 
         String dataHeader = "test";
         CamelContext ctx = new DefaultCamelContext();
@@ -57,7 +57,7 @@ public class FileNameProcessorForFailureRecordUT extends BaseTestCaseUT {
         ex.setProperty("CamelAggregationStrategy", mapData);
         Message in = ex.getIn();
         ex.setMessage(in);
-        in.setBody(reCAPCSVFailureRecord);
+        in.setBody(SCSBCSVFailureRecord);
         ex.setIn(in);
         Map<String, Object> mapdata = new HashMap<>();
         mapdata.put("CamelFileName", dataHeader);

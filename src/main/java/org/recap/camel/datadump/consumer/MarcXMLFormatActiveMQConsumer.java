@@ -3,7 +3,7 @@ package org.recap.camel.datadump.consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.FluentProducerTemplate;
 import org.marc4j.marc.Record;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.report.CommonReportGenerator;
 import org.recap.service.formatter.datadump.MarcXmlFormatterService;
 import org.recap.util.datadump.DataExportHeaderUtil;
@@ -44,13 +44,13 @@ public class MarcXMLFormatActiveMQConsumer extends CommonReportGenerator {
         long startTime = System.currentTimeMillis();
 
         String toMarcXmlString = null;
-        String batchHeaders = (String) exchange.getIn().getHeader(RecapConstants.BATCH_HEADERS);
+        String batchHeaders = (String) exchange.getIn().getHeader(ScsbConstants.BATCH_HEADERS);
         String requestId = getDataExportHeaderUtil().getValueFor(batchHeaders, "requestId");
         try {
             toMarcXmlString = marcXmlFormatterService.covertToMarcXmlString(records);
             processSuccessReportEntity(exchange, records, batchHeaders, requestId);
         } catch (Exception e) {
-            logger.error(RecapConstants.ERROR,e);
+            logger.error(ScsbConstants.ERROR,e);
             processFailureReportEntity(exchange, records, batchHeaders, requestId, e);
         }
 
@@ -70,18 +70,18 @@ public class MarcXMLFormatActiveMQConsumer extends CommonReportGenerator {
      */
     private void processSuccessReportEntity(Exchange exchange, List<Record> records, String batchHeaders, String requestId) {
         HashMap<String, String> values = new HashMap<>();
-        values.put(RecapConstants.REQUESTING_INST_CODE, getDataExportHeaderUtil().getValueFor(batchHeaders, RecapConstants.REQUESTING_INST_CODE));
-        values.put(RecapConstants.INSTITUTION_CODES, getDataExportHeaderUtil().getValueFor(batchHeaders, RecapConstants.INSTITUTION_CODES));
-        values.put(RecapConstants.FETCH_TYPE, getDataExportHeaderUtil().getValueFor(batchHeaders, RecapConstants.FETCH_TYPE));
-        values.put(RecapConstants.COLLECTION_GROUP_IDS, getDataExportHeaderUtil().getValueFor(batchHeaders, RecapConstants.COLLECTION_GROUP_IDS));
-        values.put(RecapConstants.TRANSMISSION_TYPE, getDataExportHeaderUtil().getValueFor(batchHeaders, RecapConstants.TRANSMISSION_TYPE));
-        values.put(RecapConstants.EXPORT_FROM_DATE, getDataExportHeaderUtil().getValueFor(batchHeaders, RecapConstants.EXPORT_FROM_DATE));
-        values.put(RecapConstants.EXPORT_FORMAT, getDataExportHeaderUtil().getValueFor(batchHeaders, RecapConstants.EXPORT_FORMAT));
-        values.put(RecapConstants.TO_EMAIL_ID, getDataExportHeaderUtil().getValueFor(batchHeaders, RecapConstants.TO_EMAIL_ID));
-        values.put(RecapConstants.NUM_RECORDS, String.valueOf(records.size()));
-        values.put(RecapConstants.IMS_DEPOSITORY, getDataExportHeaderUtil().getValueFor(batchHeaders, RecapConstants.IMS_DEPOSITORY));
+        values.put(ScsbConstants.REQUESTING_INST_CODE, getDataExportHeaderUtil().getValueFor(batchHeaders, ScsbConstants.REQUESTING_INST_CODE));
+        values.put(ScsbConstants.INSTITUTION_CODES, getDataExportHeaderUtil().getValueFor(batchHeaders, ScsbConstants.INSTITUTION_CODES));
+        values.put(ScsbConstants.FETCH_TYPE, getDataExportHeaderUtil().getValueFor(batchHeaders, ScsbConstants.FETCH_TYPE));
+        values.put(ScsbConstants.COLLECTION_GROUP_IDS, getDataExportHeaderUtil().getValueFor(batchHeaders, ScsbConstants.COLLECTION_GROUP_IDS));
+        values.put(ScsbConstants.TRANSMISSION_TYPE, getDataExportHeaderUtil().getValueFor(batchHeaders, ScsbConstants.TRANSMISSION_TYPE));
+        values.put(ScsbConstants.EXPORT_FROM_DATE, getDataExportHeaderUtil().getValueFor(batchHeaders, ScsbConstants.EXPORT_FROM_DATE));
+        values.put(ScsbConstants.EXPORT_FORMAT, getDataExportHeaderUtil().getValueFor(batchHeaders, ScsbConstants.EXPORT_FORMAT));
+        values.put(ScsbConstants.TO_EMAIL_ID, getDataExportHeaderUtil().getValueFor(batchHeaders, ScsbConstants.TO_EMAIL_ID));
+        values.put(ScsbConstants.NUM_RECORDS, String.valueOf(records.size()));
+        values.put(ScsbConstants.IMS_DEPOSITORY, getDataExportHeaderUtil().getValueFor(batchHeaders, ScsbConstants.IMS_DEPOSITORY));
         setValues(values, exchange, requestId);
-        FluentProducerTemplate fluentProducerTemplate = generateFluentProducerTemplate(exchange, values, RecapConstants.DATADUMP_SUCCESS_REPORT_Q);
+        FluentProducerTemplate fluentProducerTemplate = generateFluentProducerTemplate(exchange, values, ScsbConstants.DATADUMP_SUCCESS_REPORT_Q);
         fluentProducerTemplate.send();
 
     }
@@ -96,10 +96,10 @@ public class MarcXMLFormatActiveMQConsumer extends CommonReportGenerator {
      */
     private void processFailureReportEntity(Exchange exchange, List<Record> records, String batchHeaders, String requestId, Exception e) {
         HashMap<String, String> values = processReport(batchHeaders, requestId, getDataExportHeaderUtil());
-        values.put(RecapConstants.NUM_RECORDS, String.valueOf(records.size()));
-        values.put(RecapConstants.FAILURE_CAUSE, String.valueOf(e.getCause()));
+        values.put(ScsbConstants.NUM_RECORDS, String.valueOf(records.size()));
+        values.put(ScsbConstants.FAILURE_CAUSE, String.valueOf(e.getCause()));
 
-        FluentProducerTemplate fluentProducerTemplate = generateFluentProducerTemplate(exchange, values, RecapConstants.DATADUMP_FAILURE_REPORT_Q);
+        FluentProducerTemplate fluentProducerTemplate = generateFluentProducerTemplate(exchange, values, ScsbConstants.DATADUMP_FAILURE_REPORT_Q);
         fluentProducerTemplate.send();
     }
 

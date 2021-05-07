@@ -14,7 +14,7 @@ import java.util.List;
  */
 @Data
 @CsvRecord(generateHeaderColumns = true, separator = ",", quoting = true, crlf = "UNIX", skipFirstLine = true)
-public class ReCAPCSVFailureRecord implements Serializable {
+public class SCSBCSVFailureRecord implements Serializable {
     @DataField(pos = 1, columnName = "Owning Institution")
     private String owningInstitution;
     @DataField(pos = 2, columnName = "Owning Institution Bib Id")
@@ -47,6 +47,6 @@ public class ReCAPCSVFailureRecord implements Serializable {
     /**
      * The Failure report re capcsv record list.
      */
-    @OneToMany(mappedTo = "org.recap.model.csv.FailureReportReCAPCSVRecord")
-    private List<FailureReportReCAPCSVRecord> failureReportReCAPCSVRecordList;
+    @OneToMany(mappedTo = "org.recap.model.csv.FailureReportSCSBCSVRecord")
+    private List<FailureReportSCSBCSVRecord> failureReportSCSBCSVRecordList;
 }

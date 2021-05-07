@@ -13,7 +13,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.csv.DataDumpFailureReport;
 import org.recap.model.csv.DataDumpSuccessReport;
 import org.recap.model.export.DataDumpRequest;
@@ -116,16 +116,16 @@ public class DataExportEmailProcessorUT extends BaseTestCaseUT {
         reportEntity.setInstitutionName("CUL");
 
         ReportDataEntity reportDataEntity1 = new ReportDataEntity();
-        reportDataEntity1.setHeaderName(RecapConstants.HEADER_FETCH_TYPE);
-        reportDataEntity1.setHeaderValue(RecapConstants.DATADUMP_FETCHTYPE_INCREMENTAL);
+        reportDataEntity1.setHeaderName(ScsbConstants.HEADER_FETCH_TYPE);
+        reportDataEntity1.setHeaderValue(ScsbConstants.DATADUMP_FETCHTYPE_INCREMENTAL);
 
         List<ReportDataEntity> reportDataEntities = new ArrayList<>();
-        reportDataEntities.add(getReportDataEntity(RecapConstants.NUM_BIBS_EXPORTED, RecapConstants.DATADUMP_FETCHTYPE_INCREMENTAL));
-        reportDataEntities.add(getReportDataEntity(RecapConstants.FAILED_BIBS, RecapConstants.DATADUMP_FETCHTYPE_INCREMENTAL));
-        reportDataEntities.add(getReportDataEntity(RecapConstants.EXPORTED_ITEM_COUNT, RecapConstants.DATADUMP_FETCHTYPE_INCREMENTAL));
-        reportDataEntities.add(getReportDataEntity(RecapConstants.HEADER_FETCH_TYPE, RecapConstants.DATADUMP_FETCHTYPE_INCREMENTAL));
-        reportDataEntities.add(getReportDataEntity(RecapConstants.HEADER_FETCH_TYPE, RecapConstants.DATADUMP_FETCHTYPE_DELETED));
-        reportDataEntities.add(getReportDataEntity(RecapConstants.HEADER_FETCH_TYPE, "3"));
+        reportDataEntities.add(getReportDataEntity(ScsbConstants.NUM_BIBS_EXPORTED, ScsbConstants.DATADUMP_FETCHTYPE_INCREMENTAL));
+        reportDataEntities.add(getReportDataEntity(ScsbConstants.FAILED_BIBS, ScsbConstants.DATADUMP_FETCHTYPE_INCREMENTAL));
+        reportDataEntities.add(getReportDataEntity(ScsbConstants.EXPORTED_ITEM_COUNT, ScsbConstants.DATADUMP_FETCHTYPE_INCREMENTAL));
+        reportDataEntities.add(getReportDataEntity(ScsbConstants.HEADER_FETCH_TYPE, ScsbConstants.DATADUMP_FETCHTYPE_INCREMENTAL));
+        reportDataEntities.add(getReportDataEntity(ScsbConstants.HEADER_FETCH_TYPE, ScsbConstants.DATADUMP_FETCHTYPE_DELETED));
+        reportDataEntities.add(getReportDataEntity(ScsbConstants.HEADER_FETCH_TYPE, "3"));
 
 
         reportEntity.setReportDataEntities(reportDataEntities);
@@ -183,8 +183,8 @@ public class DataExportEmailProcessorUT extends BaseTestCaseUT {
             DataDumpFailureReport dataDumpFailureReport = new DataDumpFailureReport();
             DataDumpSuccessReport dataDumpSuccessReport = new DataDumpSuccessReport();
             List<ReportEntity> byFileName = new ArrayList<>();
-            byFileName.add(saveReportEntity(RecapConstants.BATCH_EXPORT_SUCCESS));
-            byFileName.add(saveReportEntity(RecapConstants.BATCH_EXPORT_FAILURE));
+            byFileName.add(saveReportEntity(ScsbConstants.BATCH_EXPORT_SUCCESS));
+            byFileName.add(saveReportEntity(ScsbConstants.BATCH_EXPORT_FAILURE));
             Mockito.when(reportDetailRepository.findByFileName(Mockito.anyString())).thenReturn(byFileName);
             Mockito.when(s3DataDumpFailureReportGenerator.getDataDumpFailureReport(Mockito.anyList(), Mockito.anyString())).thenReturn(dataDumpFailureReport);
             Mockito.when(s3DataDumpSuccessReportGenerator.getDataDumpSuccessReport(Mockito.anyList(), Mockito.anyString())).thenReturn(dataDumpSuccessReport);
@@ -213,7 +213,7 @@ public class DataExportEmailProcessorUT extends BaseTestCaseUT {
         ExportStatusEntity exportStatusEntity = getExportStatusEntity();
         DataDumpRequest dataDumpRequest = getDataDumpRequest();
         Mockito.when(etlRequestLogDetailsRepository.findById(any())).thenReturn(Optional.of(etlRequestLogEntity));
-        Mockito.when(exportStatusDetailsRepository.findByExportStatusCode(RecapConstants.COMPLETED)).thenReturn(exportStatusEntity);
+        Mockito.when(exportStatusDetailsRepository.findByExportStatusCode(ScsbConstants.COMPLETED)).thenReturn(exportStatusEntity);
         Mockito.when(etlRequestLogDetailsRepository.saveAndFlush(any())).thenReturn(etlRequestLogEntity);
         Mockito.when(dataDumpUtil.checkAndPrepareAwaitingReqIfAny()).thenReturn(dataDumpRequest);
         Mockito.when(dataDumpExportService.startDataDumpProcess(any())).thenReturn("");
@@ -233,7 +233,7 @@ public class DataExportEmailProcessorUT extends BaseTestCaseUT {
         institutionCodes.add("NYPL");
         dataDumpRequest.setInstitutionCodes(institutionCodes);
         dataDumpRequest.setTransmissionType("2");
-        dataDumpRequest.setOutputFileFormat(RecapConstants.XML_FILE_FORMAT);
+        dataDumpRequest.setOutputFileFormat(ScsbConstants.XML_FILE_FORMAT);
         dataDumpRequest.setDateTimeString(getDateTimeString());
         dataDumpRequest.setEtlRequestId(1);
         return dataDumpRequest;
@@ -241,7 +241,7 @@ public class DataExportEmailProcessorUT extends BaseTestCaseUT {
 
     private String getDateTimeString() {
         Date date = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat(RecapConstants.DATE_FORMAT_DDMMMYYYYHHMM);
+        SimpleDateFormat sdf = new SimpleDateFormat(ScsbConstants.DATE_FORMAT_DDMMMYYYYHHMM);
         return sdf.format(date);
     }
 

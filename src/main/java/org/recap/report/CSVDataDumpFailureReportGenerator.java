@@ -1,8 +1,8 @@
 package org.recap.report;
 
 import org.apache.commons.io.FilenameUtils;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.csv.DataDumpFailureReport;
 import org.recap.model.jparw.ReportEntity;
 import org.springframework.stereotype.Component;
@@ -27,7 +27,7 @@ public class CSVDataDumpFailureReportGenerator extends CommonReportGenerator imp
      */
     @Override
     public boolean isInterested(String reportType) {
-        return reportType.equalsIgnoreCase(RecapConstants.BATCH_EXPORT_FAILURE);
+        return reportType.equalsIgnoreCase(ScsbConstants.BATCH_EXPORT_FAILURE);
     }
 
     /**
@@ -38,7 +38,7 @@ public class CSVDataDumpFailureReportGenerator extends CommonReportGenerator imp
      */
     @Override
     public boolean isTransmitted(String transmissionType) {
-        return transmissionType.equalsIgnoreCase(RecapCommonConstants.FILE_SYSTEM);
+        return transmissionType.equalsIgnoreCase(ScsbCommonConstants.FILE_SYSTEM);
     }
 
     /**
@@ -49,7 +49,7 @@ public class CSVDataDumpFailureReportGenerator extends CommonReportGenerator imp
      */
     @Override
     public boolean isOperationType(String operationType) {
-        return operationType.equalsIgnoreCase(RecapConstants.BATCH_EXPORT);
+        return operationType.equalsIgnoreCase(ScsbConstants.BATCH_EXPORT);
     }
 
     /**
@@ -63,9 +63,9 @@ public class CSVDataDumpFailureReportGenerator extends CommonReportGenerator imp
     public String generateReport(List<ReportEntity> reportEntities, String fileName) {
         if(!CollectionUtils.isEmpty(reportEntities)) {
             DataDumpFailureReport dataDumpFailureReport = generateDataDumpFailureReport(reportEntities, fileName);
-            DateFormat df = new SimpleDateFormat(RecapCommonConstants.DATE_FORMAT_FOR_FILE_NAME);
+            DateFormat df = new SimpleDateFormat(ScsbCommonConstants.DATE_FORMAT_FOR_FILE_NAME);
             String generatedFileName = FilenameUtils.removeExtension(dataDumpFailureReport.getFileName()) + "-" + dataDumpFailureReport.getReportType() + "-" + df.format(new Date()) + ".csv";
-            producerTemplate.sendBody(RecapConstants.DATADUMP_FAILURE_REPORT_CSV_Q, dataDumpFailureReport);
+            producerTemplate.sendBody(ScsbConstants.DATADUMP_FAILURE_REPORT_CSV_Q, dataDumpFailureReport);
 
             return generatedFileName;
         }

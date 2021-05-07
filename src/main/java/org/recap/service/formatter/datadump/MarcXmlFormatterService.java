@@ -10,8 +10,8 @@ import org.marc4j.marc.DataField;
 import org.marc4j.marc.MarcFactory;
 import org.marc4j.marc.Record;
 import org.marc4j.marc.Subfield;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.ILSConfigProperties;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.HoldingsEntity;
@@ -50,7 +50,7 @@ public class MarcXmlFormatterService implements DataDumpFormatterInterface {
      */
     @Override
     public boolean isInterested(String formatType) {
-        return formatType.equals(RecapConstants.DATADUMP_XML_FORMAT_MARC);
+        return formatType.equals(ScsbConstants.DATADUMP_XML_FORMAT_MARC);
     }
 
 
@@ -68,21 +68,21 @@ public class MarcXmlFormatterService implements DataDumpFormatterInterface {
         for (BibliographicEntity bibliographicEntity : bibliographicEntities) {
             if (CollectionUtils.isNotEmpty(bibliographicEntity.getItemEntities())) {
                 Map<String, Object> stringObjectMap = prepareMarcRecord(bibliographicEntity);
-                Record record = (Record) stringObjectMap.get(RecapCommonConstants.SUCCESS);
+                Record record = (Record) stringObjectMap.get(ScsbCommonConstants.SUCCESS);
                 if (null != record) {
                     records.add(record);
                     itemExportedCount = itemExportedCount + bibliographicEntity.getItemEntities().size();
                 }
-                String failureMsg = (String) stringObjectMap.get(RecapCommonConstants.FAILURE);
+                String failureMsg = (String) stringObjectMap.get(ScsbCommonConstants.FAILURE);
                 if (null != failureMsg) {
                     errors.add(failureMsg);
                 }
             }
         }
 
-        resultsMap.put(RecapCommonConstants.SUCCESS, records);
-        resultsMap.put(RecapCommonConstants.FAILURE, errors);
-        resultsMap.put(RecapConstants.ITEM_EXPORTED_COUNT, itemExportedCount);
+        resultsMap.put(ScsbCommonConstants.SUCCESS, records);
+        resultsMap.put(ScsbCommonConstants.FAILURE, errors);
+        resultsMap.put(ScsbConstants.ITEM_EXPORTED_COUNT, itemExportedCount);
 
         return resultsMap;
     }
@@ -99,15 +99,15 @@ public class MarcXmlFormatterService implements DataDumpFormatterInterface {
         try {
             record = getRecordFromContent(bibliographicEntity.getContent());
             update001Field(record, bibliographicEntity);
-            stripTagsFromBib(record,Arrays.asList(RecapConstants.MarcFields.DF_852,RecapConstants.MarcFields.DF_876));
+            stripTagsFromBib(record,Arrays.asList(ScsbConstants.MarcFields.DF_852, ScsbConstants.MarcFields.DF_876));
             add009Field(record, bibliographicEntity);
             List<Integer> itemIds = getItemIds(bibliographicEntity);
             record = addHoldingInfo(record, bibliographicEntity.getHoldingsEntities(),itemIds,getNonOrphanHoldingsIdList(bibliographicEntity.getItemEntities()));
-            results.put(RecapCommonConstants.SUCCESS, record);
+            results.put(ScsbCommonConstants.SUCCESS, record);
         } catch (Exception e) {
             logger.info("failed bib own ins bib id--->{} " , bibliographicEntity.getOwningInstitutionBibId());
-            logger.error(RecapConstants.ERROR,e);
-            results.put(RecapCommonConstants.FAILURE,bibliographicEntity.getOwningInstitutionBibId()+" * "+ e);
+            logger.error(ScsbConstants.ERROR,e);
+            results.put(ScsbCommonConstants.FAILURE,bibliographicEntity.getOwningInstitutionBibId()+" * "+ e);
         }
         return results;
     }
@@ -180,20 +180,20 @@ public class MarcXmlFormatterService implements DataDumpFormatterInterface {
     private void update001Field(Record record, BibliographicEntity bibliographicEntity) {
         boolean is001Available = false;
         for (ControlField controlField : record.getControlFields()) {
-            if (RecapConstants.MarcFields.CF_001.equals(controlField.getTag())) {
-                controlField.setData(RecapConstants.SCSB + "-" + bibliographicEntity.getId());
+            if (ScsbConstants.MarcFields.CF_001.equals(controlField.getTag())) {
+                controlField.setData(ScsbConstants.SCSB + "-" + bibliographicEntity.getId());
                 is001Available = true;
             }
         }
         if(!is001Available) {
-            ControlField controlField = getFactory().newControlField(RecapConstants.MarcFields.CF_001);
-            controlField.setData(RecapConstants.SCSB + "-" + bibliographicEntity.getId());
+            ControlField controlField = getFactory().newControlField(ScsbConstants.MarcFields.CF_001);
+            controlField.setData(ScsbConstants.SCSB + "-" + bibliographicEntity.getId());
             record.addVariableField(controlField);
         }
     }
 
     private void add009Field(Record record, BibliographicEntity bibliographicEntity){
-        ControlField controlField = getFactory().newControlField(RecapConstants.MarcFields.CF_009);
+        ControlField controlField = getFactory().newControlField(ScsbConstants.MarcFields.CF_009);
         controlField.setData(bibliographicEntity.getOwningInstitutionBibId());
         record.addVariableField(controlField);
     }
@@ -212,12 +212,12 @@ public class MarcXmlFormatterService implements DataDumpFormatterInterface {
                 holdingRecord = getRecordFromContent(holdingsEntity.getContent());
                 if(holdingRecord != null) {
                     for (DataField dataField : holdingRecord.getDataFields()) {
-                        if (RecapConstants.MarcFields.DF_852.equals(dataField.getTag())) {
+                        if (ScsbConstants.MarcFields.DF_852.equals(dataField.getTag())) {
                             addOrUpdateDatafield852Subfield0(dataField, holdingsEntity);
                             update852bField(dataField, holdingsEntity);
                             record.addVariableField(dataField);
                         }
-                        if (RecapConstants.MarcFields.DF_866.equals(dataField.getTag())  &&
+                        if (ScsbConstants.MarcFields.DF_866.equals(dataField.getTag())  &&
                             (!(dataField.getSubfield('a') != null && (dataField.getSubfield('a').getData() == null || "".equals(dataField.getSubfield('a').getData()))))) {
                                 addOrUpdateDatafield852Subfield0(dataField, holdingsEntity);
                                 record.addVariableField(dataField);
@@ -289,7 +289,7 @@ public class MarcXmlFormatterService implements DataDumpFormatterInterface {
      * @return
      */
     private Record addItemInfo(Record record, ItemEntity itemEntity,HoldingsEntity holdingsEntity) {
-        DataField dataField = getFactory().newDataField(RecapConstants.MarcFields.DF_876, ' ', ' ');
+        DataField dataField = getFactory().newDataField(ScsbConstants.MarcFields.DF_876, ' ', ' ');
         dataField.addSubfield(getFactory().newSubfield('0', String.valueOf(holdingsEntity.getId())));
         dataField.addSubfield(getFactory().newSubfield('3', itemEntity.getVolumePartYear() != null ? itemEntity.getVolumePartYear() : ""));
         dataField.addSubfield(getFactory().newSubfield('a', String.valueOf(itemEntity.getId())));

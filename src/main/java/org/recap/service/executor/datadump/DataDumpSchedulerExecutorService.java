@@ -1,7 +1,7 @@
 package org.recap.service.executor.datadump;
 
 import org.apache.commons.lang3.StringUtils;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.ILSConfigProperties;
 import org.recap.model.export.DataDumpRequest;
 import org.recap.service.DataExportValidateService;
@@ -51,16 +51,16 @@ public class DataDumpSchedulerExecutorService {
         logger.info("Export data dump for {} from {}", requestingInstitutionCode, date);
         DataDumpRequest dataDumpRequest = new DataDumpRequest();
         dataDumpRequest.setIncrementalSequence(true);
-        Map<String, String> requestParameterMap = getJobDataParameterUtil().buildJobRequestParameterMap(RecapConstants.EXPORT_FETCH_TYPE_INSTITUTION);
+        Map<String, String> requestParameterMap = getJobDataParameterUtil().buildJobRequestParameterMap(ScsbConstants.EXPORT_FETCH_TYPE_INSTITUTION);
         if (StringUtils.isBlank(fetchType)) {
-            fetchType = requestParameterMap.get(RecapConstants.FETCH_TYPE);
+            fetchType = requestParameterMap.get(ScsbConstants.FETCH_TYPE);
         }
-        dataDumpUtil.setDataDumpRequest(dataDumpRequest, fetchType, requestParameterMap.get(RecapConstants.INSTITUTION_CODES), date, null, requestParameterMap.get(RecapConstants.COLLECTION_GROUP_IDS), requestParameterMap.get(RecapConstants.TRANSMISSION_TYPE), requestingInstitutionCode, getToEmailAddress(requestingInstitutionCode), requestParameterMap.get("outputFormat"),requestParameterMap.get("imsDepositoryCodes"),"Scheduler");
+        dataDumpUtil.setDataDumpRequest(dataDumpRequest, fetchType, requestParameterMap.get(ScsbConstants.INSTITUTION_CODES), date, null, requestParameterMap.get(ScsbConstants.COLLECTION_GROUP_IDS), requestParameterMap.get(ScsbConstants.TRANSMISSION_TYPE), requestingInstitutionCode, getToEmailAddress(requestingInstitutionCode), requestParameterMap.get("outputFormat"),requestParameterMap.get("imsDepositoryCodes"),"Scheduler");
         String responseMessage = dataExportValidateService.validateIncomingRequest(dataDumpRequest);
         if (responseMessage != null) {
-            RecapConstants.EXPORT_SCHEDULER_CALL = false;
-            RecapConstants.EXPORT_DATE_SCHEDULER = "";
-            RecapConstants.EXPORT_FETCH_TYPE_INSTITUTION = "";
+            ScsbConstants.EXPORT_SCHEDULER_CALL = false;
+            ScsbConstants.EXPORT_DATE_SCHEDULER = "";
+            ScsbConstants.EXPORT_FETCH_TYPE_INSTITUTION = "";
             return responseMessage;
         }
         responseMessage = dataDumpExportService.startDataDumpProcess(dataDumpRequest);

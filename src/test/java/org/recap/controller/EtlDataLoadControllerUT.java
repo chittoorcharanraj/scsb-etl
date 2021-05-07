@@ -16,7 +16,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
+import org.recap.ScsbCommonConstants;
 import org.recap.camel.RecordProcessor;
 import org.recap.model.etl.EtlLoadRequest;
 import org.recap.model.jparw.ReportDataEntity;
@@ -155,11 +155,11 @@ public class EtlDataLoadControllerUT extends BaseTestCaseUT {
             ReportEntity reportEntity = new ReportEntity();
             reportEntity.setFileName(fileName);
             reportEntity.setCreatedDate(new Date());
-            reportEntity.setType(RecapCommonConstants.FAILURE);
+            reportEntity.setType(ScsbCommonConstants.FAILURE);
             reportEntity.setInstitutionName("NYPL");
 
             ReportDataEntity reportDataEntity = new ReportDataEntity();
-            reportDataEntity.setHeaderName(RecapCommonConstants.ITEM_BARCODE);
+            reportDataEntity.setHeaderName(ScsbCommonConstants.ITEM_BARCODE);
             reportDataEntity.setHeaderValue("103");
             reportDataEntities.add(reportDataEntity);
 
@@ -181,14 +181,14 @@ public class EtlDataLoadControllerUT extends BaseTestCaseUT {
 
             EtlLoadRequest etlLoadRequest = new EtlLoadRequest();
             etlLoadRequest.setReportFileName(fileName);
-            etlLoadRequest.setReportType(RecapCommonConstants.FAILURE);
+            etlLoadRequest.setReportType(ScsbCommonConstants.FAILURE);
             etlLoadRequest.setDateFrom(from);
             etlLoadRequest.setDateTo(to);
-            etlLoadRequest.setTransmissionType(RecapCommonConstants.FILE_SYSTEM);
+            etlLoadRequest.setTransmissionType(ScsbCommonConstants.FILE_SYSTEM);
             etlLoadRequest.setOwningInstitutionName("NYPL");
             etlLoadRequest.setReportInstitutionName("NYPL");
             etlLoadRequest.setOperationType("ETL");
-            String dateString = new SimpleDateFormat(RecapCommonConstants.DATE_FORMAT_FOR_FILE_NAME).format(new Date());
+            String dateString = new SimpleDateFormat(ScsbCommonConstants.DATE_FORMAT_FOR_FILE_NAME).format(new Date());
             String reportFileName = "test" + "-Failure" + "-" + dateString + ".csv";
 
             etlDataLoadController.generateReport(etlLoadRequest, bindingResult, model);
@@ -205,10 +205,10 @@ public class EtlDataLoadControllerUT extends BaseTestCaseUT {
         etlLoadRequest.setFile(multipartFile);
         etlLoadRequest.setUserName("john");
         etlLoadRequest.setReportFileName("test");
-        etlLoadRequest.setReportType(RecapCommonConstants.FAILURE);
+        etlLoadRequest.setReportType(ScsbCommonConstants.FAILURE);
         etlLoadRequest.setDateFrom(new Date());
         etlLoadRequest.setDateTo(new Date());
-        etlLoadRequest.setTransmissionType(RecapCommonConstants.FILE_SYSTEM);
+        etlLoadRequest.setTransmissionType(ScsbCommonConstants.FILE_SYSTEM);
         etlLoadRequest.setOwningInstitutionName("NYPL");
         etlLoadRequest.setReportInstitutionName("NYPL");
         etlLoadRequest.setOperationType("ETL");

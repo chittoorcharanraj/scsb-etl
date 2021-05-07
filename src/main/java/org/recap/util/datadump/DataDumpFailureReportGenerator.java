@@ -1,7 +1,7 @@
 package org.recap.util.datadump;
 
 import org.apache.commons.beanutils.PropertyUtilsBean;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.csv.DataDumpFailureReport;
 import org.recap.model.jparw.ReportDataEntity;
 import org.recap.model.jparw.ReportEntity;
@@ -38,13 +38,13 @@ public class DataDumpFailureReportGenerator {
             ReportDataEntity report =  iterator.next();
             String headerName = report.getHeaderName();
             String headerValue = report.getHeaderValue();
-            if (!headerName.equalsIgnoreCase(RecapConstants.TO_EMAIL_ID)) {
+            if (!headerName.equalsIgnoreCase(ScsbConstants.TO_EMAIL_ID)) {
                 Method setterMethod = getSetterMethod(headerName);
                 if(null != setterMethod){
                     try {
                         setterMethod.invoke(dataDumpFailureReport, headerValue);
                     } catch(IllegalAccessException | InvocationTargetException e){
-                        logger.error(RecapConstants.ERROR,e);
+                        logger.error(ScsbConstants.ERROR,e);
                     }
                 }
             }
@@ -63,7 +63,7 @@ public class DataDumpFailureReportGenerator {
         try {
             return propertyUtilsBean.getWriteMethod(new PropertyDescriptor(propertyName, DataDumpFailureReport.class));
         } catch (IntrospectionException e) {
-            logger.error(RecapConstants.ERROR,e);
+            logger.error(ScsbConstants.ERROR,e);
         }
         return null;
     }
@@ -79,7 +79,7 @@ public class DataDumpFailureReportGenerator {
         try {
             return propertyUtilsBean.getReadMethod(new PropertyDescriptor(propertyName, DataDumpFailureReport.class));
         } catch (IntrospectionException e) {
-            logger.error(RecapConstants.ERROR,e);
+            logger.error(ScsbConstants.ERROR,e);
         }
         return null;
     }

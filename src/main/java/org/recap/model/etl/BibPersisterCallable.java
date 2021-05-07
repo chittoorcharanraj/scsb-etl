@@ -4,8 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jaxb.Bib;
 import org.recap.model.jaxb.BibRecord;
 import org.recap.model.jaxb.Holding;
@@ -76,7 +76,7 @@ public class BibPersisterCallable implements Callable {
         Integer owningInstitutionId = institutionEntitiesMap.get(bibRecord.getBib().getOwningInstitutionId());
         Date currentDate = new Date();
         Map<String, Object> bibMap = processAndValidateBibliographicEntity(owningInstitutionId,currentDate);
-        BibliographicEntity bibliographicEntity = (BibliographicEntity) bibMap.get(RecapConstants.BIBLIOGRAPHIC_ENTITY_NAME);
+        BibliographicEntity bibliographicEntity = (BibliographicEntity) bibMap.get(ScsbConstants.BIBLIOGRAPHIC_ENTITY_NAME);
         logger.info("Processing ETL load - owningInstitutionBibId : {}",bibliographicEntity.getOwningInstitutionBibId());
         ReportEntity bibReportEntity = (ReportEntity) bibMap.get("bibReportEntity");
         if (bibReportEntity != null) {
@@ -141,7 +141,7 @@ public class BibPersisterCallable implements Callable {
             map.put("reportEntities", reportEntities);
         }
         if (processBib) {
-            map.put(RecapConstants.BIBLIOGRAPHIC_ENTITY_NAME, bibliographicEntity);
+            map.put(ScsbConstants.BIBLIOGRAPHIC_ENTITY_NAME, bibliographicEntity);
         }
         return map;
     }
@@ -154,7 +154,7 @@ public class BibPersisterCallable implements Callable {
         ReportEntity reportEntity = new ReportEntity();
         reportEntity.setFileName(xmlRecordEntity.getXmlFileName());
         reportEntity.setInstitutionName(institutionName);
-        reportEntity.setType(RecapCommonConstants.FAILURE);
+        reportEntity.setType(ScsbCommonConstants.FAILURE);
         reportEntity.setCreatedDate(new Date());
 
         Bib bib = bibRecord.getBib();
@@ -174,7 +174,7 @@ public class BibPersisterCallable implements Callable {
         bibliographicEntity.setCreatedBy("etl");
         bibliographicEntity.setLastUpdatedDate(currentDate);
         bibliographicEntity.setLastUpdatedBy("etl");
-        bibliographicEntity.setCatalogingStatus(RecapCommonConstants.COMPLETE_STATUS);
+        bibliographicEntity.setCatalogingStatus(ScsbCommonConstants.COMPLETE_STATUS);
 
         ContentType bibContent = bib.getContent();
         CollectionType bibContentCollection = bibContent.getCollection();
@@ -202,7 +202,7 @@ public class BibPersisterCallable implements Callable {
         if (errorMessage.toString().length() > 1) {
             reportDataEntities = getDbReportUtil().generateBibFailureReportEntity(bibliographicEntity);
             ReportDataEntity errorReportDataEntity = new ReportDataEntity();
-            errorReportDataEntity.setHeaderName(RecapCommonConstants.ERROR_DESCRIPTION);
+            errorReportDataEntity.setHeaderName(ScsbCommonConstants.ERROR_DESCRIPTION);
             errorReportDataEntity.setHeaderValue(errorMessage.toString());
             reportDataEntities.add(errorReportDataEntity);
         }
@@ -210,7 +210,7 @@ public class BibPersisterCallable implements Callable {
             reportEntity.addAll(reportDataEntities);
             map.put("bibReportEntity", reportEntity);
         }
-        map.put(RecapConstants.BIBLIOGRAPHIC_ENTITY_NAME, bibliographicEntity);
+        map.put(ScsbConstants.BIBLIOGRAPHIC_ENTITY_NAME, bibliographicEntity);
         return map;
     }
 
@@ -222,7 +222,7 @@ public class BibPersisterCallable implements Callable {
         ReportEntity reportEntity = new ReportEntity();
         reportEntity.setFileName(xmlRecordEntity.getXmlFileName());
         reportEntity.setInstitutionName(institutionName);
-        reportEntity.setType(RecapCommonConstants.FAILURE);
+        reportEntity.setType(ScsbCommonConstants.FAILURE);
         reportEntity.setCreatedDate(new Date());
 
         String holdingsContent = holdingContentCollection.serialize(holdingContentCollection);
@@ -246,7 +246,7 @@ public class BibPersisterCallable implements Callable {
         if (errorMessage.toString().length() > 1) {
             getDbReportUtil().generateBibHoldingsFailureReportEntity(bibliographicEntity, holdingsEntity);
             ReportDataEntity errorReportDataEntity = new ReportDataEntity();
-            errorReportDataEntity.setHeaderName(RecapCommonConstants.ERROR_DESCRIPTION);
+            errorReportDataEntity.setHeaderName(ScsbCommonConstants.ERROR_DESCRIPTION);
             errorReportDataEntity.setHeaderValue(errorMessage.toString());
             reportDataEntities.add(errorReportDataEntity);
         }
@@ -267,7 +267,7 @@ public class BibPersisterCallable implements Callable {
         ReportEntity reportEntity = new ReportEntity();
         reportEntity.setFileName(xmlRecordEntity.getXmlFileName());
         reportEntity.setInstitutionName(institutionName);
-        reportEntity.setType(RecapCommonConstants.FAILURE);
+        reportEntity.setType(ScsbCommonConstants.FAILURE);
         reportEntity.setCreatedDate(new Date());
 
         String itemBarcode = getMarcUtil().getDataFieldValue(itemRecordType, "876", null, null, "p");
@@ -295,13 +295,13 @@ public class BibPersisterCallable implements Callable {
         String imsLocationCode = null;
         imsLocationCode =  getMarcUtil().getDataFieldValue(itemRecordType, "876", null, null, "l");
         if(imsLocationCode != null && imsLocationCode.trim().length()>0) {
-            itemEntity.setCatalogingStatus(RecapCommonConstants.COMPLETE_STATUS);
+            itemEntity.setCatalogingStatus(ScsbCommonConstants.COMPLETE_STATUS);
         }
         else {
-            itemEntity.setCatalogingStatus(RecapCommonConstants.INCOMPLETE_STATUS);
+            itemEntity.setCatalogingStatus(ScsbCommonConstants.INCOMPLETE_STATUS);
         }
 
-        imsLocationCode = !StringUtils.isEmpty(imsLocationCode)?imsLocationCode:RecapConstants.IMS_DEPOSITORY_UNKNOWN;
+        imsLocationCode = !StringUtils.isEmpty(imsLocationCode)?imsLocationCode: ScsbConstants.IMS_DEPOSITORY_UNKNOWN;
 
         itemEntity.setImsLocationId(imsLocationCodeMap.get(imsLocationCode));
 
@@ -345,7 +345,7 @@ public class BibPersisterCallable implements Callable {
         if (errorMessage.toString().length() > 1) {
             reportDataEntities = getDbReportUtil().generateBibHoldingsAndItemsFailureReportEntities(bibliographicEntity, holdingsEntity, itemEntity);
             ReportDataEntity errorReportDataEntity = new ReportDataEntity();
-            errorReportDataEntity.setHeaderName(RecapCommonConstants.ERROR_DESCRIPTION);
+            errorReportDataEntity.setHeaderName(ScsbCommonConstants.ERROR_DESCRIPTION);
             errorReportDataEntity.setHeaderValue(errorMessage.toString());
             reportDataEntities.add(errorReportDataEntity);
         }

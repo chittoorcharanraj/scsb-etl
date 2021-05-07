@@ -11,9 +11,8 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.recap.BaseTestCase;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.repositoryrw.ReportDetailRepository;
 import org.recap.util.datadump.DataExportHeaderUtil;
 
@@ -44,10 +43,10 @@ public class CommonReportGeneratorUT extends BaseTestCaseUT {
         Exchange ex = new DefaultExchange(ctx);
         Message in = ex.getIn();
         ex.setMessage(in);
-        ex.setProperty(RecapConstants.INST_NAME, "CUL");
+        ex.setProperty(ScsbConstants.INST_NAME, "CUL");
         GenericFile<Object> camelFileExchangeFile=new GenericFile<>();
         camelFileExchangeFile.setFileName("file");
-        ex.setProperty(RecapConstants.CAMEL_EXCHANGE_FILE, camelFileExchangeFile);
+        ex.setProperty(ScsbConstants.CAMEL_EXCHANGE_FILE, camelFileExchangeFile);
         Map<String, Object> mapdata = new HashMap<>();
         mapdata.put("institutionName", "CUL");
         in.setHeaders(mapdata);

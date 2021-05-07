@@ -2,7 +2,7 @@ package org.recap.report;
 
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.lang3.StringUtils;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jparw.ReportEntity;
 import org.recap.repositoryrw.ReportDetailRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,7 +104,7 @@ public class ReportGenerator {
     public String generateReport(String fileName, String operationType, String reportType, String institutionName, Date from, Date to, String transmissionType) {
 
         List<ReportEntity> reportEntities;
-        if(operationType.equals(RecapConstants.BATCH_EXPORT)){
+        if(operationType.equals(ScsbConstants.BATCH_EXPORT)){
             reportType = operationType+reportType;
             reportEntities = reportDetailRepository.findByInstitutionAndTypeAndDateRange(institutionName, reportType, from, to);
             fileName = institutionName;

@@ -30,7 +30,7 @@ public class SearchRecordsRequest implements Serializable {
     @ApiModelProperty(name= "collectionGroupDesignations", value= "Collection Group Designations",position = 3)
     private List<String> collectionGroupDesignations = null;
 
-    @ApiModelProperty(name= "availability", value= "Availability of books in ReCAP",position = 4)
+    @ApiModelProperty(name= "availability", value= "Availability of books in Storage Location",position = 4)
     private List<String> availability = null;
 
     @ApiModelProperty(name= "materialTypes", value= "Material Types",position = 5)

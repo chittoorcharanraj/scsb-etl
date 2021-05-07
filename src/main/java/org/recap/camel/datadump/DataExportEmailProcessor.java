@@ -4,8 +4,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.collections.CollectionUtils;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.csv.DataDumpFailureReport;
 import org.recap.model.csv.DataDumpSuccessReport;
 import org.recap.model.export.DataDumpRequest;
@@ -133,34 +133,34 @@ public class DataExportEmailProcessor implements Processor {
             List<ReportDataEntity> reportDataEntities = reportEntity.getReportDataEntities();
             for (Iterator<ReportDataEntity> iterator = reportDataEntities.iterator(); iterator.hasNext(); ) {
                 ReportDataEntity reportDataEntity = iterator.next();
-                if(reportDataEntity.getHeaderName().equals(RecapConstants.NUM_BIBS_EXPORTED)){
+                if(reportDataEntity.getHeaderName().equals(ScsbConstants.NUM_BIBS_EXPORTED)){
                     totalRecordCount = reportDataEntity.getHeaderValue();
                 }
-                if(reportDataEntity.getHeaderName().equals(RecapConstants.FAILED_BIBS)){
+                if(reportDataEntity.getHeaderName().equals(ScsbConstants.FAILED_BIBS)){
                     failedBibs = reportDataEntity.getHeaderValue();
                 }
-                if(reportDataEntity.getHeaderName().equals(RecapConstants.EXPORTED_ITEM_COUNT)){
+                if(reportDataEntity.getHeaderName().equals(ScsbConstants.EXPORTED_ITEM_COUNT)){
                     exportedItemCount = reportDataEntity.getHeaderValue();
                 }
             }
-            if(reportEntity.getType().equalsIgnoreCase(RecapConstants.BATCH_EXPORT_SUCCESS)) {
+            if(reportEntity.getType().equalsIgnoreCase(ScsbConstants.BATCH_EXPORT_SUCCESS)) {
                 successReportEntities.add(reportEntity);
-            } else if(reportEntity.getType().equalsIgnoreCase(RecapConstants.BATCH_EXPORT_FAILURE)) {
+            } else if(reportEntity.getType().equalsIgnoreCase(ScsbConstants.BATCH_EXPORT_FAILURE)) {
                 failureReportEntities.add(reportEntity);
             }
         }
-        sendBatchExportReportToFTP(successReportEntities, RecapCommonConstants.SUCCESS);
-        sendBatchExportReportToFTP(failureReportEntities, RecapCommonConstants.FAILURE);
+        sendBatchExportReportToFTP(successReportEntities, ScsbCommonConstants.SUCCESS);
+        sendBatchExportReportToFTP(failureReportEntities, ScsbCommonConstants.FAILURE);
 
         if(fetchType.equals(fetchTypeFull)) {
             logger.info("Sending email for full dump");
             processEmail(totalRecordCount,failedBibs,exportedItemCount,fetchType,requestingInstitutionCode);
         }
-        else if(fetchType.equals(RecapConstants.DATADUMP_FETCHTYPE_INCREMENTAL)){
+        else if(fetchType.equals(ScsbConstants.DATADUMP_FETCHTYPE_INCREMENTAL)){
             logger.info("Sending email for incremental dump");
             processEmail(totalRecordCount,failedBibs,exportedItemCount,fetchType,requestingInstitutionCode);
         }
-        else if(fetchType.equals(RecapConstants.DATADUMP_FETCHTYPE_DELETED)){
+        else if(fetchType.equals(ScsbConstants.DATADUMP_FETCHTYPE_DELETED)){
             logger.info("Sending email for deleted dump");
             processEmail(totalRecordCount,failedBibs,exportedItemCount,fetchType,requestingInstitutionCode);
         }
@@ -169,17 +169,17 @@ public class DataExportEmailProcessor implements Processor {
 
     private void setReportFileName(ReportEntity reportEntity){
         for (ReportDataEntity reportDataEntity:reportEntity.getReportDataEntities()){
-            if(reportDataEntity.getHeaderName().equals(RecapConstants.HEADER_FETCH_TYPE)){
-                if (reportDataEntity.getHeaderValue().equals(RecapConstants.DATADUMP_FETCHTYPE_INCREMENTAL)) {
+            if(reportDataEntity.getHeaderName().equals(ScsbConstants.HEADER_FETCH_TYPE)){
+                if (reportDataEntity.getHeaderValue().equals(ScsbConstants.DATADUMP_FETCHTYPE_INCREMENTAL)) {
                     String[] split = folderName.split("/");
-                    reportFileName =split[0]+File.separator+split[1]+File.separator+split[2]+File.separator+RecapConstants.EXPORT_DATA_DUMP_INCREMENTAL+split[3];
-                } else if(reportDataEntity.getHeaderValue().equals(RecapConstants.DATADUMP_FETCHTYPE_DELETED)) {
+                    reportFileName =split[0]+File.separator+split[1]+File.separator+split[2]+File.separator+ ScsbConstants.EXPORT_DATA_DUMP_INCREMENTAL+split[3];
+                } else if(reportDataEntity.getHeaderValue().equals(ScsbConstants.DATADUMP_FETCHTYPE_DELETED)) {
                     String[] split = folderName.split("/");
-                    reportFileName = split[0]+File.separator+split[1]+File.separator+RecapConstants.EXPORT_DATA_DUMP_DELETIONS+split[2];
+                    reportFileName = split[0]+File.separator+split[1]+File.separator+ ScsbConstants.EXPORT_DATA_DUMP_DELETIONS+split[2];
                 }
                 else{
                     String[] split = folderName.split("/");
-                    reportFileName =split[0]+File.separator+split[1]+File.separator+split[2]+File.separator+RecapConstants.EXPORT_DATA_DUMP_FULL+split[3];
+                    reportFileName =split[0]+File.separator+split[1]+File.separator+split[2]+File.separator+ ScsbConstants.EXPORT_DATA_DUMP_FULL+split[3];
                 }
             }
         }
@@ -192,13 +192,13 @@ public class DataExportEmailProcessor implements Processor {
      */
     private void sendBatchExportReportToFTP(List<ReportEntity> reportEntities, String type) {
         if(CollectionUtils.isNotEmpty(reportEntities)) {
-            if(type.equalsIgnoreCase(RecapCommonConstants.SUCCESS)) {
+            if(type.equalsIgnoreCase(ScsbCommonConstants.SUCCESS)) {
                 DataDumpSuccessReport dataDumpSuccessReport = s3DataDumpSuccessReportGenerator.getDataDumpSuccessReport(reportEntities, reportFileName);
-                producerTemplate.sendBody(RecapConstants.DATAEXPORT_WITH_SUCCESS_REPORT_FTP_Q, dataDumpSuccessReport);
+                producerTemplate.sendBody(ScsbConstants.DATAEXPORT_WITH_SUCCESS_REPORT_FTP_Q, dataDumpSuccessReport);
                 logger.info("The Success Report folder : {}", folderName);
-            } else if (type.equalsIgnoreCase(RecapCommonConstants.FAILURE)) {
+            } else if (type.equalsIgnoreCase(ScsbCommonConstants.FAILURE)) {
                 DataDumpFailureReport dataDumpFailureReport = s3DataDumpFailureReportGenerator.getDataDumpFailureReport(reportEntities, reportFileName);
-                producerTemplate.sendBody(RecapConstants.DATAEXPORT_WITH_FAILURE_REPORT_FTP_Q, dataDumpFailureReport);
+                producerTemplate.sendBody(ScsbConstants.DATAEXPORT_WITH_FAILURE_REPORT_FTP_Q, dataDumpFailureReport);
                 logger.info("The Failure Report folder : {}", folderName);
             }
         }
@@ -223,10 +223,10 @@ public class DataExportEmailProcessor implements Processor {
     private void updateStatusInFile() {
         File file = new File(dataDumpStatusFileName);
         try (FileWriter fileWriter = new FileWriter(file, false)) {
-            fileWriter.append(RecapConstants.COMPLETED);
+            fileWriter.append(ScsbConstants.COMPLETED);
             fileWriter.flush();
         } catch (IOException e) {
-            logger.error(RecapConstants.EXCEPTION, e);
+            logger.error(ScsbConstants.EXCEPTION, e);
         }
     }
 
@@ -234,7 +234,7 @@ public class DataExportEmailProcessor implements Processor {
         Optional<ETLRequestLogEntity> inProgressExportLog = etlRequestLogDetailsRepository.findById(eltRequestId);
         if(inProgressExportLog.isPresent()){
             ETLRequestLogEntity inProgressRequestLogEntity = inProgressExportLog.get();
-            ExportStatusEntity exportStatusEntity = exportStatusDetailsRepository.findByExportStatusCode(RecapConstants.COMPLETED);
+            ExportStatusEntity exportStatusEntity = exportStatusDetailsRepository.findByExportStatusCode(ScsbConstants.COMPLETED);
             inProgressRequestLogEntity.setExportStatusId(exportStatusEntity.getId());
             inProgressRequestLogEntity.setExportStatusEntity(exportStatusEntity);
             inProgressRequestLogEntity.setCompleteTime(new Date());
@@ -255,15 +255,15 @@ public class DataExportEmailProcessor implements Processor {
      * @param exportedItemCount
      */
     private void processEmail(String totalRecordCount, String failedBibs, String exportedItemCount,String fetchType,String requestingInstitutionCode){
-        if (transmissionType.equals(RecapConstants.DATADUMP_TRANSMISSION_TYPE_S3)
-                ||transmissionType.equals(RecapConstants.DATADUMP_TRANSMISSION_TYPE_FILESYSTEM)) {
+        if (transmissionType.equals(ScsbConstants.DATADUMP_TRANSMISSION_TYPE_S3)
+                ||transmissionType.equals(ScsbConstants.DATADUMP_TRANSMISSION_TYPE_FILESYSTEM)) {
             dataDumpEmailService.sendEmail(institutionCodes,
                     Integer.valueOf(totalRecordCount),
                     Integer.valueOf(failedBibs),
                     transmissionType,
                     this.folderName,
                     toEmailId,
-                    RecapConstants.DATADUMP_DATA_AVAILABLE,
+                    ScsbConstants.DATADUMP_DATA_AVAILABLE,
                     Integer.valueOf(exportedItemCount),fetchType,requestingInstitutionCode,imsDepositoryCodes
             );
         }

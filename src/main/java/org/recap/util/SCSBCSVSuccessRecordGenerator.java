@@ -1,8 +1,8 @@
 package org.recap.util;
 
 import org.apache.commons.beanutils.PropertyUtilsBean;
-import org.recap.RecapConstants;
-import org.recap.model.csv.SuccessReportReCAPCSVRecord;
+import org.recap.ScsbConstants;
+import org.recap.model.csv.SuccessReportSCSBCSVRecord;
 import org.recap.model.jparw.ReportDataEntity;
 import org.recap.model.jparw.ReportEntity;
 import org.slf4j.Logger;
@@ -17,9 +17,9 @@ import java.util.List;
 /**
  * Created by angelind on 18/8/16.
  */
-public class ReCAPCSVSuccessRecordGenerator {
+public class SCSBCSVSuccessRecordGenerator {
 
-    private static final Logger logger = LoggerFactory.getLogger(ReCAPCSVSuccessRecordGenerator.class);
+    private static final Logger logger = LoggerFactory.getLogger(SCSBCSVSuccessRecordGenerator.class);
 
     /**
      * Prepare success records csv report for initial data load.
@@ -27,11 +27,11 @@ public class ReCAPCSVSuccessRecordGenerator {
      * @param reportEntity the report entity
      * @return the success report re capcsv record
      */
-    public SuccessReportReCAPCSVRecord prepareSuccessReportReCAPCSVRecord(ReportEntity reportEntity) {
+    public SuccessReportSCSBCSVRecord prepareSuccessReportReCAPCSVRecord(ReportEntity reportEntity) {
 
         List<ReportDataEntity> reportDataEntities = reportEntity.getReportDataEntities();
 
-        SuccessReportReCAPCSVRecord successReportReCAPCSVRecord = new SuccessReportReCAPCSVRecord();
+        SuccessReportSCSBCSVRecord successReportSCSBCSVRecord = new SuccessReportSCSBCSVRecord();
 
         for (Iterator<ReportDataEntity> iterator = reportDataEntities.iterator(); iterator.hasNext(); ) {
             ReportDataEntity report =  iterator.next();
@@ -40,13 +40,13 @@ public class ReCAPCSVSuccessRecordGenerator {
             Method setterMethod = getSetterMethod(headerName);
             if(null != setterMethod){
                 try {
-                    setterMethod.invoke(successReportReCAPCSVRecord, headerValue);
+                    setterMethod.invoke(successReportSCSBCSVRecord, headerValue);
                 } catch (Exception e) {
-                    logger.error(RecapConstants.ERROR,e);
+                    logger.error(ScsbConstants.ERROR,e);
                 }
             }
         }
-        return successReportReCAPCSVRecord;
+        return successReportSCSBCSVRecord;
     }
 
     /**
@@ -58,9 +58,9 @@ public class ReCAPCSVSuccessRecordGenerator {
     public Method getSetterMethod(String propertyName) {
         PropertyUtilsBean propertyUtilsBean = new PropertyUtilsBean();
         try {
-            return propertyUtilsBean.getWriteMethod(new PropertyDescriptor(propertyName, SuccessReportReCAPCSVRecord.class));
+            return propertyUtilsBean.getWriteMethod(new PropertyDescriptor(propertyName, SuccessReportSCSBCSVRecord.class));
         } catch (IntrospectionException e) {
-            logger.error(RecapConstants.ERROR,e);
+            logger.error(ScsbConstants.ERROR,e);
         }
         return null;
     }
@@ -74,9 +74,9 @@ public class ReCAPCSVSuccessRecordGenerator {
     public Method getGetterMethod(String propertyName) {
         PropertyUtilsBean propertyUtilsBean = new PropertyUtilsBean();
         try {
-            return propertyUtilsBean.getReadMethod(new PropertyDescriptor(propertyName, SuccessReportReCAPCSVRecord.class));
+            return propertyUtilsBean.getReadMethod(new PropertyDescriptor(propertyName, SuccessReportSCSBCSVRecord.class));
         } catch (IntrospectionException e) {
-            logger.error(RecapConstants.ERROR,e);
+            logger.error(ScsbConstants.ERROR,e);
         }
         return null;
     }

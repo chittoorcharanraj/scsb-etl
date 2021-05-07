@@ -3,7 +3,7 @@ package org.recap.service.transmission.datadump;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.export.DataDumpRequest;
 
 import java.text.SimpleDateFormat;
@@ -105,7 +105,7 @@ public class DataDumpS3TransmissionServiceUT extends BaseTestCaseUT {
         institutionCodes.add("NYPL");
         dataDumpRequest.setInstitutionCodes(institutionCodes);
         dataDumpRequest.setTransmissionType("2");
-        dataDumpRequest.setOutputFileFormat(RecapConstants.XML_FILE_FORMAT);
+        dataDumpRequest.setOutputFileFormat(ScsbConstants.XML_FILE_FORMAT);
         dataDumpRequest.setDateTimeString(getDateTimeString());
         try {
 
@@ -119,18 +119,18 @@ public class DataDumpS3TransmissionServiceUT extends BaseTestCaseUT {
 
     private String getDateTimeString() {
         Date date = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat(RecapConstants.DATE_FORMAT_DDMMMYYYYHHMM);
+        SimpleDateFormat sdf = new SimpleDateFormat(ScsbConstants.DATE_FORMAT_DDMMMYYYYHHMM);
         return sdf.format(date);
     }
 
     private Map<String, String> getRouteMap() {
         dateTimeString = getDateTimeString();
         Map<String, String> routeMap = new HashMap<>();
-        String fileName = RecapConstants.DATA_DUMP_FILE_NAME + requestingInstitutionCode;
-        routeMap.put(RecapConstants.FILENAME, fileName);
-        routeMap.put(RecapConstants.DATETIME_FOLDER, dateTimeString);
-        routeMap.put(RecapConstants.REQUESTING_INST_CODE, requestingInstitutionCode);
-        routeMap.put(RecapConstants.FILE_FORMAT, RecapConstants.XML_FILE_FORMAT);
+        String fileName = ScsbConstants.DATA_DUMP_FILE_NAME + requestingInstitutionCode;
+        routeMap.put(ScsbConstants.FILENAME, fileName);
+        routeMap.put(ScsbConstants.DATETIME_FOLDER, dateTimeString);
+        routeMap.put(ScsbConstants.REQUESTING_INST_CODE, requestingInstitutionCode);
+        routeMap.put(ScsbConstants.FILE_FORMAT, ScsbConstants.XML_FILE_FORMAT);
         return routeMap;
     }
 }

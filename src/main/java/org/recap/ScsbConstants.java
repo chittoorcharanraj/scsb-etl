@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Created by premkb on 19/8/16.
  */
-public class RecapConstants {
+public class ScsbConstants {
 
     public static final String DATA_DUMP_FILE_NAME = "ReCAPCollectionFor";
     public static final String FILENAME = "fileName";
@@ -124,7 +124,7 @@ public class RecapConstants {
     public static final String DATADUMP_FETCHTYPE_FULL = "10";
     public static final String DATADUMP_FETCHTYPE_INCREMENTAL = "1";
     public static final String DATADUMP_FETCHTYPE_DELETED = "2";
-    public static final List<String> DATADUMP_TYPES = Collections.unmodifiableList(Arrays.asList(RecapConstants.DATADUMP_FETCHTYPE_INCREMENTAL,RecapConstants.DATADUMP_FETCHTYPE_DELETED,RecapConstants.DATADUMP_FETCHTYPE_FULL));
+    public static final List<String> DATADUMP_TYPES = Collections.unmodifiableList(Arrays.asList(ScsbConstants.DATADUMP_FETCHTYPE_INCREMENTAL, ScsbConstants.DATADUMP_FETCHTYPE_DELETED, ScsbConstants.DATADUMP_FETCHTYPE_FULL));
 
     public static final String DATADUMP_TRANSMISSION_TYPE_S3 = "0";
     public static final String DATADUMP_TRANSMISSION_TYPE_HTTP = "1";

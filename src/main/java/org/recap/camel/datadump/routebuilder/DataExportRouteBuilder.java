@@ -2,7 +2,7 @@ package org.recap.camel.datadump.routebuilder;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.camel.datadump.DataDumpSequenceProcessor;
 import org.recap.camel.datadump.DataExportAggregator;
 import org.recap.camel.datadump.DataExportPredicate;
@@ -59,8 +59,8 @@ public class DataExportRouteBuilder {
             camelContext.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from(RecapConstants.SOLR_INPUT_FOR_DATA_EXPORT_Q)
-                            .routeId(RecapConstants.SOLR_INPUT_DATA_EXPORT_ROUTE_ID)
+                    from(ScsbConstants.SOLR_INPUT_FOR_DATA_EXPORT_Q)
+                            .routeId(ScsbConstants.SOLR_INPUT_DATA_EXPORT_ROUTE_ID)
                             .threads(20)
                             .bean(new BibEntityGeneratorActiveMQConsumer(bibliographicDetailsRepository, dataDumpPropertyHolder.getDataDumpBibEntityThreadSize(), dataDumpPropertyHolder.getDataDumpBibEntityBatchSize()), "processBibEntities");
                 }
@@ -70,20 +70,20 @@ public class DataExportRouteBuilder {
                 @Override
                 public void configure() throws Exception {
 
-                    interceptFrom(RecapConstants.BIB_ENTITY_FOR_DATA_EXPORT_Q)
+                    interceptFrom(ScsbConstants.BIB_ENTITY_FOR_DATA_EXPORT_Q)
                             .process(new FileFormatProcessorForDataExport())
                             .process(new TransmissionTypeProcessorForDataExport());
 
-                    from(RecapConstants.BIB_ENTITY_FOR_DATA_EXPORT_Q)
-                            .routeId(RecapConstants.BIB_ENTITY_DATA_EXPORT_ROUTE_ID)
+                    from(ScsbConstants.BIB_ENTITY_FOR_DATA_EXPORT_Q)
+                            .routeId(ScsbConstants.BIB_ENTITY_DATA_EXPORT_ROUTE_ID)
                             .threads(20)
                             .choice()
-                            .when(header(RecapConstants.EXPORT_FORMAT).isEqualTo(RecapConstants.DATADUMP_XML_FORMAT_MARC))
-                            .bean(new MarcRecordFormatActiveMQConsumer(marcXmlFormatterService, dataDumpPropertyHolder.getDataDumpMarcFormatThreadSize(), dataDumpPropertyHolder.getDataDumpMarcFormatBatchSize()), RecapConstants.PROCESS_RECORDS)
-                            .when(header(RecapConstants.EXPORT_FORMAT).isEqualTo(RecapConstants.DATADUMP_XML_FORMAT_SCSB))
-                            .bean(new SCSBRecordFormatActiveMQConsumer(scsbXmlFormatterService, dataDumpPropertyHolder.getDataDumpScsbFormatThreadSize(), dataDumpPropertyHolder.getDataDumpScsbFormatBatchSize()), RecapConstants.PROCESS_RECORDS)
-                            .when(header(RecapConstants.EXPORT_FORMAT).isEqualTo(RecapConstants.DATADUMP_DELETED_JSON_FORMAT))
-                            .bean(new DeletedRecordFormatActiveMQConsumer(deletedJsonFormatterService, dataDumpPropertyHolder.getDataDumpDeletedRecordsThreadSize(), dataDumpPropertyHolder.getDataDumpDeletedRecordsBatchSize()), RecapConstants.PROCESS_RECORDS)
+                            .when(header(ScsbConstants.EXPORT_FORMAT).isEqualTo(ScsbConstants.DATADUMP_XML_FORMAT_MARC))
+                            .bean(new MarcRecordFormatActiveMQConsumer(marcXmlFormatterService, dataDumpPropertyHolder.getDataDumpMarcFormatThreadSize(), dataDumpPropertyHolder.getDataDumpMarcFormatBatchSize()), ScsbConstants.PROCESS_RECORDS)
+                            .when(header(ScsbConstants.EXPORT_FORMAT).isEqualTo(ScsbConstants.DATADUMP_XML_FORMAT_SCSB))
+                            .bean(new SCSBRecordFormatActiveMQConsumer(scsbXmlFormatterService, dataDumpPropertyHolder.getDataDumpScsbFormatThreadSize(), dataDumpPropertyHolder.getDataDumpScsbFormatBatchSize()), ScsbConstants.PROCESS_RECORDS)
+                            .when(header(ScsbConstants.EXPORT_FORMAT).isEqualTo(ScsbConstants.DATADUMP_DELETED_JSON_FORMAT))
+                            .bean(new DeletedRecordFormatActiveMQConsumer(deletedJsonFormatterService, dataDumpPropertyHolder.getDataDumpDeletedRecordsThreadSize(), dataDumpPropertyHolder.getDataDumpDeletedRecordsBatchSize()), ScsbConstants.PROCESS_RECORDS)
                     ;
 
                 }
@@ -93,46 +93,46 @@ public class DataExportRouteBuilder {
                 @Override
                 public void configure() throws Exception {
 
-                    from(RecapConstants.MARC_RECORD_FOR_DATA_EXPORT_Q)
-                            .routeId(RecapConstants.MARC_RECORD_DATA_EXPORT_ROUTE_ID)
+                    from(ScsbConstants.MARC_RECORD_FOR_DATA_EXPORT_Q)
+                            .routeId(ScsbConstants.MARC_RECORD_DATA_EXPORT_ROUTE_ID)
                             .aggregate(constant(true), new DataExportAggregator()).completionPredicate(new DataExportPredicate(Integer.valueOf(dataDumpPropertyHolder.getDataDumpRecordsPerFile())))
                             .bean(new MarcXMLFormatActiveMQConsumer(marcXmlFormatterService), "processMarcXmlString")
-                            .to(RecapConstants.DATADUMP_STAGING_Q);
+                            .to(ScsbConstants.DATADUMP_STAGING_Q);
                 }
             });
 
             camelContext.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from(RecapConstants.SCSB_RECORD_FOR_DATA_EXPORT_Q)
-                            .routeId(RecapConstants.SCSB_RECORD_DATA_EXPORT_ROUTE_ID)
+                    from(ScsbConstants.SCSB_RECORD_FOR_DATA_EXPORT_Q)
+                            .routeId(ScsbConstants.SCSB_RECORD_DATA_EXPORT_ROUTE_ID)
                             .aggregate(constant(true), new DataExportAggregator()).completionPredicate(new DataExportPredicate(Integer.valueOf(dataDumpPropertyHolder.getDataDumpRecordsPerFile())))
                             .bean(new SCSBXMLFormatActiveMQConsumer(scsbXmlFormatterService, xmlFormatter), "processSCSBXmlString")
-                            .to(RecapConstants.DATADUMP_STAGING_Q);
+                            .to(ScsbConstants.DATADUMP_STAGING_Q);
                 }
             });
 
             camelContext.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from(RecapConstants.DELETED_JSON_RECORD_FOR_DATA_EXPORT_Q)
-                            .routeId(RecapConstants.DELETED_JSON_RECORD_DATA_EXPORT_ROUTE_ID)
+                    from(ScsbConstants.DELETED_JSON_RECORD_FOR_DATA_EXPORT_Q)
+                            .routeId(ScsbConstants.DELETED_JSON_RECORD_DATA_EXPORT_ROUTE_ID)
                             .aggregate(constant(true), new DataExportAggregator()).completionPredicate(new DataExportPredicate(Integer.valueOf(dataDumpPropertyHolder.getDataDumpRecordsPerFile())))
                             .bean(new DeletedJsonFormatActiveMQConsumer(deletedJsonFormatterService), "processDeleteJsonString")
-                            .to(RecapConstants.DATADUMP_STAGING_Q);
+                            .to(ScsbConstants.DATADUMP_STAGING_Q);
                 }
             });
 
             camelContext.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from(RecapConstants.DATADUMP_STAGING_Q)
-                            .routeId(RecapConstants.DATADUMP_STAGING_ROUTE_ID)
+                    from(ScsbConstants.DATADUMP_STAGING_Q)
+                            .routeId(ScsbConstants.DATADUMP_STAGING_ROUTE_ID)
                             .choice()
-                            .when(header("transmissionType").isEqualTo(RecapConstants.DATADUMP_TRANSMISSION_TYPE_S3))
-                            .to(RecapConstants.DATADUMP_ZIPFILE_FTP_Q)
-                            .when(header("transmissionType").isEqualTo(RecapConstants.DATADUMP_TRANSMISSION_TYPE_HTTP))
-                            .to(RecapConstants.DATADUMP_HTTP_Q);
+                            .when(header("transmissionType").isEqualTo(ScsbConstants.DATADUMP_TRANSMISSION_TYPE_S3))
+                            .to(ScsbConstants.DATADUMP_ZIPFILE_FTP_Q)
+                            .when(header("transmissionType").isEqualTo(ScsbConstants.DATADUMP_TRANSMISSION_TYPE_HTTP))
+                            .to(ScsbConstants.DATADUMP_HTTP_Q);
                 }
             });
 
@@ -140,24 +140,24 @@ public class DataExportRouteBuilder {
             camelContext.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from(RecapConstants.DATA_DUMP_COMPLETION_FROM)
-                            .routeId(RecapConstants.DATA_DUMP_COMPLETION_ROUTE_ID)
+                    from(ScsbConstants.DATA_DUMP_COMPLETION_FROM)
+                            .routeId(ScsbConstants.DATA_DUMP_COMPLETION_ROUTE_ID)
                             .process(dataDumpSequenceProcessor)
-                            .onCompletion().log(RecapConstants.DATA_DUMP_COMPLETION_LOG);
+                            .onCompletion().log(ScsbConstants.DATA_DUMP_COMPLETION_LOG);
                 }
             });
 
             camelContext.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from(RecapConstants.DATA_DUMP_COMPLETION_TOPIC)
-                            .routeId(RecapConstants.DATA_DUMP_COMPLETION_TOPIC_ROUTE_ID)
+                    from(ScsbConstants.DATA_DUMP_COMPLETION_TOPIC)
+                            .routeId(ScsbConstants.DATA_DUMP_COMPLETION_TOPIC_ROUTE_ID)
                             .bean(dataExportCompletionStatusActiveMQConsumer, "onCompletionTopicMessage");
                 }
             });
 
         } catch (Exception e) {
-            logger.error(RecapConstants.ERROR, e);
+            logger.error(ScsbConstants.ERROR, e);
         }
     }
 }

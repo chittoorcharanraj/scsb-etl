@@ -1,7 +1,7 @@
 package org.recap.report;
 
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jparw.ReportEntity;
 import org.springframework.stereotype.Component;
 
@@ -21,7 +21,7 @@ public class CSVFailureReportGenerator extends CommonReportGenerator implements 
      */
     @Override
     public boolean isInterested(String reportType) {
-        return reportType.equalsIgnoreCase(RecapCommonConstants.FAILURE);
+        return reportType.equalsIgnoreCase(ScsbCommonConstants.FAILURE);
     }
 
     /**
@@ -32,7 +32,7 @@ public class CSVFailureReportGenerator extends CommonReportGenerator implements 
      */
     @Override
     public boolean isTransmitted(String transmissionType) {
-        return transmissionType.equalsIgnoreCase(RecapCommonConstants.FILE_SYSTEM);
+        return transmissionType.equalsIgnoreCase(ScsbCommonConstants.FILE_SYSTEM);
     }
 
     /**
@@ -43,7 +43,7 @@ public class CSVFailureReportGenerator extends CommonReportGenerator implements 
      */
     @Override
     public boolean isOperationType(String operationType) {
-        return operationType.equalsIgnoreCase(RecapConstants.OPERATION_TYPE_ETL);
+        return operationType.equalsIgnoreCase(ScsbConstants.OPERATION_TYPE_ETL);
     }
 
     /**
@@ -55,6 +55,6 @@ public class CSVFailureReportGenerator extends CommonReportGenerator implements 
      */
     @Override
     public String generateReport(List<ReportEntity> reportEntities, String fileName) {
-        return generateFailureReport(reportEntities, fileName, RecapConstants.CSV_FAILURE_Q);
+        return generateFailureReport(reportEntities, fileName, ScsbConstants.CSV_FAILURE_Q);
     }
 }

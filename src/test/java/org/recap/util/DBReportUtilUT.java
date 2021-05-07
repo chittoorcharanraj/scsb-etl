@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
+import org.recap.ScsbCommonConstants;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.HoldingsEntity;
 import org.recap.model.jpa.ItemEntity;
@@ -34,7 +34,7 @@ public class DBReportUtilUT extends BaseTestCaseUT {
         Map<String, Integer> institutionEntitiesMap=new HashMap<>();
         institutionEntitiesMap.put("OwningInstitutionId",1);
         Map<String, Integer> collectionGroupMap=new HashMap<>();
-        collectionGroupMap.put(RecapCommonConstants.COLLECTION_GROUP_DESIGNATION,1);
+        collectionGroupMap.put(ScsbCommonConstants.COLLECTION_GROUP_DESIGNATION,1);
         ReflectionTestUtils.setField(mockDBReportUtil,"institutionEntitiesMap",institutionEntitiesMap);
         ReflectionTestUtils.setField(mockDBReportUtil,"collectionGroupMap",collectionGroupMap);
         MockitoAnnotations.initMocks(this);
@@ -80,7 +80,7 @@ public class DBReportUtilUT extends BaseTestCaseUT {
     @Test
     public void collectionGroupMap(){
         Map<String, Integer> collectionGroupMap=new HashMap<>();
-        collectionGroupMap.put(RecapCommonConstants.COLLECTION_GROUP_DESIGNATION,1);
+        collectionGroupMap.put(ScsbCommonConstants.COLLECTION_GROUP_DESIGNATION,1);
         mockDBReportUtil.setCollectionGroupMap(collectionGroupMap);
         assertEquals(collectionGroupMap,mockDBReportUtil.getCollectionGroupMap());
     }

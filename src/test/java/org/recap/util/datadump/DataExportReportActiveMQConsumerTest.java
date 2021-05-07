@@ -7,8 +7,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.camel.datadump.consumer.DataExportReportActiveMQConsumer;
 import org.recap.model.jparw.ReportDataEntity;
 import org.recap.model.jparw.ReportEntity;
@@ -42,11 +42,11 @@ public class DataExportReportActiveMQConsumerTest {
     public void processNewSuccessReportEntity() throws Exception {
         DataExportReportActiveMQConsumer dataExportReportActiveMQConsumer = new DataExportReportActiveMQConsumer();
         HashMap values = new HashMap();
-        values.put(RecapConstants.REQUESTING_INST_CODE, "PUL");
-        values.put(RecapConstants.NUM_RECORDS, "12");
-        values.put(RecapConstants.NUM_BIBS_EXPORTED, "Num Bibs Exported");
-        values.put(RecapConstants.BATCH_EXPORT, "Batch Export");
-        values.put(RecapCommonConstants.REQUEST_ID, "PUL-2017-12-12 11");
+        values.put(ScsbConstants.REQUESTING_INST_CODE, "PUL");
+        values.put(ScsbConstants.NUM_RECORDS, "12");
+        values.put(ScsbConstants.NUM_BIBS_EXPORTED, "Num Bibs Exported");
+        values.put(ScsbConstants.BATCH_EXPORT, "Batch Export");
+        values.put(ScsbCommonConstants.REQUEST_ID, "PUL-2017-12-12 11");
 
         dataExportReportActiveMQConsumer.setReportDetailRepository(mockReportDetailsRepository);
 
@@ -93,19 +93,19 @@ public class DataExportReportActiveMQConsumerTest {
     public void processExistingSuccessReportEntity() throws Exception {
         DataExportReportActiveMQConsumer dataExportReportActiveMQConsumer = new DataExportReportActiveMQConsumer();
         HashMap values = new HashMap();
-        values.put(RecapConstants.REQUESTING_INST_CODE, "PUL");
-        values.put(RecapConstants.NUM_RECORDS, "12");
-        values.put(RecapConstants.NUM_BIBS_EXPORTED, "NoOfBibsExported");
-        values.put(RecapConstants.BATCH_EXPORT, RecapConstants.BATCH_EXPORT_SUCCESS);
-        values.put(RecapCommonConstants.REQUEST_ID, "PUL-2017-12-12 11");
-        values.put(RecapConstants.ITEM_EXPORTED_COUNT, 1);
+        values.put(ScsbConstants.REQUESTING_INST_CODE, "PUL");
+        values.put(ScsbConstants.NUM_RECORDS, "12");
+        values.put(ScsbConstants.NUM_BIBS_EXPORTED, "NoOfBibsExported");
+        values.put(ScsbConstants.BATCH_EXPORT, ScsbConstants.BATCH_EXPORT_SUCCESS);
+        values.put(ScsbCommonConstants.REQUEST_ID, "PUL-2017-12-12 11");
+        values.put(ScsbConstants.ITEM_EXPORTED_COUNT, 1);
         dataExportReportActiveMQConsumer.setReportDetailRepository(mockReportDetailsRepository);
 
         ReportEntity savedReportEntity = dataExportReportActiveMQConsumer.saveSuccessReportEntity(values);
 
 
-        Mockito.when(mockReportDetailsRepository.findByFileNameAndType("PUL-2017-12-12 11", RecapConstants.BATCH_EXPORT_SUCCESS)).thenReturn(Arrays.asList(savedReportEntity));
-        values.put(RecapConstants.NUM_RECORDS, "10");
+        Mockito.when(mockReportDetailsRepository.findByFileNameAndType("PUL-2017-12-12 11", ScsbConstants.BATCH_EXPORT_SUCCESS)).thenReturn(Arrays.asList(savedReportEntity));
+        values.put(ScsbConstants.NUM_RECORDS, "10");
         ReportEntity updatedReportEntity = dataExportReportActiveMQConsumer.saveSuccessReportEntity(values);
         assertNotNull(updatedReportEntity);
         List<ReportDataEntity> updatedReportDataEntities = updatedReportEntity.getReportDataEntities();
@@ -120,14 +120,14 @@ public class DataExportReportActiveMQConsumerTest {
     @Test
     public void processNewFailureReportEntity() throws Exception {
         HashMap values = new HashMap();
-        values.put(RecapConstants.REQUESTING_INST_CODE, "PUL");
-        values.put(RecapConstants.FAILED_BIBS, "2");
-        values.put(RecapConstants.INSTITUTION_CODES, "PUL");
-        values.put(RecapConstants.FETCH_TYPE, "Full");
-        values.put(RecapConstants.FAILURE_LIST, Arrays.asList("PUL\\*CUL", "RECALL\\*FAILED"));
-        values.put(RecapConstants.FAILURE_CAUSE, "Bad happened");
-        values.put(RecapConstants.BATCH_EXPORT, "Batch Export");
-        values.put(RecapCommonConstants.REQUEST_ID, "PUL-2017-12-12 11");
+        values.put(ScsbConstants.REQUESTING_INST_CODE, "PUL");
+        values.put(ScsbConstants.FAILED_BIBS, "2");
+        values.put(ScsbConstants.INSTITUTION_CODES, "PUL");
+        values.put(ScsbConstants.FETCH_TYPE, "Full");
+        values.put(ScsbConstants.FAILURE_LIST, Arrays.asList("PUL\\*CUL", "RECALL\\*FAILED"));
+        values.put(ScsbConstants.FAILURE_CAUSE, "Bad happened");
+        values.put(ScsbConstants.BATCH_EXPORT, "Batch Export");
+        values.put(ScsbCommonConstants.REQUEST_ID, "PUL-2017-12-12 11");
         dataExportReportActiveMQConsumer.setReportDetailRepository(mockReportDetailsRepository);
 
         ReportEntity savedReportEntity = dataExportReportActiveMQConsumer.saveFailureReportEntity(values);
@@ -137,15 +137,15 @@ public class DataExportReportActiveMQConsumerTest {
     @Test
     public void processNewFailureReportEntityWithFileName() throws Exception {
         HashMap values = new HashMap();
-        values.put(RecapConstants.REQUESTING_INST_CODE, "PUL");
-        values.put(RecapConstants.FAILED_BIBS, "2");
-        values.put(RecapConstants.INSTITUTION_CODES, "PUL");
-        values.put(RecapConstants.FETCH_TYPE, "Full");
-        values.put(RecapConstants.FAILURE_LIST, Arrays.asList("PUL\\*CUL", "RECALL\\*FAILED"));
-        values.put(RecapConstants.FAILURE_CAUSE, "Bad happened");
-        values.put(RecapConstants.BATCH_EXPORT, "Batch Export");
-        values.put(RecapCommonConstants.REQUEST_ID, "PUL-2017-12-12 11");
-        values.put(RecapConstants.NUM_RECORDS, "123");
+        values.put(ScsbConstants.REQUESTING_INST_CODE, "PUL");
+        values.put(ScsbConstants.FAILED_BIBS, "2");
+        values.put(ScsbConstants.INSTITUTION_CODES, "PUL");
+        values.put(ScsbConstants.FETCH_TYPE, "Full");
+        values.put(ScsbConstants.FAILURE_LIST, Arrays.asList("PUL\\*CUL", "RECALL\\*FAILED"));
+        values.put(ScsbConstants.FAILURE_CAUSE, "Bad happened");
+        values.put(ScsbConstants.BATCH_EXPORT, "Batch Export");
+        values.put(ScsbCommonConstants.REQUEST_ID, "PUL-2017-12-12 11");
+        values.put(ScsbConstants.NUM_RECORDS, "123");
         dataExportReportActiveMQConsumer.setReportDetailRepository(mockReportDetailsRepository);
         Mockito.when(mockReportDetailsRepository.findByFileNameAndType(any(), anyString())).thenReturn(Arrays.asList(getReportEntity()));
         ReportEntity savedReportEntity = dataExportReportActiveMQConsumer.saveFailureReportEntity(values);
@@ -155,27 +155,27 @@ public class DataExportReportActiveMQConsumerTest {
     @Test
     public void processExistingFailureReportEntity() throws Exception {
         HashMap values = new HashMap();
-        values.put(RecapConstants.REQUESTING_INST_CODE, "PUL");
-        values.put(RecapConstants.INSTITUTION_CODES, "PUL");
-        values.put(RecapConstants.FETCH_TYPE, "Incremental");
-        values.put(RecapConstants.FAILURE_LIST, Arrays.asList("PUL\\*CUL", "RECALL\\*FAILED"));
-        values.put(RecapConstants.FAILED_BIBS, "2");
-        values.put(RecapConstants.FAILURE_CAUSE, "Bad happened");
-        values.put(RecapConstants.BATCH_EXPORT, "Batch Export");
-        values.put(RecapCommonConstants.REQUEST_ID, "PUL-2017-12-12 11");
+        values.put(ScsbConstants.REQUESTING_INST_CODE, "PUL");
+        values.put(ScsbConstants.INSTITUTION_CODES, "PUL");
+        values.put(ScsbConstants.FETCH_TYPE, "Incremental");
+        values.put(ScsbConstants.FAILURE_LIST, Arrays.asList("PUL\\*CUL", "RECALL\\*FAILED"));
+        values.put(ScsbConstants.FAILED_BIBS, "2");
+        values.put(ScsbConstants.FAILURE_CAUSE, "Bad happened");
+        values.put(ScsbConstants.BATCH_EXPORT, "Batch Export");
+        values.put(ScsbCommonConstants.REQUEST_ID, "PUL-2017-12-12 11");
         dataExportReportActiveMQConsumer.setReportDetailRepository(mockReportDetailsRepository);
 
         ReportEntity savedReportEntity = dataExportReportActiveMQConsumer.saveFailureReportEntity(values);
 
 
-        Mockito.when(mockReportDetailsRepository.findByFileNameAndType("PUL-2017-12-12 11", RecapConstants.BATCH_EXPORT_FAILURE)).thenReturn(Arrays.asList(savedReportEntity));
-        values.put(RecapConstants.NUM_RECORDS, "3");
+        Mockito.when(mockReportDetailsRepository.findByFileNameAndType("PUL-2017-12-12 11", ScsbConstants.BATCH_EXPORT_FAILURE)).thenReturn(Arrays.asList(savedReportEntity));
+        values.put(ScsbConstants.NUM_RECORDS, "3");
         ReportEntity updatedReportEntity = dataExportReportActiveMQConsumer.saveFailureReportEntity(values);
         assertNotNull(updatedReportEntity);
         List<ReportDataEntity> updatedReportDataEntities = updatedReportEntity.getReportDataEntities();
         for (Iterator<ReportDataEntity> iterator = updatedReportDataEntities.iterator(); iterator.hasNext(); ) {
             ReportDataEntity reportDataEntity = iterator.next();
-            if (reportDataEntity.getHeaderName().equals(RecapConstants.FAILED_BIBS)) {
+            if (reportDataEntity.getHeaderName().equals(ScsbConstants.FAILED_BIBS)) {
                 assertEquals("5", reportDataEntity.getHeaderValue());
             }
         }
@@ -184,8 +184,8 @@ public class DataExportReportActiveMQConsumerTest {
     private ReportEntity getReportEntity() {
         ReportEntity reportEntity = new ReportEntity();
         ReportDataEntity reportDataEntity = new ReportDataEntity();
-        reportDataEntity.setHeaderName(RecapConstants.FAILED_BIBS);
-        reportDataEntity.setHeaderValue(RecapConstants.DATADUMP_FETCHTYPE_INCREMENTAL);
+        reportDataEntity.setHeaderName(ScsbConstants.FAILED_BIBS);
+        reportDataEntity.setHeaderValue(ScsbConstants.DATADUMP_FETCHTYPE_INCREMENTAL);
         reportEntity.setReportDataEntities(Arrays.asList(reportDataEntity));
         reportEntity.setCreatedDate(new Date());
         return reportEntity;

@@ -5,8 +5,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.impl.engine.DefaultFluentProducerTemplate;
 import org.apache.commons.collections.CollectionUtils;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.report.CommonReportGenerator;
 import org.recap.util.datadump.DataExportHeaderUtil;
 import org.recap.camel.datadump.callable.DeletedRecordPreparerCallable;
@@ -102,15 +102,15 @@ public class DeletedRecordFormatActiveMQConsumer extends CommonReportGenerator {
         List failures = new ArrayList<>();
         for (Future<DeletedRecord> future : collectedFutures) {
             Map<String, Object> results = (Map<String, Object>) future.get();
-            Collection<? extends DeletedRecord> successRecords = (Collection<? extends DeletedRecord>) results.get(RecapCommonConstants.SUCCESS);
+            Collection<? extends DeletedRecord> successRecords = (Collection<? extends DeletedRecord>) results.get(ScsbCommonConstants.SUCCESS);
             if (CollectionUtils.isNotEmpty(successRecords)) {
                 deletedRecordList.addAll(successRecords);
             }
-            Collection failureRecords = (Collection) results.get(RecapCommonConstants.FAILURE);
+            Collection failureRecords = (Collection) results.get(ScsbCommonConstants.FAILURE);
             if (CollectionUtils.isNotEmpty(failureRecords)) {
                 failures.addAll(failureRecords);
             }
-            Integer itemCount = (Integer) results.get(RecapConstants.ITEM_EXPORTED_COUNT);
+            Integer itemCount = (Integer) results.get(ScsbConstants.ITEM_EXPORTED_COUNT);
             if (itemCount !=0 && itemCount != null){
                 itemExportedCountList.add(itemCount);
             }
@@ -119,7 +119,7 @@ public class DeletedRecordFormatActiveMQConsumer extends CommonReportGenerator {
         for (Integer itemCount : itemExportedCountList) {
             itemExportedCount = itemExportedCount + itemCount;
         }
-        String batchHeaders = (String) exchange.getIn().getHeader(RecapConstants.BATCH_HEADERS);
+        String batchHeaders = (String) exchange.getIn().getHeader(ScsbConstants.BATCH_HEADERS);
         String requestId = getDataExportHeaderUtil().getValueFor(batchHeaders, "requestId");
         if(CollectionUtils.isNotEmpty(failures)) {
             processFailures(exchange, failures, batchHeaders, requestId);
@@ -130,12 +130,12 @@ public class DeletedRecordFormatActiveMQConsumer extends CommonReportGenerator {
         logger.info("Time taken to prepare {} deleted records :  {} seconds " ,bibliographicEntities.size() , (endTime - startTime) / 1000 );
 
         fluentProducerTemplate
-                .to(RecapConstants.DELETED_JSON_RECORD_FOR_DATA_EXPORT_Q)
+                .to(ScsbConstants.DELETED_JSON_RECORD_FOR_DATA_EXPORT_Q)
                 .withBody(deletedRecordList)
-                .withHeader(RecapConstants.BATCH_HEADERS, exchange.getIn().getHeader(RecapConstants.BATCH_HEADERS))
-                .withHeader(RecapConstants.EXPORT_FORMAT, exchange.getIn().getHeader(RecapConstants.EXPORT_FORMAT))
-                .withHeader(RecapConstants.TRANSMISSION_TYPE, exchange.getIn().getHeader(RecapConstants.TRANSMISSION_TYPE))
-                .withHeader(RecapConstants.ITEM_EXPORTED_COUNT,itemExportedCount);
+                .withHeader(ScsbConstants.BATCH_HEADERS, exchange.getIn().getHeader(ScsbConstants.BATCH_HEADERS))
+                .withHeader(ScsbConstants.EXPORT_FORMAT, exchange.getIn().getHeader(ScsbConstants.EXPORT_FORMAT))
+                .withHeader(ScsbConstants.TRANSMISSION_TYPE, exchange.getIn().getHeader(ScsbConstants.TRANSMISSION_TYPE))
+                .withHeader(ScsbConstants.ITEM_EXPORTED_COUNT,itemExportedCount);
         fluentProducerTemplate.send();
     }
 

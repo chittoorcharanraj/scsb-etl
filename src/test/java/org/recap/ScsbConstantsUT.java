@@ -4,26 +4,26 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
 
-public class RecapConstantsUT extends BaseTestCaseUT {
-    RecapConstants outerObject = new RecapConstants();
-    RecapConstants.MarcFields innerObject = outerObject.new MarcFields();
+public class ScsbConstantsUT extends BaseTestCaseUT {
+    ScsbConstants outerObject = new ScsbConstants();
+    ScsbConstants.MarcFields innerObject = outerObject.new MarcFields();
 
     @Test
     public void testConstants() {
-        String CF_001 = RecapConstants.MarcFields.CF_001;
+        String CF_001 = ScsbConstants.MarcFields.CF_001;
 
-        String DATA_DUMP_FILE_NAME = RecapConstants.DATA_DUMP_FILE_NAME;
-        String FILENAME = RecapConstants.FILENAME;
-        String DATETIME_FOLDER = RecapConstants.DATETIME_FOLDER;
-        String REQUESTING_INST_CODE = RecapConstants.REQUESTING_INST_CODE;
-        String INSTITUTION_CODES = RecapConstants.INSTITUTION_CODES;
-        String TRANSMISSION_TYPE = RecapConstants.TRANSMISSION_TYPE;
-        String EXPORT_FORMAT = RecapConstants.EXPORT_FORMAT;
-        String TO_EMAIL_ID = RecapConstants.TO_EMAIL_ID;
-        String XML_FILE_FORMAT = RecapConstants.XML_FILE_FORMAT;
-        String ZIP_FILE_FORMAT = RecapConstants.ZIP_FILE_FORMAT;
-        String JSON_FILE_FORMAT = RecapConstants.JSON_FILE_FORMAT;
-        String FILE_FORMAT = RecapConstants.FILE_FORMAT;
+        String DATA_DUMP_FILE_NAME = ScsbConstants.DATA_DUMP_FILE_NAME;
+        String FILENAME = ScsbConstants.FILENAME;
+        String DATETIME_FOLDER = ScsbConstants.DATETIME_FOLDER;
+        String REQUESTING_INST_CODE = ScsbConstants.REQUESTING_INST_CODE;
+        String INSTITUTION_CODES = ScsbConstants.INSTITUTION_CODES;
+        String TRANSMISSION_TYPE = ScsbConstants.TRANSMISSION_TYPE;
+        String EXPORT_FORMAT = ScsbConstants.EXPORT_FORMAT;
+        String TO_EMAIL_ID = ScsbConstants.TO_EMAIL_ID;
+        String XML_FILE_FORMAT = ScsbConstants.XML_FILE_FORMAT;
+        String ZIP_FILE_FORMAT = ScsbConstants.ZIP_FILE_FORMAT;
+        String JSON_FILE_FORMAT = ScsbConstants.JSON_FILE_FORMAT;
+        String FILE_FORMAT = ScsbConstants.FILE_FORMAT;
 
         String SCSB = "SCSB";
 
@@ -212,16 +212,16 @@ public class RecapConstantsUT extends BaseTestCaseUT {
         String EXPORTED_DATE = "exportedDate";
 
 
-        boolean EXPORT_SCHEDULER_CALL = RecapConstants.EXPORT_SCHEDULER_CALL;
-        String EXPORT_DATE_SCHEDULER = RecapConstants.EXPORT_DATE_SCHEDULER;
-        String EXPORT_FETCH_TYPE_INSTITUTION = RecapConstants.EXPORT_FETCH_TYPE_INSTITUTION;
+        boolean EXPORT_SCHEDULER_CALL = ScsbConstants.EXPORT_SCHEDULER_CALL;
+        String EXPORT_DATE_SCHEDULER = ScsbConstants.EXPORT_DATE_SCHEDULER;
+        String EXPORT_FETCH_TYPE_INSTITUTION = ScsbConstants.EXPORT_FETCH_TYPE_INSTITUTION;
 
-        String INCREMENTAL = RecapConstants.INCREMENTAL;
-        String DELETED = RecapConstants.DELETED;
+        String INCREMENTAL = ScsbConstants.INCREMENTAL;
+        String DELETED = ScsbConstants.DELETED;
 
-        String EXPORT_TYPE_FULL = RecapConstants.EXPORT_TYPE_FULL;
+        String EXPORT_TYPE_FULL = ScsbConstants.EXPORT_TYPE_FULL;
 
-        String ETL_DATA_LOAD_NAMESPACE = RecapConstants.ETL_DATA_LOAD_NAMESPACE;
+        String ETL_DATA_LOAD_NAMESPACE = ScsbConstants.ETL_DATA_LOAD_NAMESPACE;
         assertTrue(true);
     }
 }

@@ -3,8 +3,8 @@ package org.recap.camel;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.BindyType;
-import org.recap.RecapConstants;
-import org.recap.model.csv.ReCAPCSVSuccessRecord;
+import org.recap.ScsbConstants;
+import org.recap.model.csv.SCSBCSVSuccessRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,15 +32,15 @@ public class CSVSuccessReportRouteBuilder {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from(RecapConstants.CSV_SUCCESS_Q)
-                            .routeId(RecapConstants.CSV_SUCCESS_ROUTE_ID)
+                    from(ScsbConstants.CSV_SUCCESS_Q)
+                            .routeId(ScsbConstants.CSV_SUCCESS_ROUTE_ID)
                             .process(new FileNameProcessorForSuccessRecord())
-                            .marshal().bindy(BindyType.Csv, ReCAPCSVSuccessRecord.class)
+                            .marshal().bindy(BindyType.Csv, SCSBCSVSuccessRecord.class)
                             .to("file:" + reportsDirectory + File.separator + "?fileName=${in.header.fileName}-${in.header.reportType}-${date:now:ddMMMyyyy}.csv&fileExist=append");
                 }
             });
         } catch (Exception e) {
-            logger.error(RecapConstants.ERROR,e);
+            logger.error(ScsbConstants.ERROR,e);
         }
     }
 }

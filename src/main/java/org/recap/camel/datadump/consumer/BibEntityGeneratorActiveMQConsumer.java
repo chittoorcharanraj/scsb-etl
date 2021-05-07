@@ -5,7 +5,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.impl.engine.DefaultFluentProducerTemplate;
 import org.apache.commons.collections.CollectionUtils;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.camel.datadump.callable.BibEntityPreparerCallable;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.repository.BibliographicDetailsRepository;
@@ -126,7 +126,7 @@ public class BibEntityGeneratorActiveMQConsumer {
             logger.info("currentPageCountStrbeforesendingToNxt--->{}",currentPageCountStrbeforesendingToNxt);
             FluentProducerTemplate fluentProducerTemplate = DefaultFluentProducerTemplate.on(exchange.getContext());
             fluentProducerTemplate
-                    .to(RecapConstants.BIB_ENTITY_FOR_DATA_EXPORT_Q)
+                    .to(ScsbConstants.BIB_ENTITY_FOR_DATA_EXPORT_Q)
                     .withBody(bibliographicEntities)
                     .withHeader(batchHeaderName, exchange.getIn().getHeader(batchHeaderName))
                     .withHeader("exportFormat", exchange.getIn().getHeader("exportFormat"))

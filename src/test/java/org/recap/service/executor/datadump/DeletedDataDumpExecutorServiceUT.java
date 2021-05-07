@@ -6,7 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.export.DataDumpRequest;
 import org.recap.model.search.SearchRecordsRequest;
 import org.recap.spring.SwaggerAPIProvider;
@@ -51,7 +51,7 @@ public class DeletedDataDumpExecutorServiceUT extends BaseTestCaseUT {
                 requestingInstitutionCodes) {
             SearchRecordsRequest searchRecordsRequest = new SearchRecordsRequest();
             mockedDeletedDataDumpExecutorService.populateSearchRequest(searchRecordsRequest, getDataDumpRequest(requestingInstitutionCode));
-            boolean status = mockedDeletedDataDumpExecutorService.isInterested(RecapConstants.DATADUMP_FETCHTYPE_DELETED);
+            boolean status = mockedDeletedDataDumpExecutorService.isInterested(ScsbConstants.DATADUMP_FETCHTYPE_DELETED);
             assertTrue(status);
         }
     }
@@ -64,7 +64,7 @@ public class DeletedDataDumpExecutorServiceUT extends BaseTestCaseUT {
             SearchRecordsRequest searchRecordsRequest = new SearchRecordsRequest();
             ReflectionTestUtils.setField(mockedDeletedDataDumpExecutorService, "deletedOnlyOrphanInstitution", "CUL");
             mockedDeletedDataDumpExecutorService.populateSearchRequest(searchRecordsRequest, getDataDumpRequest(requestingInstitutionCode));
-            boolean status = mockedDeletedDataDumpExecutorService.isInterested(RecapConstants.DATADUMP_FETCHTYPE_DELETED);
+            boolean status = mockedDeletedDataDumpExecutorService.isInterested(ScsbConstants.DATADUMP_FETCHTYPE_DELETED);
             assertTrue(status);
         }
     }
@@ -83,8 +83,8 @@ public class DeletedDataDumpExecutorServiceUT extends BaseTestCaseUT {
         institutionCodes.add("PUL");
         dataDumpRequest.setInstitutionCodes(institutionCodes);
         dataDumpRequest.setTransmissionType("0");
-        dataDumpRequest.setOutputFileFormat(RecapConstants.JSON_FILE_FORMAT);
-        dataDumpRequest.setDateTimeString(new SimpleDateFormat(RecapConstants.DATE_FORMAT_DDMMMYYYYHHMM).format(new Date()));
+        dataDumpRequest.setOutputFileFormat(ScsbConstants.JSON_FILE_FORMAT);
+        dataDumpRequest.setDateTimeString(new SimpleDateFormat(ScsbConstants.DATE_FORMAT_DDMMMYYYYHHMM).format(new Date()));
         return dataDumpRequest;
     }
 

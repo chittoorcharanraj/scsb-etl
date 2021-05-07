@@ -2,7 +2,7 @@ package org.recap.camel.datadump.consumer;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.FluentProducerTemplate;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.export.DeletedRecord;
 import org.recap.report.CommonReportGenerator;
 import org.recap.service.formatter.datadump.DeletedJsonFormatterService;
@@ -47,7 +47,7 @@ public class DeletedJsonFormatActiveMQConsumer extends CommonReportGenerator  {
         long startTime = System.currentTimeMillis();
 
         String deletedJsonString = null;
-        String batchHeaders = (String) exchange.getIn().getHeader(RecapConstants.BATCH_HEADERS);
+        String batchHeaders = (String) exchange.getIn().getHeader(ScsbConstants.BATCH_HEADERS);
         String requestId = getDataExportHeaderUtil().getValueFor(batchHeaders, "requestId");
 
         try {
@@ -55,7 +55,7 @@ public class DeletedJsonFormatActiveMQConsumer extends CommonReportGenerator  {
             deletedJsonString = String.format(formattedOutputForDeletedRecords);
             processSuccessReportEntity(exchange, deletedRecordList.size(), batchHeaders, requestId);
         } catch (Exception e) {
-            logger.error(RecapConstants.ERROR,e);
+            logger.error(ScsbConstants.ERROR,e);
             processFailureReportEntity(exchange, deletedRecordList.size(), batchHeaders, requestId, e);
         }
         long endTime = System.currentTimeMillis();
@@ -86,10 +86,10 @@ public class DeletedJsonFormatActiveMQConsumer extends CommonReportGenerator  {
      */
     private void processFailureReportEntity(Exchange exchange, Integer size, String batchHeaders, String requestId, Exception e) {
         HashMap<String, String> values = processReport(batchHeaders, requestId, getDataExportHeaderUtil());
-        values.put(RecapConstants.NUM_RECORDS, String.valueOf(size));
-        values.put(RecapConstants.FAILURE_CAUSE, String.valueOf(e.getCause()));
+        values.put(ScsbConstants.NUM_RECORDS, String.valueOf(size));
+        values.put(ScsbConstants.FAILURE_CAUSE, String.valueOf(e.getCause()));
 
-        FluentProducerTemplate fluentProducerTemplate = generateFluentProducerTemplate(exchange, values, RecapConstants.DATADUMP_FAILURE_REPORT_Q);
+        FluentProducerTemplate fluentProducerTemplate = generateFluentProducerTemplate(exchange, values, ScsbConstants.DATADUMP_FAILURE_REPORT_Q);
         fluentProducerTemplate.send();
     }
 

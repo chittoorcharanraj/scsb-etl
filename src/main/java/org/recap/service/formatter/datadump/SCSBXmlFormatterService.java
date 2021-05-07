@@ -1,8 +1,8 @@
 package org.recap.service.formatter.datadump;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jaxb.*;
 import org.recap.model.jaxb.marc.*;
 import org.recap.model.jpa.BibliographicEntity;
@@ -48,7 +48,7 @@ public class SCSBXmlFormatterService implements DataDumpFormatterInterface {
      */
     @Override
     public boolean isInterested(String formatType) {
-        return formatType.equals(RecapConstants.DATADUMP_XML_FORMAT_SCSB) ? Boolean.TRUE.booleanValue():Boolean.FALSE.booleanValue();
+        return formatType.equals(ScsbConstants.DATADUMP_XML_FORMAT_SCSB) ? Boolean.TRUE.booleanValue():Boolean.FALSE.booleanValue();
     }
 
     /**
@@ -115,20 +115,20 @@ public class SCSBXmlFormatterService implements DataDumpFormatterInterface {
                     matchingBibInfoDetailListForSingleBib = recordNumMatchingBibInfoDetailMap.get(rowNum);
                 }
                 Map<String, Object> stringObjectMap = prepareBibRecord(bibliographicEntity,matchingBibInfoDetailListForSingleBib);
-                BibRecord bibRecord = (BibRecord) stringObjectMap.get(RecapCommonConstants.SUCCESS);
+                BibRecord bibRecord = (BibRecord) stringObjectMap.get(ScsbCommonConstants.SUCCESS);
                 if (null != bibRecord) {
                     records.add(bibRecord);
                     itemExportedCount = itemExportedCount + bibliographicEntity.getItemEntities().size();
                 }
-                String failureMsg = (String) stringObjectMap.get(RecapCommonConstants.FAILURE);
+                String failureMsg = (String) stringObjectMap.get(ScsbCommonConstants.FAILURE);
                 if (null != failureMsg) {
                     errors.add(failureMsg);
                 }
             }
         }
-        resultsMap.put(RecapCommonConstants.SUCCESS, records);
-        resultsMap.put(RecapCommonConstants.FAILURE, errors);
-        resultsMap.put(RecapConstants.ITEM_EXPORTED_COUNT, itemExportedCount);
+        resultsMap.put(ScsbCommonConstants.SUCCESS, records);
+        resultsMap.put(ScsbCommonConstants.FAILURE, errors);
+        resultsMap.put(ScsbConstants.ITEM_EXPORTED_COUNT, itemExportedCount);
         return resultsMap;
     }
 
@@ -193,11 +193,11 @@ public class SCSBXmlFormatterService implements DataDumpFormatterInterface {
             bibRecord = new BibRecord();
             bibRecord.setBib(bib);
             bibRecord.setHoldings(holdings);
-            results.put(RecapCommonConstants.SUCCESS, bibRecord);
+            results.put(ScsbCommonConstants.SUCCESS, bibRecord);
         } catch (Exception e) {
             logger.info(String.format("Exception for BIB Record %s", bibliographicEntity.getOwningInstitutionBibId()));
-            logger.error(RecapConstants.ERROR,e);
-            results.put(RecapCommonConstants.FAILURE, bibliographicEntity.getOwningInstitutionBibId()+" * "+String.valueOf(e));
+            logger.error(ScsbConstants.ERROR,e);
+            results.put(ScsbCommonConstants.FAILURE, bibliographicEntity.getOwningInstitutionBibId()+" * "+String.valueOf(e));
         }
         return results;
     }
@@ -242,7 +242,7 @@ public class SCSBXmlFormatterService implements DataDumpFormatterInterface {
         ContentType contentType = getContentType(bibliographicEntity.getContent());
         List<RecordType> record = contentType.getCollection().getRecord();
         RecordType recordType = record.get(0);
-        String value = RecapConstants.SCSB+"-"+bibliographicEntity.getId();
+        String value = ScsbConstants.SCSB+"-"+bibliographicEntity.getId();
         recordType.getControlfield().get(0).setValue(value);
         bib.setContent(contentType);
         return bib;
@@ -326,7 +326,7 @@ public class SCSBXmlFormatterService implements DataDumpFormatterInterface {
         List<RecordType> recordTypes = new ArrayList<>();
         if (itemEntities!=null) {
             for (ItemEntity itemEntity : itemEntities) {
-                if(!itemEntity.getCollectionGroupEntity().getCollectionGroupCode().equals(RecapConstants.COLLECTION_GROUP_PRIVATE)) {
+                if(!itemEntity.getCollectionGroupEntity().getCollectionGroupCode().equals(ScsbConstants.COLLECTION_GROUP_PRIVATE)) {
                     RecordType recordType = new RecordType();
                     List<DataFieldType> dataFieldTypeList = new ArrayList<>();
                     dataFieldTypeList.add(build876DataField(itemEntity));

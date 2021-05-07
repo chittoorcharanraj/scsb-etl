@@ -12,8 +12,8 @@ import java.io.IOException;
  */
 
 @Component
-public class ReCAPInitializer {
+public class SCSBInitializer {
 
-    public ReCAPInitializer(@Value("${etl.data.load.directory}") String etlLoadDir) throws IOException { FileUtils.forceMkdir(new File(etlLoadDir));
+    public SCSBInitializer(@Value("${etl.data.load.directory}") String etlLoadDir) throws IOException { FileUtils.forceMkdir(new File(etlLoadDir));
     }
 }

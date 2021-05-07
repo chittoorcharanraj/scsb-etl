@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.export.DataDumpRequest;
 import org.recap.model.search.SearchRecordsRequest;
 import org.slf4j.Logger;
@@ -50,11 +50,11 @@ public class IncrementalDataDumpExecutorServiceUT extends BaseTestCaseUT {
         institutionCodes.add("NYPL");
         dataDumpRequest.setInstitutionCodes(institutionCodes);
         dataDumpRequest.setTransmissionType("2");
-        dataDumpRequest.setOutputFileFormat(RecapConstants.XML_FILE_FORMAT);
-        dataDumpRequest.setDateTimeString(new SimpleDateFormat(RecapConstants.DATE_FORMAT_DDMMMYYYYHHMM).format(new Date()));
+        dataDumpRequest.setOutputFileFormat(ScsbConstants.XML_FILE_FORMAT);
+        dataDumpRequest.setDateTimeString(new SimpleDateFormat(ScsbConstants.DATE_FORMAT_DDMMMYYYYHHMM).format(new Date()));
         SearchRecordsRequest searchRecordsRequest=new SearchRecordsRequest();
         incrementalDataDumpExecutorService.populateSearchRequest(searchRecordsRequest,dataDumpRequest);
-        boolean fetchType=incrementalDataDumpExecutorService.isInterested(RecapConstants.DATADUMP_FETCHTYPE_INCREMENTAL);
+        boolean fetchType=incrementalDataDumpExecutorService.isInterested(ScsbConstants.DATADUMP_FETCHTYPE_INCREMENTAL);
         assertTrue(fetchType);
     }
 }

@@ -1,6 +1,6 @@
 package org.recap.service;
 
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.camel.dynamicrouter.DynamicRouteBuilder;
 import org.recap.model.export.DataDumpRequest;
 import org.recap.model.jpa.ETLRequestLogEntity;
@@ -26,17 +26,17 @@ public class DataExportHelperService {
 
     public String checkForExistingRequestAndStart(DataDumpRequest dataDumpRequest) {
         if (checkIfAnyExportIsInProgress()) {
-            saveRequestToDB(dataDumpRequest,RecapConstants.AWAITING);
-            return RecapConstants.EXPORT_MESSAGE;
+            saveRequestToDB(dataDumpRequest, ScsbConstants.AWAITING);
+            return ScsbConstants.EXPORT_MESSAGE;
         }
         else if(checkIfAnyExportIsAwaiting()){
-            saveRequestToDB(dataDumpRequest,RecapConstants.AWAITING);
+            saveRequestToDB(dataDumpRequest, ScsbConstants.AWAITING);
             dynamicRouteBuilder.addDataDumpExportRoutes();
             dataDumpExportService.startDataDumpProcess(dataDumpUtil.prepareRequestForExistingAwaiting());
-            return RecapConstants.EXPORT_MESSAGE;
+            return ScsbConstants.EXPORT_MESSAGE;
         }
         else{
-            saveRequestToDB(dataDumpRequest,RecapConstants.INITIATED);
+            saveRequestToDB(dataDumpRequest, ScsbConstants.INITIATED);
             dynamicRouteBuilder.addDataDumpExportRoutes();
             return dataDumpExportService.startDataDumpProcess(dataDumpRequest);
         }
@@ -49,13 +49,13 @@ public class DataExportHelperService {
     }
 
     public boolean checkIfAnyExportIsInProgress() {
-        ExportStatusEntity exportStatusEntity = dataExportDBService.findByExportStatusCode(RecapConstants.IN_PROGRESS);
+        ExportStatusEntity exportStatusEntity = dataExportDBService.findByExportStatusCode(ScsbConstants.IN_PROGRESS);
         List<ETLRequestLogEntity> etlRequestLogEntityList = dataExportDBService.findAllStatusById(exportStatusEntity.getId());
         return  !etlRequestLogEntityList.isEmpty();
     }
 
     public boolean checkIfAnyExportIsAwaiting() {
-        ExportStatusEntity exportStatusEntity = dataExportDBService.findByExportStatusCode(RecapConstants.AWAITING);
+        ExportStatusEntity exportStatusEntity = dataExportDBService.findByExportStatusCode(ScsbConstants.AWAITING);
         List<ETLRequestLogEntity> allStatusOrderByRequestedTime = dataExportDBService.findAllStatusById(exportStatusEntity.getId());
         return !allStatusOrderByRequestedTime.isEmpty();
     }
