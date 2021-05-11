@@ -4,8 +4,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.recap.ScsbConstants;
 import org.recap.model.ILSConfigProperties;
-import org.recap.repository.InstitutionDetailsRepository;
 import org.recap.service.executor.datadump.DataDumpSchedulerExecutorService;
+import org.recap.util.CommonUtil;
 import org.recap.util.PropertyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +26,7 @@ public class DataDumpSequenceProcessor implements Processor {
     private DataDumpSchedulerExecutorService dataDumpSchedulerExecutorService;
 
     @Autowired
-    InstitutionDetailsRepository institutionDetailsRepository;
+    CommonUtil commonUtil;
 
     @Autowired
     PropertyUtil propertyUtil;
@@ -43,9 +43,9 @@ public class DataDumpSequenceProcessor implements Processor {
         String fetchTypeString = ScsbConstants.EXPORT_FETCH_TYPE_INSTITUTION.contains(ScsbConstants.INCREMENTAL) ? ScsbConstants.INCREMENTAL : ScsbConstants.DELETED;
         logger.info("Completed {} export for {} institution", fetchTypeString, institution);
 
-        List<String> allInstitutionCodeExceptHTC = institutionDetailsRepository.findAllInstitutionCodeExceptHTC();
-        int i = allInstitutionCodeExceptHTC.indexOf(institution);
-        String nextInstitution =(i<allInstitutionCodeExceptHTC.size()-1) ? allInstitutionCodeExceptHTC.get(i + 1) : "";
+        List<String> allInstitutionCodesExceptSupportInstitution = commonUtil.findAllInstitutionCodesExceptSupportInstitution();
+        int i = allInstitutionCodesExceptSupportInstitution.indexOf(institution);
+        String nextInstitution =(i<allInstitutionCodesExceptSupportInstitution.size()-1) ? allInstitutionCodesExceptSupportInstitution.get(i + 1) : "";
         ILSConfigProperties ilsConfigProperties = propertyUtil.getILSConfigProperties(institution);
 
             if (ilsConfigProperties.getEtlIncrementalDump().equalsIgnoreCase(ScsbConstants.EXPORT_FETCH_TYPE_INSTITUTION)) {

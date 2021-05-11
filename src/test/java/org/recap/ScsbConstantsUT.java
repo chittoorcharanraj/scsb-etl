@@ -137,10 +137,10 @@ public class ScsbConstantsUT extends BaseTestCaseUT {
         String COMPLETED = "Completed";
         String IN_PROGRESS = "InProgress";
         String FULLDUMP_INPROGRESS_ERR_MSG = "Can't run data export now, already full data export in progress, wait until it completes.";
-        String INCREMENTAL_DATE_LIMIT_EMPTY_ERR_MSG = "The incremental Date limit is missing. Please contact HTC Support {0} for assistance.";
-        String INITIAL_DATA_LOAD_DATE_MISSING_ERR_MSG = "The initial data load Date is missing for the institution {0}. Please contact HTC Support {1} for assistance.";
-        String DATADUMP_DAYS_LIMIT_EXCEEDED_ERROR_MSG = "The date used for incremental data dump cannot be older than {0} days from the date of request. Please contact HTC Support {1} for assistance.";
-        String RESTRICT_FULLDUMP_VIA_INCREMENTAL_ERROR_MSG = "The date used for incremental data dump precedes (or) is the date on which records for the institution {0} were created. Kindly use a later date or contact HTC Support {1} for assistance.";
+        String INCREMENTAL_DATE_LIMIT_EMPTY_ERR_MSG = "The incremental Date limit is missing. Please contact {0} Support {1} for assistance.";
+        String INITIAL_DATA_LOAD_DATE_MISSING_ERR_MSG = "The initial data load Date is missing for the institution {0}. Please contact {1} Support {2} for assistance.";
+        String DATADUMP_DAYS_LIMIT_EXCEEDED_ERROR_MSG = "The date used for incremental data dump cannot be older than {0} days from the date of request. Please contact {1} Support {2} for assistance.";
+        String RESTRICT_FULLDUMP_VIA_INCREMENTAL_ERROR_MSG = "The date used for incremental data dump precedes (or) is the date on which records for the institution {0} were created. Kindly use a later date or contact {1} Support {2} for assistance.";
 
         String COLLECTION_GROUP_SHARED = "Shared";
         String COLLECTION_GROUP_OPEN = "Open";

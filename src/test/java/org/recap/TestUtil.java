@@ -49,11 +49,11 @@ public class TestUtil {
         return itemStatusEntity;
     }
 
-    public static List<String> getInstitutionCodeExceptHTC() {
-        List<String> allInstitutionCodeExceptHTC=new ArrayList<>();
-        allInstitutionCodeExceptHTC.add("PUL");
-        allInstitutionCodeExceptHTC.add("CUL");
-        allInstitutionCodeExceptHTC.add("NYPL");
-        return allInstitutionCodeExceptHTC;
+    public static List<String> getInstitutionCodeExceptSupportInstitution() {
+        List<String> allInstitutionCodeExceptSupportInstitution=new ArrayList<>();
+        allInstitutionCodeExceptSupportInstitution.add("PUL");
+        allInstitutionCodeExceptSupportInstitution.add("CUL");
+        allInstitutionCodeExceptSupportInstitution.add("NYPL");
+        return allInstitutionCodeExceptSupportInstitution;
     }
 }

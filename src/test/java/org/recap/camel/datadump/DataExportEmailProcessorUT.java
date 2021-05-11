@@ -89,7 +89,7 @@ public class DataExportEmailProcessorUT extends BaseTestCaseUT {
         dataExportEmailProcessor.setInstitutionCodes(Arrays.asList("PUL", "CUL"));
         dataExportEmailProcessor.setRequestingInstitutionCode("NYPL");
         dataExportEmailProcessor.setFolderName("test");
-        dataExportEmailProcessor.setToEmailId("hemalatha.s@htcindia.com");
+        dataExportEmailProcessor.setToEmailId("test@email.com");
         dataExportEmailProcessor.setRequestId("1");
         dataExportEmailProcessor.setFetchType("1");
         dataExportEmailProcessor.setImsDepositoryCodes(Arrays.asList("HD", "CU"));

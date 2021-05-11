@@ -12,8 +12,8 @@ import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
 import org.recap.ScsbConstants;
 import org.recap.model.ILSConfigProperties;
-import org.recap.repository.InstitutionDetailsRepository;
 import org.recap.service.executor.datadump.DataDumpSchedulerExecutorService;
+import org.recap.util.CommonUtil;
 import org.recap.util.PropertyUtil;
 
 import java.util.Arrays;
@@ -26,7 +26,7 @@ public class DataDumpSequenceProcessorUT extends BaseTestCaseUT {
     DataDumpSequenceProcessor dataDumpSequenceProcessor;
 
     @Mock
-    InstitutionDetailsRepository institutionDetailsRepository;
+    CommonUtil commonUtil;
 
     @Mock
     PropertyUtil propertyUtil;
@@ -82,7 +82,7 @@ public class DataDumpSequenceProcessorUT extends BaseTestCaseUT {
         ilsConfigProperties.setEtlIncrementalDump("1");
         ilsConfigProperties.setEtlDeletedDump(ScsbConstants.EXPORT_FETCH_TYPE_INSTITUTION);
         Mockito.when(propertyUtil.getILSConfigProperties(Mockito.anyString())).thenReturn(ilsConfigProperties);
-        Mockito.when(institutionDetailsRepository.findAllInstitutionCodeExceptHTC()).thenReturn(Arrays.asList("1"));
+        Mockito.when(commonUtil.findAllInstitutionCodesExceptSupportInstitution()).thenReturn(Arrays.asList("1"));
         try {
             dataDumpSequenceProcessor.process(ex);
         } catch (Exception e) {
@@ -103,7 +103,7 @@ public class DataDumpSequenceProcessorUT extends BaseTestCaseUT {
         ilsConfigProperties.setEtlIncrementalDump("1");
         ilsConfigProperties.setEtlDeletedDump("2");
         Mockito.when(propertyUtil.getILSConfigProperties(Mockito.anyString())).thenReturn(ilsConfigProperties);
-        Mockito.when(institutionDetailsRepository.findAllInstitutionCodeExceptHTC()).thenReturn(Arrays.asList("1"));
+        Mockito.when(commonUtil.findAllInstitutionCodesExceptSupportInstitution()).thenReturn(Arrays.asList("1"));
         try {
             dataDumpSequenceProcessor.process(ex);
         } catch (Exception e) {

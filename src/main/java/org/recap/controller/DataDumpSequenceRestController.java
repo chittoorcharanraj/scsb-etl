@@ -2,8 +2,8 @@ package org.recap.controller;
 
 import org.recap.ScsbConstants;
 import org.recap.camel.dynamicrouter.DynamicRouteBuilder;
-import org.recap.repository.InstitutionDetailsRepository;
 import org.recap.service.executor.datadump.DataDumpSchedulerExecutorService;
+import org.recap.util.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +24,7 @@ public class DataDumpSequenceRestController {
     private DynamicRouteBuilder dynamicRouteBuilder;
 
     @Autowired
-    InstitutionDetailsRepository institutionDetailsRepository;
+    private CommonUtil commonUtil;
 
     /**
      * Gets dynamic route builder.
@@ -44,8 +44,8 @@ public class DataDumpSequenceRestController {
     @GetMapping(value = "/exportDataDumpSequence")
     @ResponseBody
     public String exportDataDump(@RequestParam String date) {
-        List<String> allInstitutionCodeExceptHTC = institutionDetailsRepository.findAllInstitutionCodeExceptHTC();
-        Optional<String> firstInstitution = allInstitutionCodeExceptHTC.stream().findFirst();
+        List<String> allInstitutionCodesExceptSupportInstitution = commonUtil.findAllInstitutionCodesExceptSupportInstitution();
+        Optional<String> firstInstitution = allInstitutionCodesExceptSupportInstitution.stream().findFirst();
         ScsbConstants.EXPORT_SCHEDULER_CALL = true;
         ScsbConstants.EXPORT_DATE_SCHEDULER = date;
         ScsbConstants.EXPORT_FETCH_TYPE_INSTITUTION = ScsbConstants.EXPORT_INCREMENTAL+ (firstInstitution.isPresent() ? firstInstitution.get() : "");

@@ -113,7 +113,7 @@ public class DataDumpEmailServiceUT extends BaseTestCaseUT {
         dataDumpRequest.setFetchType(fetchType);
         dataDumpRequest.setOutputFileFormat(outputFileFormat);
         dataDumpRequest.setTransmissionType(transmissionType);
-        dataDumpRequest.setToEmailAddress("test@htcindia.com");
+        dataDumpRequest.setToEmailAddress("test@email.com");
         return dataDumpRequest;
     }
 }

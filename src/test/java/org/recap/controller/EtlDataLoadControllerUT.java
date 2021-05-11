@@ -23,9 +23,9 @@ import org.recap.model.jparw.ReportDataEntity;
 import org.recap.model.jparw.ReportEntity;
 import org.recap.report.ReportGenerator;
 import org.recap.repository.BibliographicDetailsRepository;
-import org.recap.repository.InstitutionDetailsRepository;
 import org.recap.repository.XmlRecordRepository;
 import org.recap.repositoryrw.ReportDetailRepository;
+import org.recap.util.CommonUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -75,7 +75,7 @@ public class EtlDataLoadControllerUT extends BaseTestCaseUT {
     @Mock
     ReportGenerator reportGenerator;
     @Mock
-    private InstitutionDetailsRepository institutionDetailsRepository;
+    private CommonUtil commonUtil;
     @Value("${etl.report.directory}")
     private String reportDirectory;
 
@@ -106,9 +106,9 @@ public class EtlDataLoadControllerUT extends BaseTestCaseUT {
 
     @Test
     public void getInstitution() {
-        Mockito.when(institutionDetailsRepository.findAllInstitutionCodeExceptHTC()).thenReturn(Arrays.asList("PUL", "CUL", "NYPL", "HD"));
-        List<String> institutionListExceptHTC = etlDataLoadController.getInstitution();
-        assertNotNull(institutionListExceptHTC);
+        Mockito.when(commonUtil.findAllInstitutionCodesExceptSupportInstitution()).thenReturn(Arrays.asList("PUL", "CUL", "NYPL", "HL"));
+        List<String> institutionListExceptSupportInstitution = etlDataLoadController.getInstitution();
+        assertNotNull(institutionListExceptSupportInstitution);
     }
 
     @Test

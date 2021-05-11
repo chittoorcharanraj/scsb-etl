@@ -39,13 +39,13 @@ public class RecentDataExportsInfoService {
     @Value("${recent.data.export.limit}")
     private String recentDataExportInfoLimit;
 
-    public List<S3RecentDataExportInfo> generateRecentDataExportsInfo(List<String> allInstitutionCodeExceptHTC, String institution, String bibDataFormat) {
+    public List<S3RecentDataExportInfo> generateRecentDataExportsInfo(List<String> allInstitutionCodeExceptSupportInstitution, String institution, String bibDataFormat) {
 
         List<S3RecentDataExportInfo> recentDataExportInfoList = new ArrayList<>();
         ListObjectsRequest listObjectsRequest = new ListObjectsRequest();
         try {
             listObjectsRequest.setBucketName(scsbBucketName);
-            for (String institutionPrefix : allInstitutionCodeExceptHTC) {
+            for (String institutionPrefix : allInstitutionCodeExceptSupportInstitution) {
                 listObjectsRequest.setPrefix(s3DataExportBasePath + institution + "/" + bibDataFormat + "Xml/Full/" + institutionPrefix);
                 ObjectListing objectListing = s3client.listObjects(listObjectsRequest);
                 for (S3ObjectSummary os : objectListing.getObjectSummaries()) {
