@@ -15,7 +15,9 @@ import org.recap.model.export.DataDumpRequest;
 import org.recap.repository.ImsLocationDetailsRepository;
 import org.recap.repository.InstitutionDetailsRepository;
 import org.recap.service.DataExportValidateService;
+import org.recap.util.CommonUtil;
 import org.recap.util.PropertyUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.text.SimpleDateFormat;
@@ -35,9 +37,11 @@ public class DataExportValidateServiceUT extends BaseTestCaseUT {
     @Mock
     PropertyUtil propertyUtil;
 
-
     @Mock
-    InstitutionDetailsRepository institutionDetailsRepository;
+    CommonUtil commonUtil;
+
+    @Value("${scsb.support.institution}")
+    private String supportInstitution;
 
     @Before
     public void setup() {
@@ -51,7 +55,7 @@ public class DataExportValidateServiceUT extends BaseTestCaseUT {
         DataDumpRequest dataDumpRequest = getDataDumpRequest(Arrays.asList("PUL"), "PUL", Arrays.asList("RECAP"), ScsbConstants.DATADUMP_FETCHTYPE_FULL, ScsbConstants.DATADUMP_TRANSMISSION_TYPE_S3, ScsbCommonConstants.DATE_FORMAT_YYYYMMDDHHMM);
         String dataDumpStatusFileName = getClass().getResource("dataExportStatusInProgress.txt").getPath();
         ReflectionTestUtils.setField(dataExportValidateService, "dataDumpStatusFileName", dataDumpStatusFileName);
-        Mockito.when(institutionDetailsRepository.findAllInstitutionCodeExceptHTC()).thenReturn(Arrays.asList("PUL", "CUL", "NYPL", "HUL"));
+        Mockito.when(commonUtil.findAllInstitutionCodesExceptSupportInstitution()).thenReturn(Arrays.asList("PUL", "CUL", "NYPL", "HL"));
         Mockito.when(imsLocationDetailsRepository.findAllImsLocationCodeExceptUnknown()).thenReturn(Arrays.asList("RECAP", "HD"));
         String validationMessage = dataExportValidateService.validateIncomingRequest(dataDumpRequest);
         assertNull(validationMessage);
@@ -60,7 +64,7 @@ public class DataExportValidateServiceUT extends BaseTestCaseUT {
     @Test
     public void validateIncomingRequestFetchTypeError() {
         DataDumpRequest dataDumpRequest = getDataDumpRequest(Arrays.asList("PUL"), "PUL", Arrays.asList("RECAP"), " ", ScsbConstants.DATADUMP_TRANSMISSION_TYPE_S3, ScsbCommonConstants.DATE_FORMAT_YYYYMMDDHHMM);
-        Mockito.when(institutionDetailsRepository.findAllInstitutionCodeExceptHTC()).thenReturn(Arrays.asList("PUL", "CUL", "NYPL", "HUL"));
+        Mockito.when(commonUtil.findAllInstitutionCodesExceptSupportInstitution()).thenReturn(Arrays.asList("PUL", "CUL", "NYPL", "HL"));
         Mockito.when(imsLocationDetailsRepository.findAllImsLocationCodeExceptUnknown()).thenReturn(Arrays.asList("RECAP", "HD"));
         String validationMessage = dataExportValidateService.validateIncomingRequest(dataDumpRequest);
         assertTrue(validationMessage.contains(ScsbConstants.DATADUMP_VALID_FETCHTYPE_ERR_MSG));
@@ -71,7 +75,7 @@ public class DataExportValidateServiceUT extends BaseTestCaseUT {
     public void validateIncomingRequestIncrementalFailure() {
         DataDumpRequest dataDumpRequest = getDataDumpRequest(Arrays.asList("PUL"), "PUL", Arrays.asList("RECAP"), ScsbConstants.DATADUMP_FETCHTYPE_INCREMENTAL, ScsbConstants.DATADUMP_TRANSMISSION_TYPE_S3, ScsbCommonConstants.DATE_FORMAT_YYYYMMDDHHMM);
         dataDumpRequest.setToEmailAddress("");
-        Mockito.when(institutionDetailsRepository.findAllInstitutionCodeExceptHTC()).thenReturn(Arrays.asList("PUL", "CUL", "NYPL", "HUL"));
+        Mockito.when(commonUtil.findAllInstitutionCodesExceptSupportInstitution()).thenReturn(Arrays.asList("PUL", "CUL", "NYPL", "HL"));
         Mockito.when(imsLocationDetailsRepository.findAllImsLocationCodeExceptUnknown()).thenReturn(Arrays.asList("RECAP", "HD"));
         String dataDumpStatusFileName = getClass().getResource("dataExportStatusInProgress.txt").getPath();
         ReflectionTestUtils.setField(dataExportValidateService, "dataDumpStatusFileName", dataDumpStatusFileName);
@@ -88,7 +92,7 @@ public class DataExportValidateServiceUT extends BaseTestCaseUT {
         ReflectionTestUtils.setField(dataExportValidateService, "incrementalDateLimit", "");
         DataDumpRequest dataDumpRequest = getDataDumpRequest(Arrays.asList("PUL"), "PUL", Arrays.asList("RECAP"), ScsbConstants.DATADUMP_FETCHTYPE_INCREMENTAL, ScsbConstants.DATADUMP_TRANSMISSION_TYPE_S3, "1");
         dataDumpRequest.setToEmailAddress("");
-        Mockito.when(institutionDetailsRepository.findAllInstitutionCodeExceptHTC()).thenReturn(Arrays.asList("PUL", "CUL", "NYPL", "HUL"));
+        Mockito.when(commonUtil.findAllInstitutionCodesExceptSupportInstitution()).thenReturn(Arrays.asList("PUL", "CUL", "NYPL", "HL"));
         Mockito.when(imsLocationDetailsRepository.findAllImsLocationCodeExceptUnknown()).thenReturn(Arrays.asList("RECAP", "HD"));
         String dataDumpStatusFileName = getClass().getResource("dataExportStatusInProgress.txt").getPath();
         ReflectionTestUtils.setField(dataExportValidateService, "dataDumpStatusFileName", dataDumpStatusFileName);
@@ -104,7 +108,7 @@ public class DataExportValidateServiceUT extends BaseTestCaseUT {
         ReflectionTestUtils.setField(dataExportValidateService, "incrementalDateLimit", "");
         DataDumpRequest dataDumpRequest = getDataDumpRequest(Arrays.asList("PUL"), "PUL", Arrays.asList("RECAP"), ScsbConstants.DATADUMP_FETCHTYPE_INCREMENTAL, ScsbConstants.DATADUMP_TRANSMISSION_TYPE_S3, ScsbCommonConstants.DATE_FORMAT_YYYYMMDDHHMM);
         dataDumpRequest.setToEmailAddress("");
-        Mockito.when(institutionDetailsRepository.findAllInstitutionCodeExceptHTC()).thenReturn(Arrays.asList("PUL", "CUL", "NYPL", "HUL"));
+        Mockito.when(commonUtil.findAllInstitutionCodesExceptSupportInstitution()).thenReturn(Arrays.asList("PUL", "CUL", "NYPL", "HL"));
         Mockito.when(imsLocationDetailsRepository.findAllImsLocationCodeExceptUnknown()).thenReturn(Arrays.asList("RECAP", "HD"));
         String dataDumpStatusFileName = getClass().getResource("dataExportStatusInProgress.txt").getPath();
         ReflectionTestUtils.setField(dataExportValidateService, "dataDumpStatusFileName", dataDumpStatusFileName);
@@ -122,7 +126,7 @@ public class DataExportValidateServiceUT extends BaseTestCaseUT {
         ReflectionTestUtils.setField(dataExportValidateService, "propertyUtil", null);
         DataDumpRequest dataDumpRequest = getDataDumpRequest(Arrays.asList("PUL"), "PUL", Arrays.asList("RECAP"), ScsbConstants.DATADUMP_FETCHTYPE_INCREMENTAL, ScsbConstants.DATADUMP_TRANSMISSION_TYPE_S3, ScsbCommonConstants.DATE_FORMAT_YYYYMMDDHHMM);
         dataDumpRequest.setToEmailAddress("");
-        Mockito.when(institutionDetailsRepository.findAllInstitutionCodeExceptHTC()).thenReturn(Arrays.asList("PUL", "CUL", "NYPL", "HUL"));
+        Mockito.when(commonUtil.findAllInstitutionCodesExceptSupportInstitution()).thenReturn(Arrays.asList("PUL", "CUL", "NYPL", "HL"));
         Mockito.when(imsLocationDetailsRepository.findAllImsLocationCodeExceptUnknown()).thenReturn(Arrays.asList("RECAP", "HD"));
         String dataDumpStatusFileName = getClass().getResource("dataExportStatusInProgress.txt").getPath();
         ReflectionTestUtils.setField(dataExportValidateService, "dataDumpStatusFileName", dataDumpStatusFileName);
@@ -152,7 +156,7 @@ public class DataExportValidateServiceUT extends BaseTestCaseUT {
         DataDumpRequest dataDumpRequest = getDataDumpRequest(Arrays.asList("PUL"), "PUL", Arrays.asList("RECAP"), ScsbConstants.DATADUMP_FETCHTYPE_INCREMENTAL, ScsbConstants.DATADUMP_TRANSMISSION_TYPE_S3, ScsbCommonConstants.DATE_FORMAT_YYYYMMDDHHMM);
         dataDumpRequest.setToEmailAddress("");
         dataDumpRequest.setDate(new SimpleDateFormat(ScsbCommonConstants.DATE_FORMAT_YYYYMMDDHHMM).format(new DateTime(new Date()).minusDays(7).toDate()));
-        Mockito.when(institutionDetailsRepository.findAllInstitutionCodeExceptHTC()).thenReturn(Arrays.asList("PUL", "CUL", "NYPL", "HUL"));
+        Mockito.when(commonUtil.findAllInstitutionCodesExceptSupportInstitution()).thenReturn(Arrays.asList("PUL", "CUL", "NYPL", "HL"));
         Mockito.when(imsLocationDetailsRepository.findAllImsLocationCodeExceptUnknown()).thenReturn(Arrays.asList("RECAP", "HD"));
         String dataDumpStatusFileName = getClass().getResource("dataExportStatusInProgress.txt").getPath();
         ReflectionTestUtils.setField(dataExportValidateService, "dataDumpStatusFileName", dataDumpStatusFileName);
@@ -169,7 +173,7 @@ public class DataExportValidateServiceUT extends BaseTestCaseUT {
         DataDumpRequest dataDumpRequest = getDataDumpRequest(Arrays.asList("PUL"), "PUL", Arrays.asList("RECAP"), ScsbConstants.DATADUMP_FETCHTYPE_INCREMENTAL, ScsbConstants.DATADUMP_TRANSMISSION_TYPE_S3, ScsbCommonConstants.DATE_FORMAT_YYYYMMDDHHMM);
         dataDumpRequest.setToEmailAddress("5");
         dataDumpRequest.setDate(null);
-        Mockito.when(institutionDetailsRepository.findAllInstitutionCodeExceptHTC()).thenReturn(Arrays.asList("PUL", "CUL", "NYPL", "HUL"));
+        Mockito.when(commonUtil.findAllInstitutionCodesExceptSupportInstitution()).thenReturn(Arrays.asList("PUL", "CUL", "NYPL", "HL"));
         Mockito.when(imsLocationDetailsRepository.findAllImsLocationCodeExceptUnknown()).thenReturn(Arrays.asList("RECAP", "HD"));
         String dataDumpStatusFileName = getClass().getResource("dataExportStatusInProgress.txt").getPath();
         ReflectionTestUtils.setField(dataExportValidateService, "dataDumpStatusFileName", dataDumpStatusFileName);
@@ -185,7 +189,7 @@ public class DataExportValidateServiceUT extends BaseTestCaseUT {
     public void validateIncomingRequestDeleted() {
         ReflectionTestUtils.setField(dataExportValidateService, "incrementalDateLimit", "5");
         DataDumpRequest dataDumpRequest = getDataDumpRequest(Arrays.asList("PUL"), "PUL", Arrays.asList("RECAP"), ScsbConstants.DATADUMP_FETCHTYPE_DELETED, ScsbConstants.DATADUMP_TRANSMISSION_TYPE_HTTP, ScsbCommonConstants.DATE_FORMAT_YYYYMMDDHHMM);
-        Mockito.when(institutionDetailsRepository.findAllInstitutionCodeExceptHTC()).thenReturn(Arrays.asList("PUL", "CUL", "NYPL", "HUL"));
+        Mockito.when(commonUtil.findAllInstitutionCodesExceptSupportInstitution()).thenReturn(Arrays.asList("PUL", "CUL", "NYPL", "HL"));
         Mockito.when(imsLocationDetailsRepository.findAllImsLocationCodeExceptUnknown()).thenReturn(Arrays.asList("RECAP", "HD"));
         String dataDumpStatusFileName = getClass().getResource("dataExportStatus.txt").getPath();
         ReflectionTestUtils.setField(dataExportValidateService, "dataDumpStatusFileName", dataDumpStatusFileName);
@@ -198,8 +202,8 @@ public class DataExportValidateServiceUT extends BaseTestCaseUT {
 
     @Test
     public void validateIncomingRequestFullDumpFailure() {
-        DataDumpRequest dataDumpRequest = getDataDumpRequest(Arrays.asList("HTC", "HTC"), "HTC", Arrays.asList("HTC"), ScsbConstants.DATADUMP_FETCHTYPE_FULL, "", ScsbCommonConstants.DATE_FORMAT_YYYYMMDDHHMM);
-        Mockito.when(institutionDetailsRepository.findAllInstitutionCodeExceptHTC()).thenReturn(Arrays.asList("PUL", "CUL", "NYPL", "HUL"));
+        DataDumpRequest dataDumpRequest = getDataDumpRequest(Arrays.asList(supportInstitution, supportInstitution), supportInstitution, Arrays.asList(supportInstitution), ScsbConstants.DATADUMP_FETCHTYPE_FULL, "", ScsbCommonConstants.DATE_FORMAT_YYYYMMDDHHMM);
+        Mockito.when(commonUtil.findAllInstitutionCodesExceptSupportInstitution()).thenReturn(Arrays.asList("PUL", "CUL", "NYPL", "HL"));
         Mockito.when(imsLocationDetailsRepository.findAllImsLocationCodeExceptUnknown()).thenReturn(Arrays.asList("RECAP", "HD"));
         String dataDumpStatusFileName = getClass().getResource("dataExportStatus.txt").getPath();
         ReflectionTestUtils.setField(dataExportValidateService, "dataDumpStatusFileName", dataDumpStatusFileName);
@@ -245,7 +249,7 @@ public class DataExportValidateServiceUT extends BaseTestCaseUT {
         dataDumpRequest.setImsDepositoryCodes(imsDepositoryCodes);
         dataDumpRequest.setFetchType(fetchType);
         dataDumpRequest.setTransmissionType(transmissionType);
-        dataDumpRequest.setToEmailAddress("test@htcindia.com");
+        dataDumpRequest.setToEmailAddress("test@email.com");
         dataDumpRequest.setDate(new SimpleDateFormat(date).format(new Date()));
         return dataDumpRequest;
     }

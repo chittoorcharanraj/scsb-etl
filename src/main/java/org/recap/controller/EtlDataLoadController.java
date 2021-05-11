@@ -10,9 +10,9 @@ import org.recap.model.etl.EtlLoadRequest;
 import org.recap.report.ReportGenerator;
 import org.recap.repository.BibliographicDetailsRepository;
 import org.recap.repository.HoldingsDetailsRepository;
-import org.recap.repository.InstitutionDetailsRepository;
 import org.recap.repository.ItemDetailsRepository;
 import org.recap.repository.XmlRecordRepository;
+import org.recap.util.CommonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,7 +98,7 @@ public class EtlDataLoadController {
     ReportGenerator reportGenerator;
 
     @Autowired
-    private InstitutionDetailsRepository institutionDetailsRepository;
+    private CommonUtil commonUtil;
 
     /**
      * Loads the data load UI page.
@@ -223,8 +223,8 @@ public class EtlDataLoadController {
 
     @GetMapping(value = "/etlDataLoad/institutions")
     @ResponseBody
-    public List<String> getInstitution(){
-        return  institutionDetailsRepository.findAllInstitutionCodeExceptHTC();
+    public List<String> getInstitution() {
+        return commonUtil.findAllInstitutionCodesExceptSupportInstitution();
     }
 
 }

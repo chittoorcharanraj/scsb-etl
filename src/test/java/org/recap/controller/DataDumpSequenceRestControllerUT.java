@@ -10,6 +10,7 @@ import org.recap.TestUtil;
 import org.recap.camel.dynamicrouter.DynamicRouteBuilder;
 import org.recap.repository.InstitutionDetailsRepository;
 import org.recap.service.executor.datadump.DataDumpSchedulerExecutorService;
+import org.recap.util.CommonUtil;
 
 import java.util.Date;
 
@@ -20,7 +21,7 @@ public class DataDumpSequenceRestControllerUT extends BaseTestCaseUT {
     DataDumpSequenceRestController dataDumpSequenceRestController;
 
     @Mock
-    InstitutionDetailsRepository institutionDetailsRepository;
+    CommonUtil commonUtil;
 
     @Mock
     DynamicRouteBuilder dynamicRouteBuilder;
@@ -31,7 +32,7 @@ public class DataDumpSequenceRestControllerUT extends BaseTestCaseUT {
 
     @Test
     public void testExportDataDump() {
-        Mockito.when(institutionDetailsRepository.findAllInstitutionCodeExceptHTC()).thenReturn(TestUtil.getInstitutionCodeExceptHTC());
+        Mockito.when(commonUtil.findAllInstitutionCodesExceptSupportInstitution()).thenReturn(TestUtil.getInstitutionCodeExceptSupportInstitution());
         Mockito.when(dataDumpSchedulerExecutorService.initiateDataDumpForScheduler(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(ScsbConstants.DATADUMP_PROCESS_STARTED);
         String exportDataDump = dataDumpSequenceRestController.exportDataDump(new Date().toString());
         assertEquals(ScsbConstants.DATADUMP_PROCESS_STARTED, exportDataDump);

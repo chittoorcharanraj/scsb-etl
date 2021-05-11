@@ -9,8 +9,8 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.recap.model.export.S3RecentDataExportInfo;
 import org.recap.model.export.S3RecentDataExportInfoList;
-import org.recap.repository.InstitutionDetailsRepository;
 import org.recap.service.RecentDataExportsInfoService;
+import org.recap.util.CommonUtil;
 import org.recap.util.PropertyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +35,7 @@ public class RecentDataExportsInfoControllerUT {
     RecentDataExportsInfoService recentDataExportsInfoServiceMock;
 
     @Mock
-    InstitutionDetailsRepository institutionDetailsRepositoryMock;
+    CommonUtil commonUtil;
 
     @Mock
     PropertyUtil propertyUtilMock;
@@ -81,7 +81,7 @@ public class RecentDataExportsInfoControllerUT {
 
     @Test
     public void getRecentDataExportsInfoTest() throws Exception {
-        Mockito.when(institutionDetailsRepositoryMock.findAllInstitutionCodeExceptHTC()).thenReturn(institutions);
+        Mockito.when(commonUtil.findAllInstitutionCodesExceptSupportInstitution()).thenReturn(institutions);
         Mockito.when(propertyUtilMock.getPropertyByInstitutionAndKey(Mockito.anyString(), Mockito.anyString())).thenReturn(bibDataFormat);
         Mockito.when(recentDataExportsInfoServiceMock.generateRecentDataExportsInfo(any(), anyString(), anyString())).thenReturn(recentDataExportInfoListCUL);
         s3RecentDataExportActualInfoList = recentDataExportsInfoControllerMock.getRecentDataExportsInfo();
@@ -90,7 +90,7 @@ public class RecentDataExportsInfoControllerUT {
 
     @Test
     public void getRecentDataExportsInfoException() throws Exception {
-        Mockito.when(institutionDetailsRepositoryMock.findAllInstitutionCodeExceptHTC()).thenThrow(new NullPointerException());
+        Mockito.when(commonUtil.findAllInstitutionCodesExceptSupportInstitution()).thenThrow(new NullPointerException());
         s3RecentDataExportActualInfoList = recentDataExportsInfoControllerMock.getRecentDataExportsInfo();
         assertNotNull(s3RecentDataExportInfoList);
     }

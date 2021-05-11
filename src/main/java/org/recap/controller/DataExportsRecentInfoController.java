@@ -5,6 +5,7 @@ import org.recap.model.export.S3RecentDataExportInfo;
 import org.recap.model.export.S3RecentDataExportInfoList;
 import org.recap.repository.InstitutionDetailsRepository;
 import org.recap.service.RecentDataExportsInfoService;
+import org.recap.util.CommonUtil;
 import org.recap.util.PropertyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +25,7 @@ public class DataExportsRecentInfoController {
     RecentDataExportsInfoService recentDataExportsInfoService;
 
     @Autowired
-    InstitutionDetailsRepository institutionDetailsRepository;
+    CommonUtil commonUtil;
 
     @Autowired
     PropertyUtil propertyUtil;
@@ -35,10 +36,10 @@ public class DataExportsRecentInfoController {
         S3RecentDataExportInfoList s3RecentDataExportInfoList = new S3RecentDataExportInfoList();
 
         try {
-            List<String> allInstitutionCodeExceptHTC = institutionDetailsRepository.findAllInstitutionCodeExceptHTC();
-            for (String institution : allInstitutionCodeExceptHTC) {
+            List<String> allInstitutionCodesExceptSupportInstitution = commonUtil.findAllInstitutionCodesExceptSupportInstitution();
+            for (String institution : allInstitutionCodesExceptSupportInstitution) {
                 String bibDataFormat = propertyUtil.getPropertyByInstitutionAndKey(institution, "bibdata.format");
-                List<S3RecentDataExportInfo> recentDataExportInfoList = recentDataExportsInfoService.generateRecentDataExportsInfo(allInstitutionCodeExceptHTC, institution, bibDataFormat);
+                List<S3RecentDataExportInfo> recentDataExportInfoList = recentDataExportsInfoService.generateRecentDataExportsInfo(allInstitutionCodesExceptSupportInstitution, institution, bibDataFormat);
                 if (!recentDataExportInfoList.isEmpty()) {
                     recentDataExportInfoFinalList.addAll(recentDataExportInfoList);
                     s3RecentDataExportInfoList.setRecentDataExportInfoList(recentDataExportInfoFinalList);

@@ -146,11 +146,11 @@ public class ScsbConstants {
     public static final String COMPLETED = "COMPLETED";
     public static final String IN_PROGRESS = "IN_PROGRESS";
     public static final String INPROGRESS_ERR_MSG = "Can't run data export now, already data export in progress, wait until it completes.";
-    public static final String INCREMENTAL_DATE_LIMIT_EMPTY_ERR_MSG = "The incremental Date limit is missing. Please contact HTC Support {0} for assistance.";
-    public static final String INITIAL_DATA_LOAD_DATE_MISSING_ERR_MSG = "The initial data load Date is missing for the institution {0}. Please contact HTC Support {1} for assistance.";
-    public static final String INITIAL_DATA_LOAD_DATE_INVALID_FORMAT = "The initial data load Date format is invalid. Please contact HTC Support for assistance.";
-    public static final String DATADUMP_DAYS_LIMIT_EXCEEDED_ERROR_MSG = "The date used for incremental data dump cannot be older than {0} days from the date of request. Please contact HTC Support {1} for assistance.";
-    public static final String RESTRICT_FULLDUMP_VIA_INCREMENTAL_ERROR_MSG = "The date used for incremental data dump precedes (or) is the date on which records for the institution {0} were created. Kindly use a later date or contact HTC Support {1} for assistance.";
+    public static final String INCREMENTAL_DATE_LIMIT_EMPTY_ERR_MSG = "The incremental Date limit is missing. Please contact {0} Support {1} for assistance.";
+    public static final String INITIAL_DATA_LOAD_DATE_MISSING_ERR_MSG = "The initial data load Date is missing for the institution {0}. Please contact {1} Support {2} for assistance.";
+    public static final String INITIAL_DATA_LOAD_DATE_INVALID_FORMAT = "The initial data load Date format is invalid. Please contact {0} Support {1} for assistance.";
+    public static final String DATADUMP_DAYS_LIMIT_EXCEEDED_ERROR_MSG = "The date used for incremental data dump cannot be older than {0} days from the date of request. Please contact {1} Support {2} for assistance.";
+    public static final String RESTRICT_FULLDUMP_VIA_INCREMENTAL_ERROR_MSG = "The date used for incremental data dump precedes (or) is the date on which records for the institution {0} were created. Kindly use a later date or contact {1} Support {2} for assistance.";
 
     public static final String COLLECTION_GROUP_SHARED = "Shared";
     public static final String COLLECTION_GROUP_OPEN = "Open";

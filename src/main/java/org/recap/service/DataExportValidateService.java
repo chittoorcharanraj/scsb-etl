@@ -8,6 +8,7 @@ import org.recap.model.ILSConfigProperties;
 import org.recap.model.export.DataDumpRequest;
 import org.recap.repository.ImsLocationDetailsRepository;
 import org.recap.repository.InstitutionDetailsRepository;
+import org.recap.util.CommonUtil;
 import org.recap.util.PropertyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,8 +39,10 @@ public class DataExportValidateService {
     @Value("${etl.data.dump.fetchtype.full}") private String fetchTypeFull;
     @Value("${etl.data.dump.status.file.name}") private String dataDumpStatusFileName;
     @Value("${etl.data.dump.incremental.date.limit}") private String incrementalDateLimit;
+    @Value("${scsb.support.institution}") private String supportInstitution;
 
-    @Autowired private InstitutionDetailsRepository institutionDetailsRepository;
+
+    @Autowired private CommonUtil commonUtil;
     @Autowired private PropertyUtil propertyUtil;
     @Autowired private ImsLocationDetailsRepository imsLocationDetailsRepository;
 
@@ -54,10 +57,10 @@ public class DataExportValidateService {
         Date currentDate = new Date();
         Map<Integer, String> errorMessageMap = new HashMap<>();
         Integer errorcount = 1;
-        List<String> allInstitutionCodeExceptHTC = institutionDetailsRepository.findAllInstitutionCodeExceptHTC();
+        List<String> allInstitutionCodesExceptSupportInstitution = commonUtil.findAllInstitutionCodesExceptSupportInstitution();
         if (!dataDumpRequest.getInstitutionCodes().isEmpty()) {
             for (String institutionCode : dataDumpRequest.getInstitutionCodes()) {
-                if(!allInstitutionCodeExceptHTC.contains(institutionCode)){
+                if(!allInstitutionCodesExceptSupportInstitution.contains(institutionCode)){
                     errorMessageMap.put(errorcount, ScsbConstants.DATADUMP_VALID_INST_CODES_ERR_MSG+" : "+propertyUtil.getAllInstitutions().toString());
                     errorcount++;
                 }
@@ -67,7 +70,7 @@ public class DataExportValidateService {
                 errorcount++;
             }
         }
-        if(dataDumpRequest.getRequestingInstitutionCode() != null && !allInstitutionCodeExceptHTC.contains(dataDumpRequest.getRequestingInstitutionCode())){
+        if(dataDumpRequest.getRequestingInstitutionCode() != null && !allInstitutionCodesExceptSupportInstitution.contains(dataDumpRequest.getRequestingInstitutionCode())){
             errorMessageMap.put(errorcount, ScsbConstants.DATADUMP_VALID_REQ_INST_CODE_ERR_MSG+" : "+propertyUtil.getAllInstitutions().toString());
             errorcount++;
         }
@@ -217,17 +220,17 @@ public class DataExportValidateService {
 
     private Integer checkToRestrictFullDumpViaIncremental(Map<Integer, String> errorMessageMap, Integer errorcount, String dataDumpRequestDateString, String initialDataLoadDateString, String institutionCode, String imsLocationCode) {
         if(StringUtils.isBlank(initialDataLoadDateString)) {
-            errorMessageMap.put(errorcount, MessageFormat.format(ScsbConstants.INITIAL_DATA_LOAD_DATE_MISSING_ERR_MSG, institutionCode, propertyUtil.getPropertyByImsLocationAndKey(imsLocationCode, ScsbConstants.LAS_EMAIL_ASSIST_TO)));
+            errorMessageMap.put(errorcount, MessageFormat.format(ScsbConstants.INITIAL_DATA_LOAD_DATE_MISSING_ERR_MSG, institutionCode, supportInstitution, propertyUtil.getPropertyByImsLocationAndKey(imsLocationCode, ScsbConstants.LAS_EMAIL_ASSIST_TO)));
             errorcount++;
         } else {
             Date dataDumpRequestDate = getFormattedDate(ScsbConstants.DATE_FORMAT_YYYYMMDD, dataDumpRequestDateString);
             Date initialDataLoadDate = getFormattedDate(ScsbConstants.DATE_FORMAT_YYYYMMDD, initialDataLoadDateString);
             if(initialDataLoadDate==null){
-                errorMessageMap.put(errorcount, MessageFormat.format(ScsbConstants.INITIAL_DATA_LOAD_DATE_INVALID_FORMAT, institutionCode, propertyUtil.getPropertyByImsLocationAndKey(imsLocationCode, ScsbConstants.LAS_EMAIL_ASSIST_TO)));
+                errorMessageMap.put(errorcount, MessageFormat.format(ScsbConstants.INITIAL_DATA_LOAD_DATE_INVALID_FORMAT, supportInstitution, propertyUtil.getPropertyByImsLocationAndKey(imsLocationCode, ScsbConstants.LAS_EMAIL_ASSIST_TO)));
                 errorcount++;
             }
             else if(initialDataLoadDate.after(dataDumpRequestDate) || initialDataLoadDate.equals(dataDumpRequestDate)) {
-                errorMessageMap.put(errorcount, MessageFormat.format(ScsbConstants.RESTRICT_FULLDUMP_VIA_INCREMENTAL_ERROR_MSG, institutionCode, propertyUtil.getPropertyByImsLocationAndKey(imsLocationCode, ScsbConstants.LAS_EMAIL_ASSIST_TO)));
+                errorMessageMap.put(errorcount, MessageFormat.format(ScsbConstants.RESTRICT_FULLDUMP_VIA_INCREMENTAL_ERROR_MSG, institutionCode, supportInstitution, propertyUtil.getPropertyByImsLocationAndKey(imsLocationCode, ScsbConstants.LAS_EMAIL_ASSIST_TO)));
                 errorcount++;
             }
         }
@@ -237,18 +240,18 @@ public class DataExportValidateService {
     private Integer checkForIncrementalDateLimit(Date currentDate, Map<Integer, String> errorMessageMap, Integer errorcount, String dataDumpRequestDateString, String imsLocationCode) {
         Date dataDumpRequestDateTime = getFormattedDate(ScsbCommonConstants.DATE_FORMAT_YYYYMMDDHHMM, dataDumpRequestDateString);
         if(dataDumpRequestDateTime==null){
-            errorMessageMap.put(errorcount, ScsbConstants.INITIAL_DATA_LOAD_DATE_INVALID_FORMAT);
+            errorMessageMap.put(errorcount, MessageFormat.format(ScsbConstants.INITIAL_DATA_LOAD_DATE_INVALID_FORMAT, supportInstitution, propertyUtil.getPropertyByImsLocationAndKey(imsLocationCode, ScsbConstants.LAS_EMAIL_ASSIST_TO)));
             errorcount++;
         }
         else{
             long dateDifference = currentDate.getTime() - dataDumpRequestDateTime.getTime();
             long days = TimeUnit.DAYS.convert(dateDifference, TimeUnit.MILLISECONDS);
             if(StringUtils.isBlank(incrementalDateLimit)) {
-                errorMessageMap.put(errorcount, MessageFormat.format(ScsbConstants.INCREMENTAL_DATE_LIMIT_EMPTY_ERR_MSG, propertyUtil.getPropertyByImsLocationAndKey(imsLocationCode, ScsbConstants.LAS_EMAIL_ASSIST_TO)));
+                errorMessageMap.put(errorcount, MessageFormat.format(ScsbConstants.INCREMENTAL_DATE_LIMIT_EMPTY_ERR_MSG, supportInstitution, propertyUtil.getPropertyByImsLocationAndKey(imsLocationCode, ScsbConstants.LAS_EMAIL_ASSIST_TO)));
                 errorcount++;
             } else {
                 if(Math.toIntExact(days) > Integer.valueOf(incrementalDateLimit)) {
-                    errorMessageMap.put(errorcount, MessageFormat.format(ScsbConstants.DATADUMP_DAYS_LIMIT_EXCEEDED_ERROR_MSG, incrementalDateLimit, propertyUtil.getPropertyByImsLocationAndKey(imsLocationCode, ScsbConstants.LAS_EMAIL_ASSIST_TO)));
+                    errorMessageMap.put(errorcount, MessageFormat.format(ScsbConstants.DATADUMP_DAYS_LIMIT_EXCEEDED_ERROR_MSG, incrementalDateLimit, supportInstitution, propertyUtil.getPropertyByImsLocationAndKey(imsLocationCode, ScsbConstants.LAS_EMAIL_ASSIST_TO)));
                     errorcount++;
                 }
             }

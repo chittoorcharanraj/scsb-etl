@@ -32,7 +32,7 @@ public class DataExportHeaderUtilUT extends BaseTestCaseUT {
         collectionGroupIds.add(2);
         dataDumpRequest.setCollectionGroupIds(collectionGroupIds);
         dataDumpRequest.setTransmissionType("TransmissionType");
-        dataDumpRequest.setToEmailAddress("test@htcindia.com");
+        dataDumpRequest.setToEmailAddress("test@email.com");
         dataDumpRequest.setDateTimeString(new Date().toString());
         dataDumpRequest.setRequestingInstitutionCode("1");
         dataDumpRequest.setRequestId("1");
