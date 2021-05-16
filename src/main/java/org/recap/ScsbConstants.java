@@ -230,7 +230,6 @@ public class ScsbConstants {
     public static final String INVALID = "INVALID";
     public static final String SWAGGER = "SWAGGER";
     public static final String EXPORT_MESSAGE = "Can't run export now as another process is in progress. We have saved your request.We will initiate and notify once the exiting process completes";
-    public static final String LAS_EMAIL_ASSIST_TO = "las.email.assist.to";
 
     public class MarcFields {
         public static final String CF_001 = "001";
