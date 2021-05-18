@@ -74,7 +74,7 @@ public class EtlDataLoadController {
     @Autowired
     XmlRecordRepository xmlRecordRepository;
 
-    @Value("${" + PropertyKeyConstants.EMAIL_LOAD_BATCHSIZE + "}")
+    @Value("${" + PropertyKeyConstants.ETL_LOAD_BATCHSIZE + "}")
     private Integer batchSize;
 
     @Value("${" + PropertyKeyConstants.ETL_DATA_LOAD_DIRECTORY + "}")
