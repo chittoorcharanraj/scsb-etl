@@ -15,7 +15,7 @@ import java.util.Date;
  * Created by peris on 7/17/16.
  */
 @Entity
-@Table(name = "xml_records_t", schema = "recap", catalog = "")
+@Table(name = "xml_records_t", catalog = "")
 @Getter
 @Setter
 public class XmlRecordEntity extends AbstractEntity<Integer> {

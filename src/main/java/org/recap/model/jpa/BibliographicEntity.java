@@ -20,7 +20,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@Table(name = "bibliographic_t", schema = "recap", catalog = "")
+@Table(name = "bibliographic_t", catalog = "")
 @AttributeOverride(name = "id", column = @Column(name = "BIBLIOGRAPHIC_ID"))
 public class BibliographicEntity extends BibliographicAbstractEntity {
 

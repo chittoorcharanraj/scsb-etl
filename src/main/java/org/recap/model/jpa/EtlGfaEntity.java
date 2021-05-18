@@ -13,7 +13,7 @@ import java.io.Serializable;
  * Created by hemalathas on 21/7/16.
  */
 @Entity
-@Table(name = "etl_gfa_temp_t" , schema = "recap")
+@Table(name = "etl_gfa_temp_t" )
 @Getter
 @Setter
 public class EtlGfaEntity implements Serializable {
