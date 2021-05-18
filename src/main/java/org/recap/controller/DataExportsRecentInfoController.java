@@ -1,5 +1,6 @@
 package org.recap.controller;
 
+import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.model.export.S3RecentDataExportInfo;
 import org.recap.model.export.S3RecentDataExportInfoList;
@@ -38,7 +39,7 @@ public class DataExportsRecentInfoController {
         try {
             List<String> allInstitutionCodesExceptSupportInstitution = commonUtil.findAllInstitutionCodesExceptSupportInstitution();
             for (String institution : allInstitutionCodesExceptSupportInstitution) {
-                String bibDataFormat = propertyUtil.getPropertyByInstitutionAndKey(institution, "bibdata.format");
+                String bibDataFormat = propertyUtil.getPropertyByInstitutionAndKey(institution, PropertyKeyConstants.ILS.ILS_BIBDATA_FORMAT);
                 List<S3RecentDataExportInfo> recentDataExportInfoList = recentDataExportsInfoService.generateRecentDataExportsInfo(allInstitutionCodesExceptSupportInstitution, institution, bibDataFormat);
                 if (!recentDataExportInfoList.isEmpty()) {
                     recentDataExportInfoFinalList.addAll(recentDataExportInfoList);

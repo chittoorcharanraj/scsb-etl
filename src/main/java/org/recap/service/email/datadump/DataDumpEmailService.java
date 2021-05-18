@@ -1,6 +1,7 @@
 package org.recap.service.email.datadump;
 
 import org.apache.camel.ProducerTemplate;
+import org.recap.PropertyKeyConstants;
 import org.recap.ScsbConstants;
 import org.recap.camel.EmailPayLoad;
 import org.recap.model.ILSConfigProperties;
@@ -22,16 +23,16 @@ import java.util.Optional;
 @Service
 public class DataDumpEmailService {
 
-    @Value("${etl.data.dump.directory}")
+    @Value("${" + PropertyKeyConstants.ETL_DATA_DUMP_DIRECTORY + "}")
     private String fileSystemDataDumpDirectory;
 
-    @Value("${s3.data.dump.dir}")
+    @Value("${" + PropertyKeyConstants.S3_DATA_DUMP_DIR + "}")
     private String ftpDataDumpDirectory;
 
-    @Value("${etl.data.dump.fetchtype.full}")
+    @Value("${" + PropertyKeyConstants.ETL_DATA_DUMP_FETCHTYPE_FULL + "}")
     private String dataDumpFetchType;
 
-    @Value("${data.dump.notification.cc}")
+    @Value("${" + PropertyKeyConstants.DATA_DUMP_NOTIFICATION_CC + "}")
     private String dataDumpNotificationCC;
 
     @Autowired

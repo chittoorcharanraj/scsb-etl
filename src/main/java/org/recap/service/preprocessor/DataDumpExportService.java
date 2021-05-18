@@ -4,6 +4,7 @@ import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.io.FileUtils;
+import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.export.DataDumpRequest;
@@ -31,7 +32,7 @@ public class DataDumpExportService {
 
     private static final Logger logger = LoggerFactory.getLogger(DataDumpExportService.class);
 
-    @Value("${etl.data.dump.status.file.name}") private String dataDumpStatusFileName;
+    @Value("${" + PropertyKeyConstants.ETL_DATA_DUMP_STATUS_FILE_NAME + "}") private String dataDumpStatusFileName;
 
     @Autowired private DataDumpExecutorService dataDumpExecutorService;
     @Autowired private DataDumpEmailService dataDumpEmailService;

@@ -1,6 +1,7 @@
 package org.recap.util;
 
 import lombok.extern.slf4j.Slf4j;
+import org.recap.PropertyKeyConstants;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.repository.InstitutionDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,7 @@ import java.util.List;
 @Service
 public class CommonUtil {
 
-    @Value("${scsb.support.institution}")
+    @Value("${" + PropertyKeyConstants.SCSB_SUPPORT_INSTITUTION + "}")
     private String supportInstitution;
 
     @Autowired

@@ -9,6 +9,7 @@ import org.apache.camel.component.aws.s3.S3Constants;
 import org.apache.camel.processor.aggregate.zipfile.ZipAggregationStrategy;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.util.datadump.DataExportHeaderUtil;
@@ -36,10 +37,9 @@ public class ZipFileProcessor implements Processor {
     /**
      * The s3 data dump remote server.
      */
-    @Value("${s3.data.dump.dir}")
+    @Value("${" + PropertyKeyConstants.S3_DATA_DUMP_DIR + "}")
     String s3DataDumpRemoteServer;
-
-    @Value("${etl.data.dump.ftp.staging.directory}")
+    @Value("${" + PropertyKeyConstants.ETL_DATA_DUMP_FTP_STAGING_DIRECTORY + "}")
     private String s3StagingDir;
 
     /**

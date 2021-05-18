@@ -4,6 +4,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws.s3.S3Constants;
 import org.apache.camel.model.dataformat.BindyType;
+import org.recap.PropertyKeyConstants;
 import org.recap.ScsbConstants;
 import org.recap.camel.datadump.FileNameProcessorForDataDumpFailure;
 import org.recap.camel.datadump.FileNameProcessorForDataDumpSuccess;
@@ -31,8 +32,8 @@ public class DataExportReportFtpRouteBuilder {
      * @param s3DumpWithReportRemoteServer the ftp dump with report remote server
      */
     @Autowired
-    public DataExportReportFtpRouteBuilder(CamelContext context, @Value("${s3.add.s3.routes.on.startup}") boolean addS3RoutesOnStartup, @Value("${s3.datadump.report.remote.server}") String s3OnlyReportRemoteServer,
-                                           @Value("${s3.data.dump.dir}") String s3DumpWithReportRemoteServer) {
+    public DataExportReportFtpRouteBuilder(CamelContext context, @Value("${" + PropertyKeyConstants.S3_ADD_S3_ROUTES_ON_STARTUP + "}") boolean addS3RoutesOnStartup, @Value("${" + PropertyKeyConstants.S3_DATADUMP_REPORT_REMOTE_SERVER + "}") String s3OnlyReportRemoteServer,
+                                           @Value("${" + PropertyKeyConstants.S3_DATA_DUMP_DIR + "}") String s3DumpWithReportRemoteServer) {
         try {
             if (addS3RoutesOnStartup) {
                 context.addRoutes(new RouteBuilder() {
