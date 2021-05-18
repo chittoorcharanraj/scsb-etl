@@ -16,7 +16,7 @@ import javax.validation.constraints.Email;
 import java.util.Date;
 
 @Entity
-@Table(name = "ETL_REQUEST_LOG_T", schema = "recap", catalog = "")
+@Table(name = "ETL_REQUEST_LOG_T", catalog = "")
 @Getter
 @Setter
 @AttributeOverride(

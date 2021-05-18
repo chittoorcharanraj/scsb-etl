@@ -9,7 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "ETL_EXPORT_STATUS_T", schema = "recap", catalog = "")
+@Table(name = "ETL_EXPORT_STATUS_T", catalog = "")
 @Getter
 @Setter
 @AttributeOverride(
