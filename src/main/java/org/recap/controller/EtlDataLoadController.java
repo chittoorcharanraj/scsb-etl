@@ -4,6 +4,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.recap.PropertyKeyConstants;
 import org.recap.camel.EtlDataLoadProcessor;
 import org.recap.camel.RecordProcessor;
 import org.recap.model.etl.EtlLoadRequest;
@@ -73,10 +74,10 @@ public class EtlDataLoadController {
     @Autowired
     XmlRecordRepository xmlRecordRepository;
 
-    @Value("${etl.load.batchSize}")
+    @Value("${" + PropertyKeyConstants.ETL_LOAD_BATCHSIZE + "}")
     private Integer batchSize;
 
-    @Value("${etl.data.load.directory}")
+    @Value("${" + PropertyKeyConstants.ETL_DATA_LOAD_DIRECTORY + "}")
     private String inputDirectoryPath;
 
     /**

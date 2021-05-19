@@ -3,6 +3,7 @@ package org.recap.camel.datadump.routebuilder;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.BindyType;
+import org.recap.PropertyKeyConstants;
 import org.recap.ScsbConstants;
 import org.recap.camel.datadump.FileNameProcessorForDataDumpFailure;
 import org.recap.camel.datadump.FileNameProcessorForDataDumpSuccess;
@@ -31,7 +32,7 @@ public class DataExportCsvReportRouteBuilder {
      * @param reportsDirectory the reports directory
      */
     @Autowired
-    public DataExportCsvReportRouteBuilder(CamelContext camelContext, @Value("${etl.data.dump.report.directory}") String reportsDirectory) {
+    public DataExportCsvReportRouteBuilder(CamelContext camelContext, @Value("${" + PropertyKeyConstants.ETL_DATA_DUMP_REPORT_DIRECTORY + "}") String reportsDirectory) {
         try {
             camelContext.addRoutes(new RouteBuilder() {
                 @Override

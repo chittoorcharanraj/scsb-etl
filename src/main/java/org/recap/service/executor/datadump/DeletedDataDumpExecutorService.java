@@ -1,6 +1,7 @@
 package org.recap.service.executor.datadump;
 
 import org.apache.commons.lang3.StringUtils;
+import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.export.DataDumpRequest;
@@ -17,8 +18,7 @@ import java.util.List;
  */
 @Service
 public class DeletedDataDumpExecutorService extends AbstractDataDumpExecutorService {
-
-    @Value("${etl.data.dump.deleted.type.onlyorphan.institution}")
+    @Value("${" + PropertyKeyConstants.ETL_DATA_DUMP_DELETED_TYPE_ONLYORPHAN_INSTITUTION + "}")
     private String deletedOnlyOrphanInstitution;
 
     /**

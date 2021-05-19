@@ -3,6 +3,7 @@ package org.recap.service.transmission.datadump;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.zipfile.ZipAggregationStrategy;
+import org.recap.PropertyKeyConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.export.DataDumpRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,7 @@ import java.util.Map;
 @Service
 public class DataDumpFileSystemTranmissionService implements DataDumpTransmissionInterface {
 
-    @Value("${etl.data.dump.directory}")
+    @Value("${" + PropertyKeyConstants.ETL_DATA_DUMP_DIRECTORY + "}")
     private String dumpDirectoryPath;
 
     @Autowired

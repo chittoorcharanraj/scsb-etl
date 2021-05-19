@@ -1,5 +1,6 @@
 package org.recap.service;
 
+import org.recap.PropertyKeyConstants;
 import org.recap.model.search.SearchRecordsRequest;
 import org.recap.spring.SwaggerAPIProvider;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,7 +20,8 @@ public class DataDumpSolrService {
     /**
      * The Solr client url.
      */
-    @Value("${scsb.solr.doc.url}")
+    public static final String SCSB_SOLR_DOC_URL = "scsb.solr.doc.url";
+    @Value("${" + PropertyKeyConstants.SCSB_SOLR_DOC_URL + "}")
     String solrClientUrl;
 
     /**
