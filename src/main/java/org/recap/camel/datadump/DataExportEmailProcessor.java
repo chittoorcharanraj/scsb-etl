@@ -4,6 +4,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.collections.CollectionUtils;
+import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.csv.DataDumpFailureReport;
@@ -71,10 +72,10 @@ public class DataExportEmailProcessor implements Processor {
     /**
      * The Data dump status file name.
      */
-    @Value("${etl.data.dump.status.file.name}")
+    @Value("${" + PropertyKeyConstants.ETL_DATA_DUMP_STATUS_FILE_NAME + "}")
     String dataDumpStatusFileName;
 
-    @Value("${etl.data.dump.fetchtype.full}")
+    @Value("${" + PropertyKeyConstants.ETL_DATA_DUMP_FETCHTYPE_FULL + "}")
     private String fetchTypeFull;
 
     /**

@@ -1,5 +1,6 @@
 package org.recap.controller.version;
 
+import org.recap.PropertyKeyConstants;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class VersionNumberController {
 
-    @Value("${version.number}")
+    @Value("${" + PropertyKeyConstants.VERSION_NUMBER + "}")
     private String versionNumber;
 
     /**

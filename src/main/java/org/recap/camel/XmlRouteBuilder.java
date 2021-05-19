@@ -6,6 +6,7 @@ import org.apache.camel.component.file.FileEndpoint;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileFilter;
 import org.apache.commons.io.FilenameUtils;
+import org.recap.PropertyKeyConstants;
 import org.recap.ScsbConstants;
 import org.recap.repository.XmlRecordRepository;
 import org.slf4j.Logger;
@@ -39,9 +40,9 @@ public class XmlRouteBuilder {
      */
     @Autowired
     public XmlRouteBuilder(CamelContext context, XmlRecordRepository xmlRecordRepository, XMLFileLoadReportProcessor xmlFileLoadReportProcessor, XMLFileLoadExceptionReportProcessor xmlFileLoadExceptionReportProcessor, XMLFileLoadValidator xmlFileLoadValidator,
-                           @Value("${etl.split.xml.tag.name}") String xmlTagName,
-                           @Value("${etl.data.load.directory}") String inputDirectoryPath,
-                           @Value("${etl.pool.size}") Integer poolSize, @Value("${etl.max.pool.size}") Integer maxPoolSize) {
+                           @Value("${" + PropertyKeyConstants.ETL_SPLIT_XML_TAG_NAME + "}") String xmlTagName,
+                           @Value("${" + PropertyKeyConstants.ETL_DATA_LOAD_DIRECTORY + "}") String inputDirectoryPath,
+                           @Value("${" + PropertyKeyConstants.ETL_POOL_SIZE + "}") Integer poolSize, @Value("${" + PropertyKeyConstants.ETL_MAX_POOL_SIZE + "}") Integer maxPoolSize) {
 
         try {
             context.addRoutes(new RouteBuilder() {

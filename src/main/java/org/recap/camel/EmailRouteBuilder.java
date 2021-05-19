@@ -3,6 +3,7 @@ package org.recap.camel;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.commons.io.FileUtils;
+import org.recap.PropertyKeyConstants;
 import org.recap.ScsbConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,9 +50,9 @@ public class EmailRouteBuilder {
      * @param smtpServer        the smtp server
      */
     @Autowired
-    public EmailRouteBuilder(CamelContext context, @Value("${email.smtp.server.username}") String username, @Value("${email.smtp.server.password.file}") String passwordDirectory,
-                             @Value("${email.data.dump.from}") String from, @Value("${email.data.dump.subject}") String subject,@Value("${email.data.dump.nodata.subject}") String noDataSubject,
-                             @Value("${email.smtp.server}") String smtpServer,@Value("${email.data.dump.cc}") String emailCC) {
+    public EmailRouteBuilder(CamelContext context, @Value("${" + PropertyKeyConstants.EMAIL_SMTP_SERVER_USERNAME + "}") String username, @Value("${" + PropertyKeyConstants.EMAIL_SMTP_SERVER_PASSWORD_FILE + "}") String passwordDirectory,
+                             @Value("${" + PropertyKeyConstants.EMAIL_DATA_DUMP_FROM + "}") String from, @Value("${" + PropertyKeyConstants.EMAIL_DATA_DUMP_SUBJECT + "}") String subject,@Value("${" + PropertyKeyConstants.EMAIL_DATA_DUMP_NODATA_SUBJECT + "}") String noDataSubject,
+                             @Value("${" + PropertyKeyConstants.EMAIL_SMTP_SERVER + "}") String smtpServer,@Value("${" + PropertyKeyConstants.ILS.ILS_EMAIL_DATA_DUMP_CC + "}") String emailCC) {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override

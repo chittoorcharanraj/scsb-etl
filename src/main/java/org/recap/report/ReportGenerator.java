@@ -2,6 +2,7 @@ package org.recap.report;
 
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.lang3.StringUtils;
+import org.recap.PropertyKeyConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.jparw.ReportEntity;
 import org.recap.repositoryrw.ReportDetailRepository;
@@ -33,7 +34,7 @@ public class ReportGenerator {
     @Autowired
     ProducerTemplate producerTemplate;
 
-    @Value("${etl.report.directory}")
+    @Value("${" + PropertyKeyConstants.ETL_REPORT_DIRECTORY + "}")
     private String reportDirectory;
 
     /**

@@ -4,6 +4,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws.s3.S3Constants;
 import org.apache.camel.processor.aggregate.zipfile.ZipAggregationStrategy;
+import org.recap.PropertyKeyConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.export.DataDumpRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +20,13 @@ import java.util.Map;
 @Service
 public class DataDumpS3TransmissionService implements DataDumpTransmissionInterface {
 
-    @Value("${etl.data.dump.directory}")
+    @Value("${" + PropertyKeyConstants.ETL_DATA_DUMP_DIRECTORY + "}")
     private String dumpDirectoryPath;
 
     /**
      * The s3 data dump remote server.
      */
-    @Value("${s3.data.dump.dir}")
+    @Value("${" + PropertyKeyConstants.S3_DATA_DUMP_DIR + "}")
     String s3DataDumpRemoteServer;
 
     @Autowired

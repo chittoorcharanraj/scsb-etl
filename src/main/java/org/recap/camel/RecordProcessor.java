@@ -2,6 +2,7 @@ package org.recap.camel;
 
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.lang3.StringUtils;
+import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.etl.BibPersisterCallable;
@@ -97,7 +98,7 @@ public class RecordProcessor {
     @Autowired
     private MarcUtil marcUtil;
 
-    @Value("${etl.initial.data.load.thread.size}")
+    @Value("${" + PropertyKeyConstants.ETL_INITIAL_DATA_LOAD_THREAD_SIZE + "}")
     private Integer dataLoadThreadSize;
 
 

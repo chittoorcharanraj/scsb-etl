@@ -5,6 +5,7 @@ import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.impl.engine.DefaultFluentProducerTemplate;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.jpa.CollectionGroupEntity;
@@ -49,16 +50,16 @@ public abstract class AbstractDataDumpExecutorService implements DataDumpExecuto
     @Autowired
     private DataExportHeaderUtil dataExportHeaderUtil;
 
-    @Value("${data.dump.httpresponse.record.limit}")
+    @Value("${" + PropertyKeyConstants.DATA_DUMP_HTTPRESPONSE_RECORD_LIMIT + "}")
     private String httpResonseRecordLimit;
 
-    @Value("${scsb.solr.doc.url}")
+    @Value("${" + PropertyKeyConstants.SCSB_SOLR_DOC_URL + "}")
     private String solrClientUrl;
 
-    @Value("${data.dump.batch.size}")
+    @Value("${" + PropertyKeyConstants.DATA_DUMP_BATCH_SIZE + "}")
     private String dataDumpBatchSize;
 
-    @Value("${datadump.solr.fetch.delay}")
+    @Value("${" + PropertyKeyConstants.DATADUMP_SOLR_FETCH_DELAY + "}")
     private Long solrFetchDelay;
 
     /**

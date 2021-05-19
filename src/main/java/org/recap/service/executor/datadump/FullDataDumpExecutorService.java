@@ -1,5 +1,6 @@
 package org.recap.service.executor.datadump;
 
+import org.recap.PropertyKeyConstants;
 import org.recap.model.export.DataDumpRequest;
 import org.recap.model.search.SearchRecordsRequest;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,8 +14,7 @@ import org.springframework.stereotype.Service;
 @Service
 @Scope("prototype")
 public class FullDataDumpExecutorService extends AbstractDataDumpExecutorService {
-
-    @Value("${etl.data.dump.fetchtype.full}")
+    @Value("${" + PropertyKeyConstants.ETL_DATA_DUMP_FETCHTYPE_FULL + "}")
     private String fetchTypeFull;
 
     /**

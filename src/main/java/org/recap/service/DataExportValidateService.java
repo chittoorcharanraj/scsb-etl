@@ -37,10 +37,10 @@ public class DataExportValidateService {
 
     private static final Logger logger = LoggerFactory.getLogger(DataExportValidateService.class);
 
-    @Value("${etl.data.dump.fetchtype.full}") private String fetchTypeFull;
-    @Value("${etl.data.dump.status.file.name}") private String dataDumpStatusFileName;
-    @Value("${etl.data.dump.incremental.date.limit}") private String incrementalDateLimit;
-    @Value("${scsb.support.institution}") private String supportInstitution;
+    @Value("${" + PropertyKeyConstants.ETL_DATA_DUMP_FETCHTYPE_FULL + "}") private String fetchTypeFull;
+    @Value("${" + PropertyKeyConstants.ETL_DATA_DUMP_STATUS_FILE_NAME + "}") private String dataDumpStatusFileName;
+    @Value("${" + PropertyKeyConstants.ETL_DATA_DUMP_INCREMENTAL_DATE_LIMIT + "}") private String incrementalDateLimit;
+    @Value("${" + PropertyKeyConstants.SCSB_SUPPORT_INSTITUTION + "}") private String supportInstitution;
 
 
     @Autowired private CommonUtil commonUtil;

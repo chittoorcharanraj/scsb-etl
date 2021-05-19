@@ -3,6 +3,7 @@ package org.recap.camel.datadump.routebuilder;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
+import org.recap.PropertyKeyConstants;
 import org.recap.ScsbConstants;
 import org.recap.camel.datadump.FileNameProcessorForDataExport;
 import org.recap.camel.datadump.ZipFileProcessor;
@@ -21,7 +22,7 @@ public class DataDumpFtpRouteBuilder extends RouteBuilder {
 
     private static final Logger logger = LoggerFactory.getLogger(DataDumpFtpRouteBuilder.class);
 
-    @Value("${etl.data.dump.ftp.staging.directory}")
+    @Value("${" + PropertyKeyConstants.ETL_DATA_DUMP_FTP_STAGING_DIRECTORY + "}")
     private String s3StagingDir;
 
     /**

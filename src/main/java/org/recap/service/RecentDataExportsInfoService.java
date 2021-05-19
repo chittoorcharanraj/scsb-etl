@@ -6,6 +6,7 @@ import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
+import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.model.export.S3RecentDataExportInfo;
 import org.slf4j.Logger;
@@ -30,13 +31,13 @@ public class RecentDataExportsInfoService {
     @Autowired
     AmazonS3 s3client;
 
-    @Value("${scsbBucketName}")
+    @Value("${" + PropertyKeyConstants.SCSB_BUCKET_NAME + "}")
     private String scsbBucketName;
 
-    @Value("${s3.data.dump.dir}")
+    @Value("${" + PropertyKeyConstants.S3_DATA_DUMP_DIR + "}")
     private String s3DataExportBasePath;
 
-    @Value("${recent.data.export.limit}")
+    @Value("${" + PropertyKeyConstants.RECENT_DATA_EXPORT_LIMIT + "}")
     private String recentDataExportInfoLimit;
 
     public List<S3RecentDataExportInfo> generateRecentDataExportsInfo(List<String> allInstitutionCodeExceptSupportInstitution, String institution, String bibDataFormat) {
