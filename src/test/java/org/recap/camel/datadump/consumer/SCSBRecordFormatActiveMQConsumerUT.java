@@ -71,14 +71,16 @@ public class SCSBRecordFormatActiveMQConsumerUT extends BaseTestCaseUT {
     @Test
     public void testgetExecutorService() {
         Mockito.when(executorService.isShutdown()).thenReturn(Boolean.TRUE);
+        ReflectionTestUtils.setField(sCSBRecordFormatActiveMQConsumer,"dataDumpScsbFormatThreadSize",10);
         executorService = sCSBRecordFormatActiveMQConsumer.getExecutorService();
         assertNotNull(executorService);
     }
 
     @Test
     public void testgetExecutorServiceNull() {
-        SCSBRecordFormatActiveMQConsumer scsbRecordFormatActiveMQConsumer = new SCSBRecordFormatActiveMQConsumer(scsbXmlFormatterService);
-        executorService = scsbRecordFormatActiveMQConsumer.getExecutorService();
+        ReflectionTestUtils.setField(sCSBRecordFormatActiveMQConsumer, "executorService", null);
+        ReflectionTestUtils.setField(sCSBRecordFormatActiveMQConsumer,"dataDumpScsbFormatThreadSize",12);
+        executorService = sCSBRecordFormatActiveMQConsumer.getExecutorService();
         assertNotNull(executorService);
     }
 

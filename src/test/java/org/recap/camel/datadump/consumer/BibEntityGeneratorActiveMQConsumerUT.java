@@ -63,6 +63,7 @@ public class BibEntityGeneratorActiveMQConsumerUT extends BaseTestCaseUT {
     @Test
     public void getExecutorServiceShutDown() {
         Mockito.when(executorService.isShutdown()).thenReturn(Boolean.TRUE);
+        ReflectionTestUtils.setField(bibEntityGeneratorActiveMQConsumer,"dataDumpBibEntityThreadSize",10);
         bibEntityGeneratorActiveMQConsumer.getExecutorService();
     }
 

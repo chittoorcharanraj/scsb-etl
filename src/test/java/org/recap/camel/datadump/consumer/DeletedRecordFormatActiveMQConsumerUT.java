@@ -63,13 +63,15 @@ public class DeletedRecordFormatActiveMQConsumerUT extends BaseTestCaseUT {
     @Test
     public void testgetExecutorService() {
         Mockito.when(executorService.isShutdown()).thenReturn(Boolean.TRUE);
+        ReflectionTestUtils.setField(deletedRecordFormatActiveMQConsumer,"dataDumpDeletedRecordsThreadSize",10);
         executorService = deletedRecordFormatActiveMQConsumer.getExecutorService();
         assertNotNull(executorService);
     }
 
     @Test
     public void testgetExecutorServiceNew() {
-        DeletedRecordFormatActiveMQConsumer deletedRecordFormatActiveMQConsumer = new DeletedRecordFormatActiveMQConsumer(deletedJsonFormatterService);
+        ReflectionTestUtils.setField(deletedRecordFormatActiveMQConsumer,"executorService",null);
+        ReflectionTestUtils.setField(deletedRecordFormatActiveMQConsumer,"dataDumpDeletedRecordsThreadSize",10);
         executorService = deletedRecordFormatActiveMQConsumer.getExecutorService();
         assertNotNull(executorService);
     }

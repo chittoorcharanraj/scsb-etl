@@ -58,6 +58,7 @@ public class MarcRecordFormatActiveMQConsumerUT extends BaseTestCaseUT {
     @Test
     public void testgetExecutorService() {
         Mockito.when(executorService.isShutdown()).thenReturn(Boolean.TRUE);
+        ReflectionTestUtils.setField(marcRecordFormatActiveMQConsumer,"dataDumpMarcFormatThreadSize",10);
         executorService = marcRecordFormatActiveMQConsumer.getExecutorService();
         assertNotNull(executorService);
     }
@@ -65,6 +66,7 @@ public class MarcRecordFormatActiveMQConsumerUT extends BaseTestCaseUT {
     @Test
     public void testgetExecutorServiceNULL() {
         ReflectionTestUtils.setField(marcRecordFormatActiveMQConsumer, "executorService", null);
+        ReflectionTestUtils.setField(marcRecordFormatActiveMQConsumer,"dataDumpMarcFormatThreadSize",10);
         executorService = marcRecordFormatActiveMQConsumer.getExecutorService();
         assertNotNull(executorService);
     }
