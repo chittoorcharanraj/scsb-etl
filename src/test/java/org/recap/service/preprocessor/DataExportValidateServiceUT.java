@@ -210,7 +210,6 @@ public class DataExportValidateServiceUT extends BaseTestCaseUT {
         String validationMessage = dataExportValidateService.validateIncomingRequest(dataDumpRequest);
         assertTrue(validationMessage.contains(ScsbConstants.DATADUMP_VALID_INST_CODES_ERR_MSG));
         assertTrue(validationMessage.contains(ScsbConstants.DATADUMP_MULTIPLE_INST_CODES_ERR_MSG));
-        assertTrue(validationMessage.contains(ScsbConstants.DATADUMP_VALID_REQ_INST_CODE_ERR_MSG));
         assertTrue(validationMessage.contains(ScsbConstants.DATADUMP_VALID_IMS_DEPOSITORY_CODE_ERR_MSG));
         assertTrue(validationMessage.contains(ScsbConstants.DATADUMP_TRANS_TYPE_ERR_MSG));
     }

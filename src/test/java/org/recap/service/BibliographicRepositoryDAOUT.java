@@ -55,7 +55,7 @@ public class BibliographicRepositoryDAOUT extends BaseTestCaseUT {
         HoldingsEntity holdingsEntity = getHoldingsEntity();
         ItemEntity itemEntity = getBibliographicEntity().getItemEntities().get(0);
         Mockito.when(bibliographicDetailsRepository.findByOwningInstitutionIdAndOwningInstitutionBibId(bibliographicEntity.getOwningInstitutionId(), bibliographicEntity.getOwningInstitutionBibId())).thenReturn(bibliographicEntity);
-        Mockito.when( holdingsDetailsRepository.findByOwningInstitutionHoldingsIdAndOwningInstitutionId(holdingsEntity.getOwningInstitutionHoldingsId(), holdingsEntity.getOwningInstitutionId())).thenReturn(holdingsEntity);
+        Mockito.when(holdingsDetailsRepository.findByOwningInstitutionHoldingsIdAndOwningInstitutionId(holdingsEntity.getOwningInstitutionHoldingsId(), holdingsEntity.getOwningInstitutionId())).thenReturn(holdingsEntity);
         Mockito.when(itemDetailsRepository.findByOwningInstitutionItemIdAndOwningInstitutionId(itemEntity.getOwningInstitutionItemId(), itemEntity.getOwningInstitutionId())).thenReturn(itemEntity);
         List<BibliographicEntity> bibliographicEntities = bibliographicRepositoryDAO.saveOrUpdateList(Arrays.asList(bibliographicEntity));
         assertNotNull(bibliographicEntities);
@@ -112,19 +112,7 @@ public class BibliographicRepositoryDAOUT extends BaseTestCaseUT {
         HoldingsEntity holdingsEntity = getHoldingsEntity();
         List<HoldingsEntity> holdingsEntitylist = new LinkedList(Arrays.asList(holdingsEntity));
 
-        ItemEntity itemEntity = new ItemEntity();
-        itemEntity.setCallNumberType("0");
-        itemEntity.setCallNumber("callNum");
-        itemEntity.setCreatedDate(new Date());
-        itemEntity.setCreatedBy("etl");
-        itemEntity.setLastUpdatedDate(new Date());
-        itemEntity.setLastUpdatedBy("etl");
-        itemEntity.setBarcode("334330028533193343300285331933433002853319555565");
-        itemEntity.setOwningInstitutionItemId("1231");
-        itemEntity.setOwningInstitutionId(1);
-        itemEntity.setCollectionGroupId(1);
-        itemEntity.setCustomerCode("PA");
-        itemEntity.setItemAvailabilityStatusId(1);
+        ItemEntity itemEntity = getItemEntity();
         List<ItemEntity> itemEntitylist = new LinkedList(Arrays.asList(itemEntity));
 
 
@@ -138,6 +126,23 @@ public class BibliographicRepositoryDAOUT extends BaseTestCaseUT {
         return bibliographicEntity;
     }
 
+    private ItemEntity getItemEntity() {
+        ItemEntity itemEntity = new ItemEntity();
+        itemEntity.setCallNumberType("0");
+        itemEntity.setCallNumber("callNum");
+        itemEntity.setCreatedDate(new Date());
+        itemEntity.setCreatedBy("etl");
+        itemEntity.setLastUpdatedDate(new Date());
+        itemEntity.setLastUpdatedBy("etl");
+        itemEntity.setBarcode("334330028533193343300285331933433002853319555565");
+        itemEntity.setOwningInstitutionItemId("1231");
+        itemEntity.setOwningInstitutionId(1);
+        itemEntity.setCollectionGroupId(1);
+        itemEntity.setCustomerCode("PA");
+        itemEntity.setItemAvailabilityStatusId(1);
+        return itemEntity;
+    }
+
     private HoldingsEntity getHoldingsEntity() {
         HoldingsEntity holdingsEntity = new HoldingsEntity();
         holdingsEntity.setContent("mock holdings".getBytes());
@@ -146,6 +151,7 @@ public class BibliographicRepositoryDAOUT extends BaseTestCaseUT {
         holdingsEntity.setLastUpdatedDate(new Date());
         holdingsEntity.setLastUpdatedBy("etl");
         holdingsEntity.setOwningInstitutionHoldingsId("002");
+        holdingsEntity.setItemEntities(Arrays.asList(getItemEntity()));
         return holdingsEntity;
     }
 

@@ -236,6 +236,7 @@ public class RecordProcessorUT {
     @Test
     public void getExecutorService() {
         Mockito.when(executorService.isShutdown()).thenReturn(true);
+        ReflectionTestUtils.setField(recordProcessor,"dataLoadThreadSize",10);
         recordProcessor.getExecutorService();
     }
 
