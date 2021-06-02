@@ -47,6 +47,13 @@ public class MarcRecordFormatActiveMQConsumerUT extends BaseTestCaseUT {
     @Mock
     Future future;
 
+    @Test
+    public void testMarcRecordFormatActiveMQConsumer(){
+        MarcRecordFormatActiveMQConsumer marcRecordFormatActiveMQConsumer = new MarcRecordFormatActiveMQConsumer(marcXmlFormatterService,10,10);
+        marcRecordFormatActiveMQConsumer.setDataExportHeaderUtil(dataExportHeaderUtil);
+        assertNotNull(marcRecordFormatActiveMQConsumer);
+    }
+
 
     @Test
     public void testgetDataExportHeaderUtil() {
@@ -118,6 +125,8 @@ public class MarcRecordFormatActiveMQConsumerUT extends BaseTestCaseUT {
         results.put(ScsbCommonConstants.SUCCESS, Arrays.asList(getDeletedRecord()));
         results.put(ScsbCommonConstants.FAILURE, Arrays.asList("FailureRecords", getDeletedRecord()));
         results.put(ScsbConstants.ITEM_EXPORTED_COUNT, 10);
+        ReflectionTestUtils.setField(marcRecordFormatActiveMQConsumer,"dataDumpMarcFormatThreadSize",10);
+        ReflectionTestUtils.setField(marcRecordFormatActiveMQConsumer,"dataDumpMarcFormatBatchSize",10);
         Mockito.when(executorService.invokeAll(any())).thenReturn(futureList);
         Mockito.when(future.get()).thenReturn(results);
         Mockito.doNothing().when(marcRecordFormatActiveMQConsumer).processRecordFailures(any(), any(), any(), any(), any());

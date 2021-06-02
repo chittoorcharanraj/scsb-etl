@@ -19,6 +19,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 
 public class BibEntityGeneratorActiveMQConsumerUT extends BaseTestCaseUT {
@@ -53,6 +54,8 @@ public class BibEntityGeneratorActiveMQConsumerUT extends BaseTestCaseUT {
 
             List<BibliographicEntity> bibliographicEntityList = new ArrayList<>();
             bibliographicEntityList.add(getBibliographicEntity());
+            ReflectionTestUtils.setField(bibEntityGeneratorActiveMQConsumer,"dataDumpBibEntityBatchSize",10);
+            ReflectionTestUtils.setField(bibEntityGeneratorActiveMQConsumer,"dataDumpBibEntityThreadSize",10);
             Mockito.when(executorService.invokeAll(any())).thenReturn(futures);
             Mockito.when(bibliographicDetailsRepository.getBibliographicEntityList(Mockito.anyList())).thenReturn(bibliographicEntityList);
             bibEntityGeneratorActiveMQConsumer.processBibEntities(ex);
@@ -89,6 +92,11 @@ public class BibEntityGeneratorActiveMQConsumerUT extends BaseTestCaseUT {
     public void getExecutorServiceNull() {
         BibEntityGeneratorActiveMQConsumer bibEntityGeneratorActiveMQConsumer = new BibEntityGeneratorActiveMQConsumer(bibliographicDetailsRepository, 2, 10);
         bibEntityGeneratorActiveMQConsumer.getExecutorService();
+    }
+    @Test
+    public void getBibEntityGeneratorActiveMQConsumer() {
+        BibEntityGeneratorActiveMQConsumer bibEntityGeneratorActiveMQConsumer = new BibEntityGeneratorActiveMQConsumer(bibliographicDetailsRepository);
+        assertNotNull(bibEntityGeneratorActiveMQConsumer);
     }
 
     private BibliographicEntity getBibliographicEntity() {
