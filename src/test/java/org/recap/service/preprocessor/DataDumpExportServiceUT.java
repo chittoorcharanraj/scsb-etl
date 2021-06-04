@@ -3,6 +3,7 @@ package org.recap.service.preprocessor;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.ProducerTemplate;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -17,6 +18,8 @@ import org.recap.service.executor.datadump.DataDumpExecutorService;
 import org.recap.util.PropertyUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import java.io.File;
 
 import static org.junit.Assert.assertEquals;
 
@@ -43,6 +46,9 @@ public class DataDumpExportServiceUT extends BaseTestCaseUT {
 
     @Mock
     PropertyUtil propertyUtil;
+
+    @Mock
+    ProducerTemplate producerTemplate;
 
 
     @Value("${etl.data.dump.fetchtype.full}")
@@ -127,6 +133,13 @@ public class DataDumpExportServiceUT extends BaseTestCaseUT {
     public void setDataExportCurrentStatus() {
         ReflectionTestUtils.setField(dataDumpExportService, "dataDumpStatusFileName", "src/test/resources/org/recap/service/formatter/datadump/princeton.xml");
         ReflectionTestUtils.invokeMethod(dataDumpExportService, "setDataExportCurrentStatus");
+    }
+
+    @Test
+    public void writeStatusToFile(){
+        File file = new File("dataExportStatus.txt");
+        String status = ScsbConstants.DATAEXPORT_WITH_SUCCESS_REPORT_FTP_ROUTE_ID;
+        ReflectionTestUtils.invokeMethod(dataDumpExportService,"writeStatusToFile",file,status);
     }
 
 }

@@ -48,6 +48,12 @@ public class DeletedRecordFormatActiveMQConsumerUT extends BaseTestCaseUT {
     Future future;
 
     @Test
+    public void testDeletedRecordFormatActiveMQConsumer(){
+        DeletedRecordFormatActiveMQConsumer deletedRecordFormatActiveMQConsumer = new DeletedRecordFormatActiveMQConsumer(deletedJsonFormatterService,10,10);
+        deletedRecordFormatActiveMQConsumer.getDataExportHeaderUtil();
+    }
+
+    @Test
     public void testgetDataExportHeaderUtil() {
         deletedRecordFormatActiveMQConsumer.getDataExportHeaderUtil();
         assertNotNull(dataExportHeaderUtil);
@@ -120,6 +126,8 @@ public class DeletedRecordFormatActiveMQConsumerUT extends BaseTestCaseUT {
         results.put(ScsbConstants.ITEM_EXPORTED_COUNT, 10);
         ReflectionTestUtils.setField(deletedRecordFormatActiveMQConsumer, "deletedJsonFormatterService", deletedJsonFormatterService);
         ReflectionTestUtils.setField(deletedRecordFormatActiveMQConsumer, "executorService", executorService);
+        ReflectionTestUtils.setField(deletedRecordFormatActiveMQConsumer, "dataDumpDeletedRecordsBatchSize", 10);
+        ReflectionTestUtils.setField(deletedRecordFormatActiveMQConsumer, "dataDumpDeletedRecordsThreadSize", 10);
         Mockito.when(executorService.invokeAll(any())).thenReturn(futureList);
         Mockito.when(future.get()).thenReturn(results);
         Mockito.doNothing().when(deletedRecordFormatActiveMQConsumer).processRecordFailures(any(), any(), any(), any(), any());

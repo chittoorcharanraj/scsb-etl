@@ -124,6 +124,8 @@ public class SCSBRecordFormatActiveMQConsumerUT extends BaseTestCaseUT {
         results.put(ScsbCommonConstants.SUCCESS, Arrays.asList(getDeletedRecord()));
         results.put(ScsbCommonConstants.FAILURE, Arrays.asList("FailureRecords", getDeletedRecord()));
         results.put(ScsbConstants.ITEM_EXPORTED_COUNT, 10);
+        ReflectionTestUtils.setField(sCSBRecordFormatActiveMQConsumer,"dataDumpScsbFormatBatchSize",10);
+        ReflectionTestUtils.setField(sCSBRecordFormatActiveMQConsumer,"dataDumpScsbFormatThreadSize",10);
         Mockito.when(executorService.invokeAll(any())).thenReturn(futureList);
         Mockito.when(future.get()).thenReturn(results);
         try {
