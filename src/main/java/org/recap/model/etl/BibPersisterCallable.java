@@ -200,6 +200,7 @@ public class BibPersisterCallable implements Callable {
 
         List<ReportDataEntity> reportDataEntities = null;
         if (errorMessage.toString().length() > 1) {
+            logger.info("Error Message for Bib: {} - {}", bibliographicEntity.getOwningInstitutionBibId(), errorMessage);
             reportDataEntities = getDbReportUtil().generateBibFailureReportEntity(bibliographicEntity);
             ReportDataEntity errorReportDataEntity = new ReportDataEntity();
             errorReportDataEntity.setHeaderName(ScsbCommonConstants.ERROR_DESCRIPTION);
@@ -244,6 +245,7 @@ public class BibPersisterCallable implements Callable {
         holdingsEntity.setOwningInstitutionHoldingsId(owningInstitutionHoldingsId);
         List<ReportDataEntity> reportDataEntities = new ArrayList<>();
         if (errorMessage.toString().length() > 1) {
+            logger.info("Error Message for Bib: {} - {}", bibliographicEntity.getOwningInstitutionBibId(), errorMessage);
             getDbReportUtil().generateBibHoldingsFailureReportEntity(bibliographicEntity, holdingsEntity);
             ReportDataEntity errorReportDataEntity = new ReportDataEntity();
             errorReportDataEntity.setHeaderName(ScsbCommonConstants.ERROR_DESCRIPTION);
@@ -343,6 +345,7 @@ public class BibPersisterCallable implements Callable {
 
         List<ReportDataEntity> reportDataEntities = null;
         if (errorMessage.toString().length() > 1) {
+            logger.info("Error Message for Bib: {} - {}", bibliographicEntity.getOwningInstitutionBibId(), errorMessage);
             reportDataEntities = getDbReportUtil().generateBibHoldingsAndItemsFailureReportEntities(bibliographicEntity, holdingsEntity, itemEntity);
             ReportDataEntity errorReportDataEntity = new ReportDataEntity();
             errorReportDataEntity.setHeaderName(ScsbCommonConstants.ERROR_DESCRIPTION);
