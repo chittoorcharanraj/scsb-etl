@@ -1,6 +1,7 @@
 package org.recap.camel;
 
 import org.apache.camel.ProducerTemplate;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.jpa.BibliographicEntity;
@@ -241,7 +242,7 @@ public class BibDataProcessor {
                     reportEntity.setReportDataEntities(reportDataEntities);
                     ReportDataEntity exceptionReportDataEntity = new ReportDataEntity();
                     exceptionReportDataEntity.setHeaderName(ScsbConstants.EXCEPTION_MESSAGE);
-                    exceptionReportDataEntity.setHeaderValue(holdingsEx.getCause().getCause().getMessage());
+                    exceptionReportDataEntity.setHeaderValue(ExceptionUtils.getMessage(holdingsEx));
                     reportDataEntities.add(exceptionReportDataEntity);
                     reportEntity.setFileName(xmlFileName);
                     reportEntity.setCreatedDate(new Date());
