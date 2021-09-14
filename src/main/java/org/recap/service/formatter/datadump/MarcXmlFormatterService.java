@@ -101,6 +101,7 @@ public class MarcXmlFormatterService implements DataDumpFormatterInterface {
             update001Field(record, bibliographicEntity);
             stripTagsFromBib(record,Arrays.asList(ScsbConstants.MarcFields.DF_852, ScsbConstants.MarcFields.DF_876));
             add009Field(record, bibliographicEntity);
+            add901Field(record, bibliographicEntity);
             List<Integer> itemIds = getItemIds(bibliographicEntity);
             record = addHoldingInfo(record, bibliographicEntity.getHoldingsEntities(),itemIds,getNonOrphanHoldingsIdList(bibliographicEntity.getItemEntities()));
             results.put(ScsbCommonConstants.SUCCESS, record);
@@ -196,6 +197,14 @@ public class MarcXmlFormatterService implements DataDumpFormatterInterface {
         ControlField controlField = getFactory().newControlField(ScsbConstants.MarcFields.CF_009);
         controlField.setData(bibliographicEntity.getOwningInstitutionBibId());
         record.addVariableField(controlField);
+    }
+
+    private void add901Field(Record record, BibliographicEntity bibliographicEntity){
+        DataField dataField = getFactory().newDataField(ScsbConstants.MarcFields.DF_901, ' ', ' ');
+        dataField.addSubfield(getFactory().newSubfield('a', bibliographicEntity.getMatchingIdentity() != null ? bibliographicEntity.getMatchingIdentity() : ""));
+        dataField.addSubfield(getFactory().newSubfield('b', bibliographicEntity.getMatchScore() != null ? String.valueOf(bibliographicEntity.getMatchScore()) : ""));
+        dataField.addSubfield(getFactory().newSubfield('c', bibliographicEntity.getMatchingIdentity() != null ? String.valueOf(bibliographicEntity.getAnamolyFlag()) : ""));
+        record.addVariableField(dataField);
     }
 
     /**
