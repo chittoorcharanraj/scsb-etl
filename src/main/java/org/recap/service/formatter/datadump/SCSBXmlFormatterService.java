@@ -242,7 +242,7 @@ public class SCSBXmlFormatterService implements DataDumpFormatterInterface {
         if(bibliographicEntity.getMatchingIdentity() != null) {
             bib.setMatchingIdentity(bibliographicEntity.getMatchingIdentity());
             bib.setMatchScore(bibliographicEntity.getMatchScore().toString());
-            bib.setAnamolyFlag(bibliographicEntity.getAnamolyFlag().toString());
+            bib.setAnomalyFlag(bibliographicEntity.getAnamolyFlag().toString());
         }
 
         ContentType contentType = getContentType(bibliographicEntity.getContent());
