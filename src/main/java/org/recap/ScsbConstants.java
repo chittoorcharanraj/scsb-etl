@@ -237,6 +237,7 @@ public class ScsbConstants {
         public static final String DF_852 = "852";
         public static final String DF_876 = "876";
         public static final String DF_866 = "866";
+        public static final String DF_901 = "901";
     }
 
     // Data export scheduler sequence job
