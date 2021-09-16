@@ -239,17 +239,14 @@ public class SCSBXmlFormatterService implements DataDumpFormatterInterface {
         if(matchingBibInfoDetailList!=null){
             bib.setMatchingInstitutionBibId(getMatchingInstitutionBibId(String.valueOf(bibliographicEntity.getId()),matchingBibInfoDetailList));
         }
-        if(bibliographicEntity.getMatchingIdentity() != null) {
-            bib.setMatchingIdentity(bibliographicEntity.getMatchingIdentity());
-            bib.setMatchScore(bibliographicEntity.getMatchScore().toString());
-            bib.setAnomalyFlag(bibliographicEntity.getAnamolyFlag().toString());
-        }
-
         ContentType contentType = getContentType(bibliographicEntity.getContent());
         List<RecordType> record = contentType.getCollection().getRecord();
         RecordType recordType = record.get(0);
         String value = ScsbConstants.SCSB+"-"+bibliographicEntity.getId();
         recordType.getControlfield().get(0).setValue(value);
+        if(bibliographicEntity.getMatchingIdentity() != null) {
+            recordType.getDatafield().add(add901Field(record, bibliographicEntity));
+        }
         bib.setContent(contentType);
         return bib;
     }
@@ -419,5 +416,17 @@ public class SCSBXmlFormatterService implements DataDumpFormatterInterface {
         return contentType;
     }
 
+    private  DataFieldType  add901Field(List<RecordType> record, BibliographicEntity bibliographicEntity) {
+        DataFieldType dataFieldType = new DataFieldType();
+        List<SubfieldatafieldType> subfieldatafieldTypes = new ArrayList<>();
+        dataFieldType.setTag(ScsbConstants.MarcFields.DF_901);
+        dataFieldType.setInd1(" ");
+        dataFieldType.setInd2(" ");
+        subfieldatafieldTypes.add(getSubfieldatafieldType("a", bibliographicEntity.getMatchingIdentity() != null ? bibliographicEntity.getMatchingIdentity() : ""));
+        subfieldatafieldTypes.add(getSubfieldatafieldType("b", bibliographicEntity.getMatchScore() != null ? String.valueOf(bibliographicEntity.getMatchScore()) : ""));
+        subfieldatafieldTypes.add(getSubfieldatafieldType("c", bibliographicEntity.getMatchingIdentity() != null ? String.valueOf(bibliographicEntity.getAnamolyFlag()) : ""));
+        dataFieldType.setSubfield(subfieldatafieldTypes);
+        return dataFieldType;
+    }
 
 }
