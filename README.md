@@ -15,7 +15,7 @@ SCSB-ETL is a microservice application that provides a major functionality for l
 
 1.**Cloud Config Server**
 
-Dspring.cloud.config.uri=http://phase4-scsb-config-server:8888
+Dspring.cloud.config.uri=http://phase4-scsb-config-server:<port>
 
 ## Build
 
@@ -33,7 +33,7 @@ Naviagte Inside project folder where Dockerfile is present and Execute the below
 
 User the below command to Run the Docker
 
-**sudo docker run --name phase4-scsb-etl  -v /data:/recap-vol --label collect_logs_with_filebeat="true" --label decode_log_event_to_json_object="true" -p 9094:9094 -e "ENV= -XX:+HeapDumpOnOutOfMemoryError   -XX:HeapDumpPath=/recap-vol/scsb-etl/heapdump/  
--Dorg.apache.activemq.SERIALIZABLE_PACKAGES="*"  -Dspring.cloud.config.uri=http://phase4-scsb-config-server:8888 "  --network=scsb -d phase4-scsb-etl**
+**sudo docker run --name phase4-scsb-etl  -v <volume> --label collect_logs_with_filebeat="true" --label decode_log_event_to_json_object="true" -p <port>:<port> -e "ENV= -XX:+HeapDumpOnOutOfMemoryError   -XX:HeapDumpPath=/recap-vol/scsb-etl/heapdump/  
+-Dorg.apache.activemq.SERIALIZABLE_PACKAGES="*"  -Dspring.cloud.config.uri=http://phase4-scsb-config-server:<port> "  --network=scsb -d phase4-scsb-etl**
 
 
