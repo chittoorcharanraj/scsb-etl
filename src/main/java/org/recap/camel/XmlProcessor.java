@@ -1,5 +1,6 @@
 package org.recap.camel;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.aggregate.UseOriginalAggregationStrategy;
@@ -7,8 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.recap.ScsbConstants;
 import org.recap.model.jpa.XmlRecordEntity;
 import org.recap.repository.XmlRecordRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
@@ -18,9 +17,9 @@ import java.util.Map;
 /**
  * Created by peris on 7/17/16.
  */
+@Slf4j
 public class XmlProcessor implements Processor {
 
-    private static final Logger logger = LoggerFactory.getLogger(XmlProcessor.class);
 
     private final XmlRecordRepository xmlRecordRepository;
 
@@ -70,7 +69,7 @@ public class XmlProcessor implements Processor {
             try {
                 xmlRecordRepository.save(xmlRecordEntity);
             } catch (Exception e) {
-                logger.error("Exception" , e);
+                log.error("Exception" , e);
             }
 
         }

@@ -1,5 +1,6 @@
 package org.recap.service.formatter.datadump;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.ProducerTemplate;
 import org.junit.Test;
 import org.marc4j.MarcReader;
@@ -43,9 +44,9 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by premkb on 2/10/16.
  */
+@Slf4j
 public class MarcXmlFormatterServiceUT extends BaseTestCaseUT {
 
-    private static final Logger logger = org.slf4j.LoggerFactory.getLogger(MarcXmlFormatterServiceUT.class);
 
     @InjectMocks
     private MarcXmlFormatterService marcXmlFormatterService;
@@ -474,7 +475,7 @@ public class MarcXmlFormatterServiceUT extends BaseTestCaseUT {
         while (reader.hasNext()) {
             Record record = reader.next();
             recordList.add(record);
-            logger.info(record.toString());
+            log.info(record.toString());
         }
         return recordList;
     }

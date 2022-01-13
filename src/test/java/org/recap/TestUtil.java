@@ -12,7 +12,6 @@ import java.util.List;
 
 public class TestUtil {
 
-    private static final Logger logger = LoggerFactory.getLogger(TestUtil.class);
 
     private TestUtil() {}
 

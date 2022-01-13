@@ -1,6 +1,7 @@
 package org.recap.camel.datadump.consumer;
 
 import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Exchange;
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.impl.engine.DefaultFluentProducerTemplate;
@@ -10,8 +11,6 @@ import org.recap.camel.datadump.callable.BibEntityPreparerCallable;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.repository.BibliographicDetailsRepository;
 import org.recap.util.datadump.DataExportHeaderUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,9 +27,8 @@ import java.util.stream.Collectors;
 /**
  * Created by peris on 11/1/16.
  */
+@Slf4j
 public class BibEntityGeneratorActiveMQConsumer {
-
-    private static final Logger logger = LoggerFactory.getLogger(BibEntityGeneratorActiveMQConsumer.class);
 
     private BibliographicDetailsRepository bibliographicDetailsRepository;
     private ExecutorService executorService;
@@ -76,7 +74,7 @@ public class BibEntityGeneratorActiveMQConsumer {
 
         String batchHeaders = (String) exchange.getIn().getHeader(batchHeaderName);
         String currentPageCountStr = new DataExportHeaderUtil().getValueFor(batchHeaders, "currentPageCount");
-        logger.info("Current page in BibEntityGeneratorActiveMQConsumer--->{}",currentPageCountStr);
+        log.info("Current page in BibEntityGeneratorActiveMQConsumer--->{}",currentPageCountStr);
         List<BibliographicEntity> bibliographicEntities = new ArrayList<>();
 
         List<Integer> bibIdList = new ArrayList<>();
@@ -117,13 +115,13 @@ public class BibEntityGeneratorActiveMQConsumer {
 
             long endTime = System.currentTimeMillis();
 
-        logger.info("Time taken to prepare {} bib entities is : {} seconds, solr result size {}" , bibliographicEntities.size() , (endTime - startTime) / 1000,dataDumpSearchResults.size());
+        log.info("Time taken to prepare {} bib entities is : {} seconds, solr result size {}" , bibliographicEntities.size() , (endTime - startTime) / 1000,dataDumpSearchResults.size());
 
         getExecutorService().shutdown();
 
-        logger.info("sending page count {} to marcrecord formatter route",currentPageCountStr);
+        log.info("sending page count {} to marcrecord formatter route",currentPageCountStr);
             String currentPageCountStrbeforesendingToNxt = new DataExportHeaderUtil().getValueFor(batchHeaders, "currentPageCount");
-            logger.info("currentPageCountStrbeforesendingToNxt--->{}",currentPageCountStrbeforesendingToNxt);
+            log.info("currentPageCountStrbeforesendingToNxt--->{}",currentPageCountStrbeforesendingToNxt);
             FluentProducerTemplate fluentProducerTemplate = DefaultFluentProducerTemplate.on(exchange.getContext());
             fluentProducerTemplate
                     .to(ScsbConstants.BIB_ENTITY_FOR_DATA_EXPORT_Q)
@@ -155,11 +153,11 @@ public class BibEntityGeneratorActiveMQConsumer {
      */
     public ExecutorService getExecutorService() {
         if (null == executorService) {
-            logger.info("Creating Thread Pool of Size : {}", dataDumpBibEntityThreadSize);
+            log.info("Creating Thread Pool of Size : {}", dataDumpBibEntityThreadSize);
             executorService = Executors.newFixedThreadPool(dataDumpBibEntityThreadSize);
         }
         if (executorService.isShutdown()) {
-            logger.info("On Shutdown, Creating Thread Pool of Size : {}", dataDumpBibEntityThreadSize);
+            log.info("On Shutdown, Creating Thread Pool of Size : {}", dataDumpBibEntityThreadSize);
             executorService = Executors.newFixedThreadPool(dataDumpBibEntityThreadSize);
         }
         return executorService;

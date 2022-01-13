@@ -1,15 +1,13 @@
 package org.recap.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.model.export.S3RecentDataExportInfo;
 import org.recap.model.export.S3RecentDataExportInfoList;
-import org.recap.repository.InstitutionDetailsRepository;
 import org.recap.service.RecentDataExportsInfoService;
 import org.recap.util.CommonUtil;
 import org.recap.util.PropertyUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,10 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @RestController
 public class DataExportsRecentInfoController {
 
-    private static final Logger logger = LoggerFactory.getLogger(DataExportsRecentInfoController.class);
 
     @Autowired
     RecentDataExportsInfoService recentDataExportsInfoService;
@@ -47,7 +45,7 @@ public class DataExportsRecentInfoController {
                 }
             }
         } catch (Exception e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR, e);
+            log.error(ScsbCommonConstants.LOG_ERROR, e);
         }
         return s3RecentDataExportInfoList;
     }

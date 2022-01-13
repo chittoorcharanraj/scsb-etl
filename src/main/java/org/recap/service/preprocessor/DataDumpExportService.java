@@ -1,5 +1,6 @@
 package org.recap.service.preprocessor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
@@ -11,8 +12,6 @@ import org.recap.model.export.DataDumpRequest;
 import org.recap.service.email.datadump.DataDumpEmailService;
 import org.recap.service.executor.datadump.DataDumpExecutorService;
 import org.recap.util.datadump.DataDumpUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -27,10 +26,11 @@ import java.util.Date;
 /**
  * Created by premkb on 27/9/16.
  */
+@Slf4j
 @Service
 public class DataDumpExportService {
 
-    private static final Logger logger = LoggerFactory.getLogger(DataDumpExportService.class);
+
 
     @Value("${" + PropertyKeyConstants.ETL_DATA_DUMP_STATUS_FILE_NAME + "}") private String dataDumpStatusFileName;
 
@@ -54,14 +54,14 @@ public class DataDumpExportService {
                 try {
                     dataDumpExecutorService.generateDataDump(dataDumpRequest);
                 } catch (Exception e) {
-                    logger.error(ScsbConstants.ERROR,e);
+                    log.error(ScsbConstants.ERROR,e);
                 }
             }).start();
 
             outputString = sendEmailAndGetResponse(dataDumpRequest);
             responseMessage = getResponseMessage(outputString, dataDumpRequest);
         } catch (Exception e) {
-            logger.error(ScsbConstants.ERROR,e);
+            log.error(ScsbConstants.ERROR,e);
             responseMessage = ScsbConstants.DATADUMP_EXPORT_FAILURE;
         }
         return responseMessage;
@@ -144,8 +144,8 @@ public class DataDumpExportService {
                 }
             }
         } catch (IOException e) {
-            logger.error(ScsbConstants.ERROR,e);
-            logger.error("Exception while creating or updating the file : " + e.getMessage());
+            log.error(ScsbConstants.ERROR,e);
+            log.error("Exception while creating or updating the file : " + e.getMessage());
         }
     }
 
@@ -160,7 +160,7 @@ public class DataDumpExportService {
             fileWriter.append(status);
             fileWriter.flush();
         } catch (IOException e) {
-            logger.error(ScsbConstants.EXCEPTION, e);
+            log.error(ScsbConstants.EXCEPTION, e);
         }
     }
 
@@ -176,7 +176,7 @@ public class DataDumpExportService {
         String date = new Date().toString();
         if (dataDumpRequest.getTransmissionType().equals(ScsbConstants.DATADUMP_TRANSMISSION_TYPE_S3)) {
             if (outputString.equals(ScsbConstants.DATADUMP_RECORDS_AVAILABLE_FOR_PROCESS)) {
-                logger.info("Writing to data-dump status file as 'In Progress' on Dump-Type:{} Requesting Inst : {} and Request ID : {} ",dataDumpRequest.getFetchType(),dataDumpRequest.getRequestingInstitutionCode(),dataDumpRequest.getEtlRequestId());
+                log.info("Writing to data-dump status file as 'In Progress' on Dump-Type:{} Requesting Inst : {} and Request ID : {} ",dataDumpRequest.getFetchType(),dataDumpRequest.getRequestingInstitutionCode(),dataDumpRequest.getEtlRequestId());
                 if(!dataDumpRequest.isRequestFromSwagger()){
                     setDataExportCurrentStatus();
                 }

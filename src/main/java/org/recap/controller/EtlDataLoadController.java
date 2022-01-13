@@ -1,5 +1,6 @@
 package org.recap.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.io.FileUtils;
@@ -14,8 +15,7 @@ import org.recap.repository.HoldingsDetailsRepository;
 import org.recap.repository.ItemDetailsRepository;
 import org.recap.repository.XmlRecordRepository;
 import org.recap.util.CommonUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -39,10 +39,11 @@ import java.util.Objects;
 /**
  * Created by rajeshbabuk on 22/6/16.
  */
+@Slf4j
 @Controller
 public class EtlDataLoadController {
 
-    private static final Logger logger = LoggerFactory.getLogger(EtlDataLoadController.class);
+
 
     /**
      * The Camel context.
@@ -215,9 +216,9 @@ public class EtlDataLoadController {
         String generatedReportFileName = reportGenerator.generateReport(etlLoadRequest.getReportFileName(), etlLoadRequest.getOperationType(),etlLoadRequest.getReportType(), etlLoadRequest.getReportInstitutionName(),
                 from, to, etlLoadRequest.getTransmissionType());
         if(StringUtils.isBlank(generatedReportFileName)){
-            logger.error("Report wasn't generated! Please contact help desk!");
+            log.error("Report wasn't generated! Please contact help desk!");
         } else {
-            logger.info("Report successfully generated! : {} " , generatedReportFileName);
+            log.info("Report successfully generated! : {} " , generatedReportFileName);
         }
         return etlDataLoader(model);
     }

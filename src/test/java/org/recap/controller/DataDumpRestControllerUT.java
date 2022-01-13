@@ -38,7 +38,6 @@ import static org.mockito.ArgumentMatchers.any;
 @RunWith(Parameterized.class)
 public class DataDumpRestControllerUT extends BaseTestCaseUT {
 
-    private static final Logger logger = LoggerFactory.getLogger(DataDumpRestControllerUT.class);
 
     @InjectMocks
     DataDumpRestController mockedDataDumpRestController;

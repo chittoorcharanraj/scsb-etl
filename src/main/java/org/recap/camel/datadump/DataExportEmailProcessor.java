@@ -1,5 +1,6 @@
 package org.recap.camel.datadump;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
@@ -23,8 +24,6 @@ import org.recap.service.email.datadump.DataDumpEmailService;
 import org.recap.service.preprocessor.DataDumpExportService;
 import org.recap.util.datadump.DataDumpUtil;
 import org.recap.util.datadump.DataExportHeaderUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -41,10 +40,10 @@ import java.util.Optional;
 /**
  * Created by peris on 11/5/16.
  */
+@Slf4j
 @Component
 public class DataExportEmailProcessor implements Processor {
 
-    private static final Logger logger = LoggerFactory.getLogger(DataExportEmailProcessor.class);
     /**
      * The Data dump email service.
      */
@@ -154,15 +153,15 @@ public class DataExportEmailProcessor implements Processor {
         sendBatchExportReportToFTP(failureReportEntities, ScsbCommonConstants.FAILURE);
 
         if(fetchType.equals(fetchTypeFull)) {
-            logger.info("Sending email for full dump");
+            log.info("Sending email for full dump");
             processEmail(totalRecordCount,failedBibs,exportedItemCount,fetchType,requestingInstitutionCode);
         }
         else if(fetchType.equals(ScsbConstants.DATADUMP_FETCHTYPE_INCREMENTAL)){
-            logger.info("Sending email for incremental dump");
+            log.info("Sending email for incremental dump");
             processEmail(totalRecordCount,failedBibs,exportedItemCount,fetchType,requestingInstitutionCode);
         }
         else if(fetchType.equals(ScsbConstants.DATADUMP_FETCHTYPE_DELETED)){
-            logger.info("Sending email for deleted dump");
+            log.info("Sending email for deleted dump");
             processEmail(totalRecordCount,failedBibs,exportedItemCount,fetchType,requestingInstitutionCode);
         }
         updateDataDumpStatus();
@@ -196,11 +195,11 @@ public class DataExportEmailProcessor implements Processor {
             if(type.equalsIgnoreCase(ScsbCommonConstants.SUCCESS)) {
                 DataDumpSuccessReport dataDumpSuccessReport = s3DataDumpSuccessReportGenerator.getDataDumpSuccessReport(reportEntities, reportFileName);
                 producerTemplate.sendBody(ScsbConstants.DATAEXPORT_WITH_SUCCESS_REPORT_FTP_Q, dataDumpSuccessReport);
-                logger.info("The Success Report folder : {}", folderName);
+                log.info("The Success Report folder : {}", folderName);
             } else if (type.equalsIgnoreCase(ScsbCommonConstants.FAILURE)) {
                 DataDumpFailureReport dataDumpFailureReport = s3DataDumpFailureReportGenerator.getDataDumpFailureReport(reportEntities, reportFileName);
                 producerTemplate.sendBody(ScsbConstants.DATAEXPORT_WITH_FAILURE_REPORT_FTP_Q, dataDumpFailureReport);
-                logger.info("The Failure Report folder : {}", folderName);
+                log.info("The Failure Report folder : {}", folderName);
             }
         }
     }
@@ -211,7 +210,7 @@ public class DataExportEmailProcessor implements Processor {
      * @throws IOException
      */
     private void updateDataDumpStatus() throws IOException {
-        logger.info("Changing status to completed");
+        log.info("Changing status to completed");
         //TODo change the status to complete based on etl request id
         if(isRequestFromSwagger){
             updateStatusInDB();
@@ -227,7 +226,7 @@ public class DataExportEmailProcessor implements Processor {
             fileWriter.append(ScsbConstants.COMPLETED);
             fileWriter.flush();
         } catch (IOException e) {
-            logger.error(ScsbConstants.EXCEPTION, e);
+            log.error(ScsbConstants.EXCEPTION, e);
         }
     }
 

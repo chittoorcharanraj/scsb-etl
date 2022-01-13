@@ -1,5 +1,6 @@
 package org.recap.camel.datadump.consumer;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Exchange;
 import org.apache.camel.FluentProducerTemplate;
 import org.recap.ScsbConstants;
@@ -8,8 +9,7 @@ import org.recap.report.CommonReportGenerator;
 import org.recap.service.formatter.datadump.SCSBXmlFormatterService;
 import org.recap.util.XmlFormatter;
 import org.recap.util.datadump.DataExportHeaderUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 import java.util.HashMap;
 import java.util.List;
@@ -17,9 +17,9 @@ import java.util.List;
 /**
  * Created by peris on 11/1/16.
  */
+@Slf4j
 public class SCSBXMLFormatActiveMQConsumer extends CommonReportGenerator {
 
-    private static final Logger logger = LoggerFactory.getLogger(SCSBXMLFormatActiveMQConsumer.class);
 
     /**
      * The Scsb xml formatter service.
@@ -51,7 +51,7 @@ public class SCSBXMLFormatActiveMQConsumer extends CommonReportGenerator {
      */
     public String processSCSBXmlString(Exchange exchange) throws Exception {
         List<BibRecord> records = (List<BibRecord>) exchange.getIn().getBody();
-        logger.info("Num records to generate scsb XMl for: {} " , records.size());
+        log.info("Num records to generate scsb XMl for: {} " , records.size());
         long startTime = System.currentTimeMillis();
 
         String toSCSBXmlString = null;
@@ -61,12 +61,12 @@ public class SCSBXMLFormatActiveMQConsumer extends CommonReportGenerator {
             toSCSBXmlString = scsbXmlFormatterService.getSCSBXmlForBibRecords(records);
             processSuccessReportEntity(exchange, records.size(), batchHeaders, requestId);
         } catch (Exception e) {
-            logger.error(ScsbConstants.ERROR,e);
+            log.error(ScsbConstants.ERROR,e);
             processFailureReportEntity(exchange, records.size(), batchHeaders, requestId);
         }
         long endTime = System.currentTimeMillis();
 
-        logger.info("Time taken to generate scsb xml for : {} is {} : seconds " , records.size() ,  (endTime - startTime) / 1000 );
+        log.info("Time taken to generate scsb xml for : {} is {} : seconds " , records.size() ,  (endTime - startTime) / 1000 );
 
         return toSCSBXmlString;
     }
@@ -89,7 +89,7 @@ public class SCSBXMLFormatActiveMQConsumer extends CommonReportGenerator {
      * @param size
      * @param batchHeaders
      * @param requestId
-     * @param e
+     * @param
      */
     private void processFailureReportEntity(Exchange exchange, Integer size, String batchHeaders, String requestId) {
 

@@ -1,5 +1,6 @@
 package org.recap.camel.datadump;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
@@ -13,8 +14,6 @@ import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.util.datadump.DataExportHeaderUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -29,10 +28,11 @@ import java.util.StringTokenizer;
 /**
  * Created by peris on 11/6/16.
  */
+@Slf4j
 @Component
 public class ZipFileProcessor implements Processor {
 
-    private static final Logger logger = LoggerFactory.getLogger(ZipFileProcessor.class);
+
 
     /**
      * The s3 data dump remote server.
@@ -88,7 +88,7 @@ public class ZipFileProcessor implements Processor {
         Route ftpRoute = exchange.getContext().getRoute(ScsbConstants.FTP_ROUTE);
         if (null != ftpRoute) {
             exchange.getContext().removeRoute(ScsbConstants.FTP_ROUTE);
-            logger.info(ScsbConstants.FTP_ROUTE + " Removed");
+            log.info(ScsbConstants.FTP_ROUTE + " Removed");
         }
 
         exchange.getContext().addRoutes(new RouteBuilder() {
@@ -128,10 +128,10 @@ public class ZipFileProcessor implements Processor {
     }
 
     public void ftpOnCompletion() throws JSONException {
-        logger.info("FTP OnCompletionProcessor");
+        log.info("FTP OnCompletionProcessor");
         String batchHeaders = (String) exchange.getIn().getHeader("batchHeaders");
         String reqestingInst = getValueFor(batchHeaders, "requestingInstitutionCode");
-        logger.info("Req Inst -> {}" , reqestingInst);
+        log.info("Req Inst -> {}" , reqestingInst);
         if (ScsbConstants.EXPORT_SCHEDULER_CALL) {
             producer.sendBody(ScsbConstants.DATA_DUMP_COMPLETION_FROM, reqestingInst);
         }

@@ -1,7 +1,7 @@
 package org.recap.camel;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+
 import org.recap.model.jpa.BibliographicEntity;
 
 import java.io.Serializable;
@@ -11,8 +11,7 @@ import java.util.Map;
 /**
  * Created by chenchulakshmig on 4/7/16.
  */
-@Getter
-@Setter
+@Data
 public class ETLExchange implements Serializable {
 
     private List<BibliographicEntity> bibliographicEntities;

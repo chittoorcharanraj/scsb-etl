@@ -26,7 +26,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RecentDataExportsInfoControllerUT {
-    private static final Logger logger = LoggerFactory.getLogger(RecentDataExportsInfoControllerUT.class);
+
 
     @InjectMocks
     DataExportsRecentInfoController recentDataExportsInfoControllerMock;

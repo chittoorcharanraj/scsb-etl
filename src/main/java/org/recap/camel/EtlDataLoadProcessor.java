@@ -1,5 +1,6 @@
 package org.recap.camel;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.ProducerTemplate;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
@@ -10,8 +11,6 @@ import org.recap.repository.BibliographicDetailsRepository;
 import org.recap.repository.HoldingsDetailsRepository;
 import org.recap.repository.ItemDetailsRepository;
 import org.recap.repository.XmlRecordRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
@@ -24,10 +23,10 @@ import java.util.List;
 /**
  * Created by rajeshbabuk on 18/7/16.
  */
+@Slf4j
 @Component
 public class EtlDataLoadProcessor {
 
-    private static final Logger logger = LoggerFactory.getLogger(EtlDataLoadProcessor.class);
 
     private Integer batchSize;
     private String fileName;
@@ -78,20 +77,20 @@ public class EtlDataLoadProcessor {
                         recordProcessor.setInstitutionName(institutionName);
                         recordProcessor.process(xmlRecordEntities);
                         long endTime = System.currentTimeMillis();
-                        logger.info("File name : {} , Total Docs : {}, Total Loops : {}, Current Iteration : {} , Time taken to save: {} bibs and related data is: {} seconds." ,
+                        log.info("File name : {} , Total Docs : {}, Total Loops : {}, Current Iteration : {} , Time taken to save: {} bibs and related data is: {} seconds." ,
                                 distinctFileName, totalDocCount, loopCount, iteration, xmlRecordEntities.getNumberOfElements() , (endTime - startTime) / 1000 );
                     }
 
 
                     long totalEndTime = System.currentTimeMillis();
                     if(xmlRecordEntities != null) {
-                        logger.info("File name : {} , Total time taken to save: {} bibs and related data is: {} seconds.", distinctFileName, xmlRecordEntities.getTotalElements(), (totalEndTime - totalStartTime) / 1000);
+                        log.info("File name : {} , Total time taken to save: {} bibs and related data is: {} seconds.", distinctFileName, xmlRecordEntities.getTotalElements(), (totalEndTime - totalStartTime) / 1000);
                     }
                     else {
-                        logger.info("File name : {} , Total time taken to save: zero bibs and related data is: {} seconds.", distinctFileName,  (totalEndTime - totalStartTime) / 1000);
+                        log.info("File name : {} , Total time taken to save: zero bibs and related data is: {} seconds.", distinctFileName,  (totalEndTime - totalStartTime) / 1000);
                     }
                     } else {
-                    logger.info("No records found to load into DB");
+                    log.info("No records found to load into DB");
                 }
 
                 generateSuccessReport(oldBibsCount, oldHoldingsCount, oldItemsCount, distinctFileName, oldBibHoldingsCount, oldBibItemsCount, instIdByFileName);

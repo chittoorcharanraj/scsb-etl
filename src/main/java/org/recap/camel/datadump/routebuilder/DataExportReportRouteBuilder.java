@@ -1,5 +1,6 @@
 package org.recap.camel.datadump.routebuilder;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -11,8 +12,7 @@ import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.camel.datadump.consumer.DataExportReportActiveMQConsumer;
 import org.recap.model.csv.DataExportFailureReport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -22,10 +22,9 @@ import java.util.List;
 /**
  * Created by peris on 11/12/16.
  */
+@Slf4j
 @Component
 public class DataExportReportRouteBuilder {
-
-    private static final Logger logger = LoggerFactory.getLogger(DataExportReportRouteBuilder.class);
 
     /**
      * Instantiates a new Data export report route builder.
@@ -75,7 +74,7 @@ public class DataExportReportRouteBuilder {
                 });
             }
         } catch (Exception e) {
-            logger.error(ScsbConstants.ERROR, e);
+            log.error(ScsbConstants.ERROR, e);
         }
     }
 }

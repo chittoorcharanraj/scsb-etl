@@ -1,16 +1,17 @@
 package org.recap.camel.datadump;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.recap.util.datadump.BatchCounter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 /**
  * Created by peris on 11/5/16.
  */
+@Slf4j
 public class DataExportPredicate implements Predicate {
-    private static final Logger logger = LoggerFactory.getLogger(DataExportPredicate.class);
+
     private Integer batchSize;
 
     /**
@@ -38,7 +39,7 @@ public class DataExportPredicate implements Predicate {
         Integer totalPageCount = BatchCounter.getTotalPages();
         Integer currentPageCount = BatchCounter.getCurrentPage();
 
-        logger.info("Current page count: {}/{}, configured batch size-> {}, current batch size-> {}" , currentPageCount, totalPageCount, this.batchSize, batchSizeFromHeader);
+        log.info("Current page count: {}/{}, configured batch size-> {}, current batch size-> {}" , currentPageCount, totalPageCount, this.batchSize, batchSizeFromHeader);
 
         if (this.batchSize.equals(batchSizeFromHeader) || batchSizeFromHeader > this.batchSize || (currentPageCount.equals(totalPageCount))) {
             exchange.getIn().setHeader("batchSize", 0);

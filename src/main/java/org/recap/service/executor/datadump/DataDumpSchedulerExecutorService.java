@@ -1,5 +1,6 @@
 package org.recap.service.executor.datadump;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.recap.ScsbConstants;
 import org.recap.model.ILSConfigProperties;
@@ -9,8 +10,6 @@ import org.recap.service.preprocessor.DataDumpExportService;
 import org.recap.util.PropertyUtil;
 import org.recap.util.datadump.DataDumpUtil;
 import org.recap.util.datadump.JobDataParameterUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,10 +18,11 @@ import java.util.Map;
 /**
  * Created by rajeshbabuk on 7/7/17.
  */
+@Slf4j
 @Service
 public class DataDumpSchedulerExecutorService {
 
-    private static final Logger logger = LoggerFactory.getLogger(DataDumpSchedulerExecutorService.class);
+
 
     @Autowired private DataDumpExportService dataDumpExportService;
     @Autowired private JobDataParameterUtil jobDataParameterUtil;
@@ -47,8 +47,8 @@ public class DataDumpSchedulerExecutorService {
      * @return
      */
     public String initiateDataDumpForScheduler(String date, String requestingInstitutionCode, String fetchType) {
-        logger.info("Starting sequencial Incremental and Deleted Dump");
-        logger.info("Export data dump for {} from {}", requestingInstitutionCode, date);
+        log.info("Starting sequencial Incremental and Deleted Dump");
+        log.info("Export data dump for {} from {}", requestingInstitutionCode, date);
         DataDumpRequest dataDumpRequest = new DataDumpRequest();
         dataDumpRequest.setIncrementalSequence(true);
         Map<String, String> requestParameterMap = getJobDataParameterUtil().buildJobRequestParameterMap(ScsbConstants.EXPORT_FETCH_TYPE_INSTITUTION);

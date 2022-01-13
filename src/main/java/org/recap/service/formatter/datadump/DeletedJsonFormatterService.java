@@ -1,6 +1,7 @@
 package org.recap.service.formatter.datadump;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.export.Bib;
@@ -9,8 +10,6 @@ import org.recap.model.export.Item;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.ItemEntity;
 import org.recap.repository.BibliographicDetailsRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,10 +21,10 @@ import java.util.Map;
 /**
  * Created by premkb on 29/9/16.
  */
+@Slf4j
 @Service
 public class DeletedJsonFormatterService implements DataDumpFormatterInterface {
 
-    private static final Logger logger = LoggerFactory.getLogger(DeletedJsonFormatterService.class);
 
     @Autowired
     private BibliographicDetailsRepository bibliographicDetailsRepository;
@@ -78,7 +77,7 @@ public class DeletedJsonFormatterService implements DataDumpFormatterInterface {
                 deletedRecords.add(deletedRecord);
                 itemExportedCount = itemExportedCount + bibliographicEntity.getItemEntities().size();
             } catch (Exception e) {
-                logger.error(ScsbConstants.ERROR,e);
+                log.error(ScsbConstants.ERROR,e);
                 errors.add(bibliographicEntity.getOwningInstitutionBibId()+" * "+String.valueOf(e));
             }
         }

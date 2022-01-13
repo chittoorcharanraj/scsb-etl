@@ -1,6 +1,7 @@
 package org.recap.camel.datadump.consumer;
 
 import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Exchange;
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.impl.engine.DefaultFluentProducerTemplate;
@@ -13,8 +14,7 @@ import org.recap.camel.datadump.callable.DeletedRecordPreparerCallable;
 import org.recap.model.export.DeletedRecord;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.service.formatter.datadump.DeletedJsonFormatterService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,8 +31,8 @@ import java.util.stream.Collectors;
 /**
  * Created by peris on 11/1/16.
  */
+@Slf4j
 public class DeletedRecordFormatActiveMQConsumer extends CommonReportGenerator {
-    private static final Logger logger = LoggerFactory.getLogger(DeletedRecordFormatActiveMQConsumer.class);
 
     /**
      * The Deleted json formatter service.
@@ -127,7 +127,7 @@ public class DeletedRecordFormatActiveMQConsumer extends CommonReportGenerator {
 
         long endTime = System.currentTimeMillis();
 
-        logger.info("Time taken to prepare {} deleted records :  {} seconds " ,bibliographicEntities.size() , (endTime - startTime) / 1000 );
+        log.info("Time taken to prepare {} deleted records :  {} seconds " ,bibliographicEntities.size() , (endTime - startTime) / 1000 );
 
         fluentProducerTemplate
                 .to(ScsbConstants.DELETED_JSON_RECORD_FOR_DATA_EXPORT_Q)
@@ -192,11 +192,11 @@ public class DeletedRecordFormatActiveMQConsumer extends CommonReportGenerator {
      */
     public ExecutorService getExecutorService() {
         if (null == executorService) {
-            logger.info("Creating Thread Pool of Size : {}", dataDumpDeletedRecordsThreadSize);
+            log.info("Creating Thread Pool of Size : {}", dataDumpDeletedRecordsThreadSize);
             executorService = Executors.newFixedThreadPool(dataDumpDeletedRecordsThreadSize);
         }
         if (executorService.isShutdown()) {
-            logger.info("On Shutdown, Creating Thread Pool of Size : {}", dataDumpDeletedRecordsThreadSize);
+            log.info("On Shutdown, Creating Thread Pool of Size : {}", dataDumpDeletedRecordsThreadSize);
             executorService = Executors.newFixedThreadPool(dataDumpDeletedRecordsThreadSize);
         }
         return executorService;

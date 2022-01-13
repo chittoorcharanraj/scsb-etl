@@ -1,12 +1,11 @@
 package org.recap.camel.datadump;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.AggregationStrategy;
 import org.recap.ScsbConstants;
 import org.recap.util.datadump.DataExportHeaderUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -16,9 +15,10 @@ import java.util.Map;
 /**
  * Created by peris on 11/5/16.
  */
+@Slf4j
 public class DataExportAggregator implements AggregationStrategy {
 
-    private Logger logger = LoggerFactory.getLogger(DataExportAggregator.class);
+
     /**
      * This method aggregates an old and new exchange together to create a single combined exchange.
      * The strategy is to update the batch size in old exchange with the records size in the new exchange.
@@ -45,10 +45,10 @@ public class DataExportAggregator implements AggregationStrategy {
                 Integer previousItemExportCount = (Integer) oldExchange.getIn().getHeader(ScsbConstants.ITEM_EXPORTED_COUNT);
                 Integer updatedItemExportCount = previousItemExportCount + itemExportCount;
                 newExchange.getIn().setHeader(ScsbConstants.ITEM_EXPORTED_COUNT,updatedItemExportCount);
-                logger.info("itemExportCount--->{} previousItemExportCount--->{} updatedItemExportCount--->{}",itemExportCount,previousItemExportCount,updatedItemExportCount);
+                log.info("itemExportCount--->{} previousItemExportCount--->{} updatedItemExportCount--->{}",itemExportCount,previousItemExportCount,updatedItemExportCount);
             } else {
                 Integer itemExportCount = (Integer) newExchange.getIn().getHeader(ScsbConstants.ITEM_EXPORTED_COUNT);
-                logger.info("first batch...itemExportCount-->{}",itemExportCount);
+                log.info("first batch...itemExportCount-->{}",itemExportCount);
             }
             oldBody.addAll(body);
             Object oldBatchSize = oldExchange.getIn().getHeader("batchSize");
@@ -71,7 +71,7 @@ public class DataExportAggregator implements AggregationStrategy {
             }
             String batchHeaders = (String) oldExchange.getIn().getHeader(ScsbConstants.BATCH_HEADERS);
             String currentPageCountStr = new DataExportHeaderUtil().getValueFor(batchHeaders, "currentPageCount");
-            logger.info("Current page in DataExportAggregator--->{}",currentPageCountStr);
+            log.info("Current page in DataExportAggregator--->{}",currentPageCountStr);
         }
 
         return oldExchange;

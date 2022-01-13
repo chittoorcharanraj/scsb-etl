@@ -46,7 +46,6 @@ import static org.junit.Assert.assertTrue;
  */
 public class SCSBXmlFormatterServiceUT extends BaseTestCaseUT {
 
-    private static final Logger logger = LoggerFactory.getLogger(SCSBXmlFormatterServiceUT.class);
 
     @InjectMocks
     SCSBXmlFormatterService scsbXmlFormatterService;

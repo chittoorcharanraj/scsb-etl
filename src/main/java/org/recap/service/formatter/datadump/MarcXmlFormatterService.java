@@ -1,5 +1,6 @@
 package org.recap.service.formatter.datadump;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.marc4j.MarcReader;
 import org.marc4j.MarcWriter;
@@ -17,7 +18,6 @@ import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.HoldingsEntity;
 import org.recap.model.jpa.ItemEntity;
 import org.recap.util.PropertyUtil;
-import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -31,11 +31,11 @@ import java.util.*;
 /**
  * Created by premkb on 28/9/16.
  */
+@Slf4j
 @Service
 @Scope("prototype")
 public class MarcXmlFormatterService implements DataDumpFormatterInterface {
 
-    private static final Logger logger = org.slf4j.LoggerFactory.getLogger(MarcXmlFormatterService.class);
 
     @Autowired
     PropertyUtil propertyUtil;
@@ -108,8 +108,8 @@ public class MarcXmlFormatterService implements DataDumpFormatterInterface {
             record = addHoldingInfo(record, bibliographicEntity.getHoldingsEntities(),itemIds,getNonOrphanHoldingsIdList(bibliographicEntity.getItemEntities()));
             results.put(ScsbCommonConstants.SUCCESS, record);
         } catch (Exception e) {
-            logger.info("failed bib own ins bib id--->{} " , bibliographicEntity.getOwningInstitutionBibId());
-            logger.error(ScsbConstants.ERROR,e);
+            log.info("failed bib own ins bib id--->{} " , bibliographicEntity.getOwningInstitutionBibId());
+            log.error(ScsbConstants.ERROR,e);
             results.put(ScsbCommonConstants.FAILURE,bibliographicEntity.getOwningInstitutionBibId()+" * "+ e);
         }
         return results;

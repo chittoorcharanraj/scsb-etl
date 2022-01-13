@@ -1,5 +1,6 @@
 package org.recap.service.transmission.datadump;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.junit.Test;
@@ -8,8 +9,6 @@ import org.mockito.Mock;
 import org.recap.BaseTestCaseUT;
 import org.recap.ScsbConstants;
 import org.recap.model.export.DataDumpRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.io.File;
@@ -23,10 +22,9 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by premkb on 3/10/16.
  */
-
+@Slf4j
 public class DataDumpFileSystemTranmissionServiceUT extends BaseTestCaseUT {
 
-    private static final Logger logger = LoggerFactory.getLogger(DataDumpFileSystemTranmissionServiceUT.class);
 
     @Value("${etl.data.dump.directory}")
     private String dumpDirectoryPath;
@@ -54,7 +52,7 @@ public class DataDumpFileSystemTranmissionServiceUT extends BaseTestCaseUT {
         producer.sendBodyAndHeader(ScsbConstants.DATADUMP_FILE_SYSTEM_Q,  xmlString, "routeMap", getRouteMap());
         dataDumpFileSystemTranmissionService.transmitDataDump(getRouteMap());
         Thread.sleep(2000);
-        logger.info(dumpDirectoryPath+File.separator+ requestingInstitutionCode +File.separator+dateTimeString+ File.separator  + ScsbConstants.DATA_DUMP_FILE_NAME+ requestingInstitutionCode +"-"+dateTimeString+ ScsbConstants.XML_FILE_FORMAT);
+        log.info(dumpDirectoryPath+File.separator+ requestingInstitutionCode +File.separator+dateTimeString+ File.separator  + ScsbConstants.DATA_DUMP_FILE_NAME+ requestingInstitutionCode +"-"+dateTimeString+ ScsbConstants.XML_FILE_FORMAT);
         File file = new File(dumpDirectoryPath+File.separator+ requestingInstitutionCode +File.separator+dateTimeString+ File.separator  + ScsbConstants.DATA_DUMP_FILE_NAME+ requestingInstitutionCode + ScsbConstants.ZIP_FILE_FORMAT);
         assertTrue(true);
     }

@@ -1,6 +1,7 @@
 package org.recap.camel.datadump.consumer;
 
 import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Exchange;
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.impl.engine.DefaultFluentProducerTemplate;
@@ -12,8 +13,7 @@ import org.recap.util.datadump.DataExportHeaderUtil;
 import org.recap.camel.datadump.callable.MarcRecordPreparerCallable;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.service.formatter.datadump.MarcXmlFormatterService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
@@ -31,9 +31,8 @@ import java.util.stream.Collectors;
 /**
  * Created by peris on 11/1/16.
  */
+@Slf4j
 public class MarcRecordFormatActiveMQConsumer extends CommonReportGenerator {
-
-    private static final Logger logger = LoggerFactory.getLogger(MarcRecordFormatActiveMQConsumer.class);
 
     /**
      * The Marc xml formatter service.
@@ -76,7 +75,7 @@ public class MarcRecordFormatActiveMQConsumer extends CommonReportGenerator {
         FluentProducerTemplate fluentProducerTemplate = DefaultFluentProducerTemplate.on(exchange.getContext());
         String batchHeaders = (String) exchange.getIn().getHeader(ScsbConstants.BATCH_HEADERS);
         String currentPageCountStr = new DataExportHeaderUtil().getValueFor(batchHeaders, "currentPageCount");
-        logger.info("Current page in MarcRecordFormatActiveMQConsumer--->{}",currentPageCountStr);
+        log.info("Current page in MarcRecordFormatActiveMQConsumer--->{}",currentPageCountStr);
 
         List<Record> records = new ArrayList<>();
 
@@ -126,7 +125,7 @@ public class MarcRecordFormatActiveMQConsumer extends CommonReportGenerator {
 
         long endTime = System.currentTimeMillis();
 
-        logger.info("Time taken to prepare {} marc records : {} seconds " , bibliographicEntities.size() , (endTime - startTime) / 1000);
+        log.info("Time taken to prepare {} marc records : {} seconds " , bibliographicEntities.size() , (endTime - startTime) / 1000);
 
         fluentProducerTemplate
                 .to(ScsbConstants.MARC_RECORD_FOR_DATA_EXPORT_Q)
@@ -172,11 +171,11 @@ public class MarcRecordFormatActiveMQConsumer extends CommonReportGenerator {
      */
     public ExecutorService getExecutorService() {
         if (null == executorService) {
-            logger.info("Creating Thread Pool of Size : {}", dataDumpMarcFormatThreadSize);
+            log.info("Creating Thread Pool of Size : {}", dataDumpMarcFormatThreadSize);
             executorService = Executors.newFixedThreadPool(dataDumpMarcFormatThreadSize);
         }
         if (executorService.isShutdown()) {
-            logger.info("On Shutdown, Creating Thread Pool of Size : {}", dataDumpMarcFormatThreadSize);
+            log.info("On Shutdown, Creating Thread Pool of Size : {}", dataDumpMarcFormatThreadSize);
             executorService = Executors.newFixedThreadPool(dataDumpMarcFormatThreadSize);
         }
         return executorService;
