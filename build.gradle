@@ -1,7 +1,7 @@
 buildscript {
     ext {
-        springBootVersion = '2.5.8'
-        set('springCloudVersion', "2020.0.5")
+        springBootVersion = '2.6.2'
+        set('springCloudVersion', "2021.0.0")
     }
     repositories {
         mavenCentral()
@@ -18,13 +18,13 @@ buildscript {
         }
     }
     dependencies {
-        classpath "net.saliman:gradle-cobertura-plugin:2.3.2"
+        classpath "net.saliman:gradle-cobertura-plugin:4.0.0"
     }
 }
 
 plugins {
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-    id 'org.springframework.boot' version '2.5.8'
+    id 'org.springframework.boot' version '2.6.2'
     id "org.sonarqube" version "3.3"
 }
 
@@ -56,8 +56,8 @@ jar {
     archiveVersion = '0.0.1-SNAPSHOT'
 }
 
-sourceCompatibility = 1.11
-targetCompatibility = 1.11
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
 
 repositories {
     mavenCentral()
@@ -77,16 +77,16 @@ dependencies {
     implementation('org.apache.camel:camel-jaxb:3.14.0')
     implementation('org.apache.camel:camel-zipfile:3.14.0')
     implementation('org.apache.camel:camel-jms:3.14.0')
-    implementation('org.apache.camel.springboot:camel-aws-s3-starter:3.7.6')
-    implementation('org.apache.camel:camel-aws-s3:3.7.6')
+    implementation('org.apache.camel.springboot:camel-aws-s3-starter:3.8.0')
+    implementation('org.apache.camel:camel-aws-s3:3.8.0')
 
     implementation('org.apache.commons:commons-csv:1.9.0')
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
 
-    implementation('org.apache.activemq:activemq-camel:5.15.15')
-    implementation('org.apache.activemq:activemq-pool:5.15.15')
-    implementation('org.apache.activemq:activemq-broker:5.15.15')
-    implementation('org.apache.activemq:activemq-client:5.15.15')
+    implementation('org.apache.activemq:activemq-camel:5.16.2')
+    implementation('org.apache.activemq:activemq-pool:5.16.2')
+    implementation('org.apache.activemq:activemq-broker:5.16.2')
+    implementation('org.apache.activemq:activemq-client:5.16.2')
 
     implementation('org.springframework.boot:spring-boot-starter-data-jpa')
     implementation('org.springframework.boot:spring-boot-starter-thymeleaf')
@@ -105,8 +105,9 @@ dependencies {
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
 
     implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.26'
-    implementation('io.springfox:springfox-swagger-ui:3.0.0')
-    implementation('io.springfox:springfox-swagger2:3.0.0')
+//    implementation('io.springfox:springfox-swagger-ui:3.0.0')
+//    implementation('io.springfox:springfox-swagger2:3.0.0')
+    implementation group: 'io.springfox', name: 'springfox-boot-starter', version: '3.0.0'
     implementation('org.codehaus.jettison:jettison:1.4.1')
 
     implementation 'io.micrometer:micrometer-registry-prometheus'
@@ -127,13 +128,13 @@ dependencies {
 
 }
 
-configurations.all {
-    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
-        if (details.requested.group == 'org.apache.logging.log4j') {
-            details.useVersion '2.17.0'
-        }
-    }
-}
+//configurations.all {
+//    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+//        if (details.requested.group == 'org.apache.logging.log4j') {
+//            details.useVersion '2.17.0'
+//        }
+//    }
+//}
 
 dependencyManagement {
 	imports {
@@ -177,9 +178,7 @@ task scsbEtlJavadocs(type: Javadoc) {
     destinationDir = new File(home + "/scsb-javadocs/scsb-etl")
 }
 
-bootJar {
-    layered()
-}
+
 
 jar {
     enabled = false
