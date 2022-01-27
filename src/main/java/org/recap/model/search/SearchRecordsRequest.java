@@ -2,8 +2,8 @@ package org.recap.model.search;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -12,8 +12,7 @@ import java.util.List;
 /**
  * Created by rajeshbabuk on 6/7/16.
  */
-@Getter
-@Setter
+@Data
 @ApiModel(value="SearchRecordsRequest", description="Model for showing user details")
 public class SearchRecordsRequest implements Serializable {
 

@@ -6,11 +6,10 @@ import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
+import lombok.extern.slf4j.Slf4j;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.model.export.S3RecentDataExportInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -23,10 +22,10 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class RecentDataExportsInfoService {
 
-    private static final Logger logger = LoggerFactory.getLogger(RecentDataExportsInfoService.class);
 
     @Autowired
     AmazonS3 s3client;
@@ -61,11 +60,11 @@ public class RecentDataExportsInfoService {
                     s3RecentDataExportInfo.setKeySize(os.getSize());
                     s3RecentDataExportInfo.setKeyLastModified(os.getLastModified());
                     recentDataExportInfoList.add(s3RecentDataExportInfo);
-                    logger.info("File with the key -->" + os.getKey() + " " + os.getSize() + " " + os.getLastModified());
+                    log.info("File with the key -->" + os.getKey() + " " + os.getSize() + " " + os.getLastModified());
                 }
             }
         } catch (Exception e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR, e);
+            log.error(ScsbCommonConstants.LOG_ERROR, e);
         }
         recentDataExportInfoList.sort(Comparator.comparing(S3RecentDataExportInfo::getKeyLastModified).reversed());
         return recentDataExportInfoList.stream().limit(Integer.parseInt(recentDataExportInfoLimit)).collect(Collectors.toList());
@@ -90,7 +89,7 @@ public class RecentDataExportsInfoService {
                 records = str.get(1).replace("\"", "").split(",");
             }
         } catch (Exception e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR, e);
+            log.error(ScsbCommonConstants.LOG_ERROR, e);
         }
         return mapResult(headers, records);
     }

@@ -1,5 +1,6 @@
 package org.recap.camel.datadump;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.recap.ScsbConstants;
@@ -7,8 +8,6 @@ import org.recap.model.ILSConfigProperties;
 import org.recap.service.executor.datadump.DataDumpSchedulerExecutorService;
 import org.recap.util.CommonUtil;
 import org.recap.util.PropertyUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,10 +16,9 @@ import java.util.List;
 /**
  * Created by rajeshbabuk on 7/7/17.
  */
+@Slf4j
 @Component
 public class DataDumpSequenceProcessor implements Processor {
-
-    private static final Logger logger = LoggerFactory.getLogger(DataDumpSequenceProcessor.class);
 
     @Autowired
     private DataDumpSchedulerExecutorService dataDumpSchedulerExecutorService;
@@ -41,7 +39,7 @@ public class DataDumpSequenceProcessor implements Processor {
     public void process(Exchange exchange) throws Exception {
         String institution = (String) exchange.getIn().getBody();
         String fetchTypeString = ScsbConstants.EXPORT_FETCH_TYPE_INSTITUTION.contains(ScsbConstants.INCREMENTAL) ? ScsbConstants.INCREMENTAL : ScsbConstants.DELETED;
-        logger.info("Completed {} export for {} institution", fetchTypeString, institution);
+        log.info("Completed {} export for {} institution", fetchTypeString, institution);
 
         List<String> allInstitutionCodesExceptSupportInstitution = commonUtil.findAllInstitutionCodesExceptSupportInstitution();
         int i = allInstitutionCodesExceptSupportInstitution.indexOf(institution);

@@ -1,5 +1,6 @@
 package org.recap.service.formatter.datadump;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
@@ -29,11 +30,11 @@ import java.util.*;
 /**
  * Created by premkb on 28/9/16.
  */
+@Slf4j
 @Service
 @Scope("prototype")
 public class SCSBXmlFormatterService implements DataDumpFormatterInterface {
 
-    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SCSBXmlFormatterService.class);
 
     @Autowired
     private ReportDataRepository reportDataRepository;
@@ -195,8 +196,8 @@ public class SCSBXmlFormatterService implements DataDumpFormatterInterface {
             bibRecord.setHoldings(holdings);
             results.put(ScsbCommonConstants.SUCCESS, bibRecord);
         } catch (Exception e) {
-            logger.info(String.format("Exception for BIB Record %s", bibliographicEntity.getOwningInstitutionBibId()));
-            logger.error(ScsbConstants.ERROR,e);
+            log.info(String.format("Exception for BIB Record %s", bibliographicEntity.getOwningInstitutionBibId()));
+            log.error(ScsbConstants.ERROR,e);
             results.put(ScsbCommonConstants.FAILURE, bibliographicEntity.getOwningInstitutionBibId()+" * "+String.valueOf(e));
         }
         return results;

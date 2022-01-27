@@ -1,9 +1,8 @@
 package org.recap.service.transmission.datadump;
 
+import lombok.extern.slf4j.Slf4j;
 import org.recap.ScsbConstants;
 import org.recap.model.export.DataDumpRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -15,10 +14,9 @@ import java.util.Map;
 /**
  * Created by premkb on 28/9/16.
  */
+@Slf4j
 @Service
 public class DataDumpTransmissionService {
-
-    private static final Logger logger = LoggerFactory.getLogger(DataDumpTransmissionService.class);
 
     private List<DataDumpTransmissionInterface> dataDumpTransmissionInterfaceList;
 
@@ -41,7 +39,7 @@ public class DataDumpTransmissionService {
                 try {
                     dataDumpTransmissionInterface.transmitDataDump(routeMap);
                 } catch (Exception e) {
-                    logger.error(ScsbConstants.ERROR,e);
+                    log.error(ScsbConstants.ERROR,e);
                 }
             }
         }

@@ -1,20 +1,20 @@
 package org.recap.camel;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
  * Created by peris on 8/12/16.
  */
+@Slf4j
 @Component
 public class ReportsRouteBuilder {
-    private static final Logger logger = LoggerFactory.getLogger(ReportsRouteBuilder.class);
+
 
     /**
      * Instantiates a new Reports route builder.
@@ -34,7 +34,7 @@ public class ReportsRouteBuilder {
                 }
             });
         } catch (Exception e) {
-            logger.error(ScsbConstants.ERROR,e);
+            log.error(ScsbConstants.ERROR,e);
         }
     }
 }

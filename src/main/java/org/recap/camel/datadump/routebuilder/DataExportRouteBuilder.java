@@ -1,5 +1,6 @@
 package org.recap.camel.datadump.routebuilder;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.recap.ScsbConstants;
@@ -22,15 +23,14 @@ import org.recap.service.formatter.datadump.DeletedJsonFormatterService;
 import org.recap.service.formatter.datadump.MarcXmlFormatterService;
 import org.recap.service.formatter.datadump.SCSBXmlFormatterService;
 import org.recap.util.XmlFormatter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Created by peris on 11/5/16.
  */
+@Slf4j
 public class DataExportRouteBuilder {
 
-    private static final Logger logger = LoggerFactory.getLogger(DataExportRouteBuilder.class);
+
 
     /**
      * Instantiates a new Data export route builder.
@@ -157,7 +157,7 @@ public class DataExportRouteBuilder {
             });
 
         } catch (Exception e) {
-            logger.error(ScsbConstants.ERROR, e);
+            log.error(ScsbConstants.ERROR, e);
         }
     }
 }

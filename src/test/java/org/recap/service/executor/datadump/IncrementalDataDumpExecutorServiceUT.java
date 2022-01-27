@@ -23,7 +23,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class IncrementalDataDumpExecutorServiceUT extends BaseTestCaseUT {
 
-    private static final Logger logger = LoggerFactory.getLogger(FullDataDumpExecutorServiceUT.class);
+
 
     @InjectMocks
     IncrementalDataDumpExecutorService incrementalDataDumpExecutorService;

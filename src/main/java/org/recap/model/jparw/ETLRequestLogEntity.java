@@ -1,7 +1,7 @@
 package org.recap.model.jparw;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+
 import org.recap.model.jpa.AbstractEntity;
 
 import javax.persistence.AttributeOverride;
@@ -17,8 +17,7 @@ import java.util.Date;
 
 @Entity
 @Table(name = "ETL_REQUEST_LOG_T", catalog = "")
-@Getter
-@Setter
+@Data
 @AttributeOverride(
         name = "id",
         column = @Column(

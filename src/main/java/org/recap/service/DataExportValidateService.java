@@ -1,5 +1,6 @@
 package org.recap.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.recap.PropertyKeyConstants;
@@ -8,11 +9,8 @@ import org.recap.ScsbConstants;
 import org.recap.model.ILSConfigProperties;
 import org.recap.model.export.DataDumpRequest;
 import org.recap.repository.ImsLocationDetailsRepository;
-import org.recap.repository.InstitutionDetailsRepository;
 import org.recap.util.CommonUtil;
 import org.recap.util.PropertyUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -32,10 +30,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Slf4j
 @Service
 public class DataExportValidateService {
 
-    private static final Logger logger = LoggerFactory.getLogger(DataExportValidateService.class);
+
 
     @Value("${" + PropertyKeyConstants.ETL_DATA_DUMP_FETCHTYPE_FULL + "}") private String fetchTypeFull;
     @Value("${" + PropertyKeyConstants.ETL_DATA_DUMP_STATUS_FILE_NAME + "}") private String dataDumpStatusFileName;
@@ -124,7 +123,7 @@ public class DataExportValidateService {
                     }
 
                 } catch (Exception e) {
-                    logger.error("Exception : ", e);
+                    log.error("Exception : ", e);
                 }
             }
         }
@@ -143,7 +142,7 @@ public class DataExportValidateService {
         if(ScsbConstants.DATADUMP_TYPES.contains(dataDumpRequest.getFetchType())&& dataDumpRequest.getTransmissionType().equals(ScsbConstants.DATADUMP_TRANSMISSION_TYPE_S3) && !dataDumpRequest.isRequestFromSwagger()) {
             String dataExportStatus = getDataExportCurrentStatus();
             String status = Optional.ofNullable(dataExportStatus).orElse("No file created");
-            logger.info("Validating datadump status file for requested Dump-Type {} by {} . Status : {}",dataDumpRequest.getFetchType(),dataDumpRequest.getRequestingInstitutionCode(),status);
+            log.info("Validating datadump status file for requested Dump-Type {} by {} . Status : {}",dataDumpRequest.getFetchType(),dataDumpRequest.getRequestingInstitutionCode(),status);
             if(dataExportStatus != null && dataExportStatus.contains(ScsbConstants.IN_PROGRESS)){
                 errorMessageMap.put(errorcount, ScsbConstants.INPROGRESS_ERR_MSG);
                 errorcount++;
@@ -173,7 +172,7 @@ public class DataExportValidateService {
         try {
             return simpleDateFormat.parse(dateString);
         } catch (ParseException e) {
-            logger.error("Exception while Parsing Date : ", e);
+            log.error("Exception while Parsing Date : ", e);
         }
         return null;
     }
@@ -201,8 +200,8 @@ public class DataExportValidateService {
                 dataDumpStatus = FileUtils.readFileToString(file, Charset.defaultCharset());
             }
         } catch (IOException e) {
-            logger.error(ScsbConstants.ERROR,e);
-            logger.error("Exception while creating or updating the file : {}", e.getMessage());
+            log.error(ScsbConstants.ERROR,e);
+            log.error("Exception while creating or updating the file : {}", e.getMessage());
         }
         return dataDumpStatus;
     }

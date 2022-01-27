@@ -1,5 +1,6 @@
 package org.recap.camel.datadump.consumer;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Exchange;
 import org.apache.camel.FluentProducerTemplate;
 import org.marc4j.marc.Record;
@@ -7,8 +8,6 @@ import org.recap.ScsbConstants;
 import org.recap.report.CommonReportGenerator;
 import org.recap.service.formatter.datadump.MarcXmlFormatterService;
 import org.recap.util.datadump.DataExportHeaderUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.List;
@@ -16,8 +15,9 @@ import java.util.List;
 /**
  * Created by peris on 11/1/16.
  */
+@Slf4j
 public class MarcXMLFormatActiveMQConsumer extends CommonReportGenerator {
-    private static final Logger logger = LoggerFactory.getLogger(MarcXMLFormatActiveMQConsumer.class);
+
 
     private MarcXmlFormatterService marcXmlFormatterService;
     private DataExportHeaderUtil dataExportHeaderUtil;
@@ -40,7 +40,7 @@ public class MarcXMLFormatActiveMQConsumer extends CommonReportGenerator {
      */
     public String processMarcXmlString(Exchange exchange) throws Exception {
         List<Record> records = (List<Record>) exchange.getIn().getBody();
-        logger.info("Num records to generate marc XMl for: {} " , records.size());
+        log.info("Num records to generate marc XMl for: {} " , records.size());
         long startTime = System.currentTimeMillis();
 
         String toMarcXmlString = null;
@@ -50,13 +50,13 @@ public class MarcXMLFormatActiveMQConsumer extends CommonReportGenerator {
             toMarcXmlString = marcXmlFormatterService.covertToMarcXmlString(records);
             processSuccessReportEntity(exchange, records, batchHeaders, requestId);
         } catch (Exception e) {
-            logger.error(ScsbConstants.ERROR,e);
+            log.error(ScsbConstants.ERROR,e);
             processFailureReportEntity(exchange, records, batchHeaders, requestId, e);
         }
 
         long endTime = System.currentTimeMillis();
 
-        logger.info("Time taken to generate marc xml for : {} is : {} seconds " , records.size() , (endTime - startTime) / 1000 );
+        log.info("Time taken to generate marc xml for : {} is : {} seconds " , records.size() , (endTime - startTime) / 1000 );
 
         return toMarcXmlString;
     }

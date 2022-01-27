@@ -1,5 +1,6 @@
 package org.recap.camel.datadump.consumer;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.ProducerTemplate;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
@@ -7,8 +8,6 @@ import org.recap.model.csv.DataExportFailureReport;
 import org.recap.model.jparw.ReportDataEntity;
 import org.recap.model.jparw.ReportEntity;
 import org.recap.repositoryrw.ReportDetailRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -22,11 +21,10 @@ import java.util.Map;
 /**
  * Created by peris on 11/11/16.
  */
+@Slf4j
 @Component
 public class DataExportReportActiveMQConsumer {
-
-    private static final Logger logger = LoggerFactory.getLogger(DataExportReportActiveMQConsumer.class);
-    /**
+   /**
      * The Report detail repository.
      */
     @Autowired
@@ -56,8 +54,8 @@ public class DataExportReportActiveMQConsumer {
         String numRecords = (String) body.get(ScsbConstants.NUM_RECORDS);
         Integer exportedItemCount = (Integer) body.get(ScsbConstants.ITEM_EXPORTED_COUNT);
         String imsDepositoryCodes = (String) body.get(ScsbConstants.IMS_DEPOSITORY);
-        logger.info("No. of bib exported for a single batch---->{}",numRecords);
-        logger.info("No. of item exported for a single batch---->{}",exportedItemCount);
+        log.info("No. of bib exported for a single batch---->{}",numRecords);
+        log.info("No. of item exported for a single batch---->{}",exportedItemCount);
 
         List<ReportEntity> byFileName = getReportDetailRepository().findByFileNameAndType(requestId, ScsbConstants.BATCH_EXPORT_SUCCESS);
 
@@ -133,11 +131,11 @@ public class DataExportReportActiveMQConsumer {
             for (Iterator<ReportDataEntity> iterator = reportDataEntities.iterator(); iterator.hasNext(); ) {
                 ReportDataEntity reportDataEntity = iterator.next();
                 if (reportDataEntity.getHeaderName().equals(numBibsExported)) {
-                    logger.info("Updated bib count-->{}",(Integer.valueOf(reportDataEntity.getHeaderValue()) + Integer.valueOf(numRecords)));
+                    log.info("Updated bib count-->{}",(Integer.valueOf(reportDataEntity.getHeaderValue()) + Integer.valueOf(numRecords)));
                     reportDataEntity.setHeaderValue(String.valueOf(Integer.valueOf(reportDataEntity.getHeaderValue()) + Integer.valueOf(numRecords)));
                 }
                 if(reportDataEntity.getHeaderName().equals(ScsbConstants.EXPORTED_ITEM_COUNT)){
-                    logger.info("Updated item count-->{}",(Integer.valueOf(reportDataEntity.getHeaderValue())+exportedItemCount));
+                    log.info("Updated item count-->{}",(Integer.valueOf(reportDataEntity.getHeaderValue())+exportedItemCount));
                     reportDataEntity.setHeaderValue(String.valueOf(Integer.valueOf(reportDataEntity.getHeaderValue())+exportedItemCount));
                 }
             }

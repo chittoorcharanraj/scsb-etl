@@ -1,6 +1,7 @@
 package org.recap.camel.datadump.consumer;
 
 import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Exchange;
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.impl.engine.DefaultFluentProducerTemplate;
@@ -12,8 +13,7 @@ import org.recap.model.jpa.BibliographicEntity;
 import org.recap.report.CommonReportGenerator;
 import org.recap.service.formatter.datadump.SCSBXmlFormatterService;
 import org.recap.util.datadump.DataExportHeaderUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
@@ -23,9 +23,9 @@ import java.util.stream.Collectors;
 /**
  * Created by peris on 11/1/16.
  */
+@Slf4j
 public class SCSBRecordFormatActiveMQConsumer extends CommonReportGenerator {
 
-    private static final Logger logger = LoggerFactory.getLogger(SCSBRecordFormatActiveMQConsumer.class);
 
     /**
      * The Scsb xml formatter service.
@@ -116,7 +116,7 @@ public class SCSBRecordFormatActiveMQConsumer extends CommonReportGenerator {
 
         long endTime = System.currentTimeMillis();
 
-        logger.info("Time taken to prepare {} scsb records : {} seconds " , bibliographicEntities.size() , (endTime - startTime) / 1000 );
+        log.info("Time taken to prepare {} scsb records : {} seconds " , bibliographicEntities.size() , (endTime - startTime) / 1000 );
 
 
         fluentProducerTemplate
@@ -171,11 +171,11 @@ public class SCSBRecordFormatActiveMQConsumer extends CommonReportGenerator {
      */
     public ExecutorService getExecutorService() {
         if (null == executorService) {
-            logger.info("Creating Thread Pool of Size : {}", dataDumpScsbFormatThreadSize);
+            log.info("Creating Thread Pool of Size : {}", dataDumpScsbFormatThreadSize);
             executorService = Executors.newFixedThreadPool(dataDumpScsbFormatThreadSize);
         }
         if (executorService.isShutdown()) {
-            logger.info("On Shutdown, Creating Thread Pool of Size : {}", dataDumpScsbFormatThreadSize);
+            log.info("On Shutdown, Creating Thread Pool of Size : {}", dataDumpScsbFormatThreadSize);
             executorService = Executors.newFixedThreadPool(dataDumpScsbFormatThreadSize);
         }
         return executorService;

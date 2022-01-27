@@ -1,10 +1,11 @@
 package org.recap.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -18,9 +19,10 @@ import java.util.TimeZone;
 /**
  * Created by premkb on 20/8/16.
  */
+@Slf4j
 public class DateUtil {
 
-    private static final Logger logger = LoggerFactory.getLogger(DateUtil.class);
+
 
     private DateUtil() {}
 
@@ -39,7 +41,7 @@ public class DateUtil {
                 outputDate = sdf.parse(inputDateString);
             }
         } catch (ParseException e) {
-            logger.error(e.getMessage());
+            log.error(e.getMessage());
         }
         return outputDate;
     }
@@ -58,7 +60,7 @@ public class DateUtil {
             LocalDateTime parsedDateTime = LocalDateTime.parse(inputDateTimeString, formatter);
             outputDateTime = Date.from(parsedDateTime.atZone(ZoneId.systemDefault()).toInstant());
         }catch (Exception e){
-            logger.error(ScsbConstants.ERROR,e);
+            log.error(ScsbConstants.ERROR,e);
         }
         return outputDateTime;
     }
@@ -84,9 +86,9 @@ public class DateUtil {
                 String toDateStr = format.format(toDate);
                 dateString = fromDateStr + " TO " + toDateStr;
             }
-            logger.info("Date range for solr : {} " , dateString);
+            log.info("Date range for solr : {} " , dateString);
         } catch (ParseException e) {
-            logger.error(e.getMessage());
+            log.error(e.getMessage());
         }
         return dateString;
     }

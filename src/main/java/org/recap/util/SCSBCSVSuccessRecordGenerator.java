@@ -1,12 +1,11 @@
 package org.recap.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.PropertyUtilsBean;
 import org.recap.ScsbConstants;
 import org.recap.model.csv.SuccessReportSCSBCSVRecord;
 import org.recap.model.jparw.ReportDataEntity;
 import org.recap.model.jparw.ReportEntity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
@@ -16,10 +15,10 @@ import java.util.List;
 
 /**
  * Created by angelind on 18/8/16.
- */
+ */@Slf4j
 public class SCSBCSVSuccessRecordGenerator {
 
-    private static final Logger logger = LoggerFactory.getLogger(SCSBCSVSuccessRecordGenerator.class);
+
 
     /**
      * Prepare success records csv report for initial data load.
@@ -42,7 +41,7 @@ public class SCSBCSVSuccessRecordGenerator {
                 try {
                     setterMethod.invoke(successReportSCSBCSVRecord, headerValue);
                 } catch (Exception e) {
-                    logger.error(ScsbConstants.ERROR,e);
+                    log.error(ScsbConstants.ERROR,e);
                 }
             }
         }
@@ -60,7 +59,7 @@ public class SCSBCSVSuccessRecordGenerator {
         try {
             return propertyUtilsBean.getWriteMethod(new PropertyDescriptor(propertyName, SuccessReportSCSBCSVRecord.class));
         } catch (IntrospectionException e) {
-            logger.error(ScsbConstants.ERROR,e);
+            log.error(ScsbConstants.ERROR,e);
         }
         return null;
     }
@@ -76,7 +75,7 @@ public class SCSBCSVSuccessRecordGenerator {
         try {
             return propertyUtilsBean.getReadMethod(new PropertyDescriptor(propertyName, SuccessReportSCSBCSVRecord.class));
         } catch (IntrospectionException e) {
-            logger.error(ScsbConstants.ERROR,e);
+            log.error(ScsbConstants.ERROR,e);
         }
         return null;
     }

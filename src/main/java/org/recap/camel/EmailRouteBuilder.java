@@ -1,12 +1,11 @@
 package org.recap.camel;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.commons.io.FileUtils;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -21,9 +20,10 @@ import java.nio.charset.StandardCharsets;
 /**
  * Created by chenchulakshmig on 13/9/16.
  */
+@Slf4j
 @Component
 public class EmailRouteBuilder {
-    private static final Logger logger = LoggerFactory.getLogger(EmailRouteBuilder.class);
+
 
     private String emailBody;
     private String emailForExportNotification;
@@ -135,13 +135,13 @@ public class EmailRouteBuilder {
                         try {
                             emailPassword = FileUtils.readFileToString(file, StandardCharsets.UTF_8).trim();
                         } catch (IOException e) {
-                            logger.error(ScsbConstants.ERROR,e);
+                            log.error(ScsbConstants.ERROR,e);
                         }
                     }
                 }
             });
         } catch (Exception e) {
-            logger.error(ScsbConstants.ERROR,e);
+            log.error(ScsbConstants.ERROR,e);
         }
     }
 
@@ -159,7 +159,7 @@ public class EmailRouteBuilder {
                             }
                         }
                     } catch (IOException e) {
-                        logger.error(ScsbConstants.ERROR,e);
+                        log.error(ScsbConstants.ERROR,e);
                     }
         return out;
     }

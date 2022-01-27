@@ -1,5 +1,6 @@
 package org.recap.camel;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws.s3.S3Constants;
@@ -16,9 +17,9 @@ import org.springframework.stereotype.Component;
 /**
  * Created by angelind on 18/8/16.
  */
+@Slf4j
 @Component
 public class S3SuccessReportRouteBuilder {
-    private static final Logger logger = LoggerFactory.getLogger(S3SuccessReportRouteBuilder.class);
 
     /**
      * Instantiates a new Ftp success report route builder.
@@ -43,7 +44,7 @@ public class S3SuccessReportRouteBuilder {
                 });
             }
         } catch (Exception e) {
-            logger.error(ScsbConstants.ERROR,e);
+            log.error(ScsbConstants.ERROR,e);
         }
     }
 }

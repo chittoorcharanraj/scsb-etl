@@ -1,7 +1,7 @@
 package org.recap.model.jpa;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,8 +16,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "xml_records_t", catalog = "")
-@Getter
-@Setter
+@Data
 public class XmlRecordEntity extends AbstractEntity<Integer> {
     @Lob
     @Column(name = "xml_record")

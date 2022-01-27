@@ -1,5 +1,6 @@
 package org.recap.camel.datadump.routebuilder;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.BindyType;
@@ -9,8 +10,7 @@ import org.recap.camel.datadump.FileNameProcessorForDataDumpFailure;
 import org.recap.camel.datadump.FileNameProcessorForDataDumpSuccess;
 import org.recap.model.csv.DataDumpFailureReport;
 import org.recap.model.csv.DataDumpSuccessReport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -20,10 +20,10 @@ import java.io.File;
 /**
  * Created by peris on 11/12/16.
  */
+@Slf4j
 @Component
 public class DataExportCsvReportRouteBuilder {
 
-    private static final Logger logger = LoggerFactory.getLogger(DataExportCsvReportRouteBuilder.class);
 
     /**
      * Instantiates a new Data export csv report route builder.
@@ -56,7 +56,7 @@ public class DataExportCsvReportRouteBuilder {
                 }
             });
         } catch (Exception e) {
-            logger.error(ScsbConstants.ERROR,e);
+            log.error(ScsbConstants.ERROR,e);
         }
     }
 }

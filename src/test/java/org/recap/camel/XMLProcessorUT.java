@@ -30,8 +30,6 @@ import static org.junit.Assert.assertTrue;
 
 public class XMLProcessorUT extends BaseTestCaseUT {
 
-    private static final Logger logger = LoggerFactory.getLogger(XMLProcessorUT.class);
-
 
     @InjectMocks
     XmlProcessor xmlProcessor;

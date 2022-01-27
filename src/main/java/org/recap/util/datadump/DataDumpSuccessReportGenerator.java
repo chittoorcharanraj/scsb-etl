@@ -1,12 +1,12 @@
 package org.recap.util.datadump;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.PropertyUtilsBean;
 import org.recap.ScsbConstants;
 import org.recap.model.csv.DataDumpSuccessReport;
 import org.recap.model.jparw.ReportDataEntity;
 import org.recap.model.jparw.ReportEntity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
@@ -18,9 +18,10 @@ import java.util.List;
 /**
  * Created by premkb on 30/9/16.
  */
+@Slf4j
 public class DataDumpSuccessReportGenerator {
 
-    private static final Logger logger = LoggerFactory.getLogger(DataDumpSuccessReportGenerator.class);
+
 
     /**
      * Prepare data dump csv success record data dump success report.
@@ -44,7 +45,7 @@ public class DataDumpSuccessReportGenerator {
                     try {
                         setterMethod.invoke(dataDumpSuccessReport, headerValue);
                     } catch (IllegalAccessException | InvocationTargetException e) {
-                        logger.error(ScsbConstants.ERROR, e);
+                        log.error(ScsbConstants.ERROR, e);
                     }
                 }
             }
@@ -63,7 +64,7 @@ public class DataDumpSuccessReportGenerator {
         try {
             return propertyUtilsBean.getWriteMethod(new PropertyDescriptor(propertyName, DataDumpSuccessReport.class));
         } catch (IntrospectionException e) {
-            logger.error(ScsbConstants.ERROR,e);
+            log.error(ScsbConstants.ERROR,e);
         }
         return null;
     }
@@ -79,7 +80,7 @@ public class DataDumpSuccessReportGenerator {
         try {
             return propertyUtilsBean.getReadMethod(new PropertyDescriptor(propertyName, DataDumpSuccessReport.class));
         } catch (IntrospectionException e) {
-            logger.error(ScsbConstants.ERROR,e);
+            log.error(ScsbConstants.ERROR,e);
         }
         return null;
     }

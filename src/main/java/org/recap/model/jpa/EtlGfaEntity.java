@@ -1,7 +1,7 @@
 package org.recap.model.jpa;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,8 +14,7 @@ import java.io.Serializable;
  */
 @Entity
 @Table(name = "etl_gfa_temp_t" )
-@Getter
-@Setter
+@Data
 public class EtlGfaEntity implements Serializable {
 
     @Id

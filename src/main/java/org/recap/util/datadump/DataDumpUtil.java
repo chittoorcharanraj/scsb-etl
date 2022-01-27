@@ -1,5 +1,6 @@
 package org.recap.util.datadump;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
@@ -15,8 +16,6 @@ import org.recap.repository.ImsLocationDetailsRepository;
 import org.recap.service.DataExportDBService;
 import org.recap.service.preprocessor.DataDumpExportService;
 import org.recap.util.DateUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,11 +27,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
+@Slf4j
 @Component
 public class DataDumpUtil {
 
-    private static final Logger logger = LoggerFactory.getLogger(DataDumpUtil.class);
+
 
     @Autowired CollectionGroupDetailsRepository collectionGroupDetailsRepository;
     @Autowired ETLRequestLogDetailsRepository etlRequestLogDetailsRepository;
@@ -225,7 +224,7 @@ public class DataDumpUtil {
 
     @Transactional
     public void updateStatusInETLRequestLog(DataDumpRequest dataDumpRequest, String outputString) {
-        logger.info("ETL Request ID to update: {}",dataDumpRequest.getEtlRequestId());
+        log.info("ETL Request ID to update: {}",dataDumpRequest.getEtlRequestId());
         Optional<ETLRequestLogEntity> etlRequestLogEntity = etlRequestLogDetailsRepository.findById(dataDumpRequest.getEtlRequestId());
         etlRequestLogEntity.ifPresent(exportLog ->{
             if(outputString.contains(ScsbConstants.DATADUMP_EXPORT_FAILURE) ){

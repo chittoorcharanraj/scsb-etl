@@ -1,7 +1,7 @@
 package org.recap.model.etl;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.recap.ScsbCommonConstants;
@@ -24,8 +24,6 @@ import org.recap.model.jparw.ReportEntity;
 import org.recap.repository.ImsLocationDetailsRepository;
 import org.recap.util.DBReportUtil;
 import org.recap.util.MarcUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
@@ -42,11 +40,11 @@ import java.util.concurrent.Callable;
 /**
  * Created by pvsubrah on 6/24/16.
  */
-@Getter
-@Setter
+@Data
+@Slf4j
 public class BibPersisterCallable implements Callable {
 
-    private static final Logger logger = LoggerFactory.getLogger(BibPersisterCallable.class);
+
 
     private MarcUtil marcUtil;
     private BibRecord bibRecord;
@@ -78,7 +76,7 @@ public class BibPersisterCallable implements Callable {
         Date currentDate = new Date();
         Map<String, Object> bibMap = processAndValidateBibliographicEntity(owningInstitutionId,currentDate);
         BibliographicEntity bibliographicEntity = (BibliographicEntity) bibMap.get(ScsbConstants.BIBLIOGRAPHIC_ENTITY_NAME);
-        logger.info("Processing ETL load - owningInstitutionBibId : {}",bibliographicEntity.getOwningInstitutionBibId());
+        log.info("Processing ETL load - owningInstitutionBibId : {}",bibliographicEntity.getOwningInstitutionBibId());
         ReportEntity bibReportEntity = (ReportEntity) bibMap.get("bibReportEntity");
         if (bibReportEntity != null) {
             reportEntities.add(bibReportEntity);
@@ -201,7 +199,7 @@ public class BibPersisterCallable implements Callable {
 
         List<ReportDataEntity> reportDataEntities = null;
         if (errorMessage.toString().length() > 1) {
-            logger.info("Error Message for Bib: {} - {}", bibliographicEntity.getOwningInstitutionBibId(), errorMessage);
+            log.info("Error Message for Bib: {} - {}", bibliographicEntity.getOwningInstitutionBibId(), errorMessage);
             reportDataEntities = getDbReportUtil().generateBibFailureReportEntity(bibliographicEntity);
             ReportDataEntity errorReportDataEntity = new ReportDataEntity();
             errorReportDataEntity.setHeaderName(ScsbCommonConstants.ERROR_DESCRIPTION);
@@ -246,7 +244,7 @@ public class BibPersisterCallable implements Callable {
         holdingsEntity.setOwningInstitutionHoldingsId(owningInstitutionHoldingsId);
         List<ReportDataEntity> reportDataEntities = new ArrayList<>();
         if (errorMessage.toString().length() > 1) {
-            logger.info("Error Message for Bib: {} - {}", bibliographicEntity.getOwningInstitutionBibId(), errorMessage);
+            log.info("Error Message for Bib: {} - {}", bibliographicEntity.getOwningInstitutionBibId(), errorMessage);
             getDbReportUtil().generateBibHoldingsFailureReportEntity(bibliographicEntity, holdingsEntity);
             ReportDataEntity errorReportDataEntity = new ReportDataEntity();
             errorReportDataEntity.setHeaderName(ScsbCommonConstants.ERROR_DESCRIPTION);
@@ -348,7 +346,7 @@ public class BibPersisterCallable implements Callable {
 
         List<ReportDataEntity> reportDataEntities = null;
         if (errorMessage.toString().length() > 1) {
-            logger.info("Error Message for Bib: {} - {}", bibliographicEntity.getOwningInstitutionBibId(), errorMessage);
+            log.info("Error Message for Bib: {} - {}", bibliographicEntity.getOwningInstitutionBibId(), errorMessage);
             reportDataEntities = getDbReportUtil().generateBibHoldingsAndItemsFailureReportEntities(bibliographicEntity, holdingsEntity, itemEntity);
             ReportDataEntity errorReportDataEntity = new ReportDataEntity();
             errorReportDataEntity.setHeaderName(ScsbCommonConstants.ERROR_DESCRIPTION);

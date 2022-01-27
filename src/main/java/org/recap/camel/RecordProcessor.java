@@ -1,5 +1,6 @@
 package org.recap.camel;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.lang3.StringUtils;
 import org.recap.PropertyKeyConstants;
@@ -25,8 +26,6 @@ import org.recap.repository.ItemStatusDetailsRepository;
 import org.recap.util.DBReportUtil;
 import org.recap.util.MarcUtil;
 import org.recap.util.PropertyUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -56,9 +55,10 @@ import java.util.concurrent.Future;
 /**
  * Created by pvsubrah on 6/21/16.
  */
+@Slf4j
 @Component
 public class RecordProcessor {
-    private static final Logger logger = LoggerFactory.getLogger(RecordProcessor.class);
+
 
     private Map<String, Integer> institutionEntityMap;
     private Map<String, Integer>  itemStatusMap;
@@ -113,7 +113,7 @@ public class RecordProcessor {
      * @param xmlRecordEntities the xml record entities
      */
     public void process(Page<XmlRecordEntity> xmlRecordEntities) {
-        logger.info("Processor: {}" , Thread.currentThread().getName());
+        log.info("Processor: {}" , Thread.currentThread().getName());
 
         List<BibliographicEntity> bibliographicEntities = new ArrayList<>();
         List<ReportEntity> reportEntities = new ArrayList<>();
@@ -127,9 +127,9 @@ public class RecordProcessor {
                 object = future.get();
             } catch (InterruptedException  e) {
                 Thread.currentThread().interrupt();
-                logger.error(ScsbConstants.ERROR,e);
+                log.error(ScsbConstants.ERROR,e);
             } catch  (ExecutionException e) {
-                logger.error(ScsbConstants.ERROR,e);
+                log.error(ScsbConstants.ERROR,e);
             }
 
             processFutureResults(object, bibliographicEntities, reportEntities);
@@ -224,7 +224,7 @@ public class RecordProcessor {
                 }
 
             } catch (Exception e) {
-                logger.error(ScsbConstants.ERROR,e);
+                log.error(ScsbConstants.ERROR,e);
                 ReportEntity reportEntity = new ReportEntity();
                 List<ReportDataEntity> reportDataEntities = new ArrayList<>();
                 String owningInst = xmlRecordEntity.getOwningInst();
@@ -264,7 +264,7 @@ public class RecordProcessor {
             futures = getExecutorService().invokeAll(callables);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            logger.error(ScsbConstants.ERROR,e);
+            log.error(ScsbConstants.ERROR,e);
         }
         if(futures !=null) {
             futures

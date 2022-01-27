@@ -1,12 +1,12 @@
 package org.recap.service.executor.datadump;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.CamelContext;
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.impl.engine.DefaultFluentProducerTemplate;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.recap.PropertyKeyConstants;
-import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.jpa.CollectionGroupEntity;
 import org.recap.util.datadump.DataExportHeaderUtil;
@@ -15,8 +15,6 @@ import org.recap.model.search.SearchRecordsRequest;
 import org.recap.repository.CollectionGroupDetailsRepository;
 import org.recap.service.DataDumpSolrService;
 import org.recap.util.datadump.BatchCounter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -34,9 +32,9 @@ import java.util.concurrent.ExecutionException;
 /**
  * Created by premkb on 27/9/16.
  */
+@Slf4j
 public abstract class AbstractDataDumpExecutorService implements DataDumpExecutorInterface {
 
-    private static final Logger logger = LoggerFactory.getLogger(AbstractDataDumpExecutorService.class);
 
     @Autowired
     private DataDumpSolrService dataDumpSolrService;
@@ -83,10 +81,10 @@ public abstract class AbstractDataDumpExecutorService implements DataDumpExecuto
 
         Map results = dataDumpSolrService.getResults(searchRecordsRequest);
         Integer totalPageCount = (Integer) results.get("totalPageCount");
-        logger.info("totalPageCount--->{}",totalPageCount);
+        log.info("totalPageCount--->{}",totalPageCount);
         Integer totalBibsCount = Integer.valueOf((String) results.get("totalRecordsCount"));
-        logger.info("totalBibsCount--->{}",totalBibsCount);
-        logger.info("solrFetchDelay--->{}",solrFetchDelay);
+        log.info("totalBibsCount--->{}",totalBibsCount);
+        log.info("solrFetchDelay--->{}",solrFetchDelay);
 
         boolean isRecordsToProcess = totalBibsCount > 0;
         boolean canProcess = canProcessRecords(totalBibsCount, dataDumpRequest.getTransmissionType());
@@ -109,7 +107,7 @@ public abstract class AbstractDataDumpExecutorService implements DataDumpExecuto
                 BatchCounter.setCurrentPage(pageNum + 1);
                 Map results1 = dataDumpSolrService.getResults(searchRecordsRequest);
                 fileName = getFileName(dataDumpRequest, pageNum + 1);
-                logger.info("Solr fetch page num--->{}",pageNum+1);
+                log.info("Solr fetch page num--->{}",pageNum+1);
                 headerString = dataExportHeaderUtil.getBatchHeaderString(totalPageCount, pageNum + 1, folderName, fileName, dataDumpRequest);
                 sendBodyAndHeader(results1, headerString);
             }

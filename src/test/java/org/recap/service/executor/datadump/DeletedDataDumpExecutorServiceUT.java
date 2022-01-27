@@ -27,7 +27,6 @@ import static org.junit.Assert.assertTrue;
  * Created by premkb on 29/9/16.
  */
 public class DeletedDataDumpExecutorServiceUT extends BaseTestCaseUT {
-    private static final Logger logger = LoggerFactory.getLogger(DeletedDataDumpExecutorServiceUT.class);
 
     @InjectMocks
     DeletedDataDumpExecutorService mockedDeletedDataDumpExecutorService;

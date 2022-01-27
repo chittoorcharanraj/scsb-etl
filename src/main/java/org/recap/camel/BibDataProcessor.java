@@ -1,5 +1,6 @@
 package org.recap.camel;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.recap.ScsbCommonConstants;
@@ -13,8 +14,6 @@ import org.recap.repository.BibliographicDetailsRepository;
 import org.recap.repository.ItemDetailsRepository;
 import org.recap.service.BibliographicRepositoryDAO;
 import org.recap.util.DBReportUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,11 +27,11 @@ import java.util.List;
 /**
  * Created by pvsubrah on 6/26/16.
  */
-
+@Slf4j
 @Component
 public class BibDataProcessor {
 
-    private static final Logger logger = LoggerFactory.getLogger(BibDataProcessor.class);
+
 
     private String xmlFileName;
 
@@ -72,11 +71,11 @@ public class BibDataProcessor {
                 try {
                     processRecordWhenDuplicateBarcodeException(bibliographicEntityList, pe);
                 } catch(Exception e) {
-                    logger.info("exception while eliminating..");
-                    logger.error(ScsbConstants.ERROR,e);
+                    log.info("exception while eliminating..");
+                    log.error(ScsbConstants.ERROR,e);
                 }
             } catch (Exception e) {
-                logger.error(ScsbConstants.ERROR,e);
+                log.error(ScsbConstants.ERROR,e);
                 etlDataLoadDAOService.clearSession();
                 dbReportUtil.setCollectionGroupMap(etlExchange.getCollectionGroupMap());
                 dbReportUtil.setInstitutionEntitiesMap(etlExchange.getInstitutionEntityMap());
@@ -84,7 +83,7 @@ public class BibDataProcessor {
                     try {
                         etlDataLoadDAOService.saveBibliographicEntity(bibliographicEntity);
                     } catch (Exception ex) {
-                        logger.error(ScsbConstants.ERROR,ex);
+                        log.error(ScsbConstants.ERROR,ex);
                         etlDataLoadDAOService.clearSession();
                         reportEntity = processBibHoldingsItems(dbReportUtil, bibliographicEntity);
                     }
@@ -97,7 +96,7 @@ public class BibDataProcessor {
     }
 
     private void processRecordWhenDuplicateBarcodeException(List<BibliographicEntity> bibliographicEntityList, PersistenceException pe) {
-        logger.error("persistence exe-->",pe);
+        log.error("persistence exe-->",pe);
         etlDataLoadDAOService.clearSession();
         for(BibliographicEntity bibliographicEntity:bibliographicEntityList){
             List<ReportEntity> reportEntityList = processDuplicatedRecord(bibliographicEntity);
@@ -116,15 +115,15 @@ public class BibDataProcessor {
             List<ItemEntity> itemEntityListWithNoDuplicatedBarcode = new ArrayList<>();
             for (ItemEntity itemEntity:holdingsEntity.getItemEntities()){
                 List<ItemEntity> existingItemEntityList = itemDetailsRepository.findByBarcode(itemEntity.getBarcode());
-                logger.info("Processing own bib {}, own hold id {}, own item id {}",bibliographicEntity.getOwningInstitutionBibId(),
+                log.info("Processing own bib {}, own hold id {}, own item id {}",bibliographicEntity.getOwningInstitutionBibId(),
                         holdingsEntity.getOwningInstitutionHoldingsId(),itemEntity.getOwningInstitutionItemId());
                 if(isDuplicateItem(existingItemEntityList,itemEntity))   {//Add to report if duplicate barcode found
-                    logger.info("existing barcode--->{}",existingItemEntityList.get(0).getBarcode());
+                    log.info("existing barcode--->{}",existingItemEntityList.get(0).getBarcode());
                     ItemEntity existingItemEntity = existingItemEntityList.get(0);
                     ReportEntity reportEntity = setDuplicateBarcodeReportInfo(itemEntity.getBarcode(),existingItemEntity,dbReportUtil,bibliographicEntity, holdingsEntity, itemEntity);
                     reportEntityList.add(reportEntity);
                 } else {
-                    logger.info("Duplicate not found for the barcode-->{}",itemEntity.getBarcode());
+                    log.info("Duplicate not found for the barcode-->{}",itemEntity.getBarcode());
                     ItemEntity existingItemEntity = getExistingBarcodeItemWithinSameBib(nonDuplicateItemsForABib,itemEntity);//If the item is not available in db but barcode is duplicated in the same bib,so this is to find the barcode already added to the bib to save, if the barcode is already there the current item which is having same barcode will be eliminated by below conditions
                     if (existingItemEntity == null) {
                         itemEntityListWithNoDuplicatedBarcode.add(itemEntity);
@@ -143,7 +142,7 @@ public class BibDataProcessor {
         }
         if (!updatedHoldingEntityList.isEmpty()) {
             bibliographicEntity.setHoldingsEntities(updatedHoldingEntityList);
-            logger.info("saving bib id--->{} item ids - barcodes-->{}",bibliographicEntity.getOwningInstitutionBibId(),getBarcodeList(bibliographicEntity.getItemEntities()));
+            log.info("saving bib id--->{} item ids - barcodes-->{}",bibliographicEntity.getOwningInstitutionBibId(),getBarcodeList(bibliographicEntity.getItemEntities()));
             etlDataLoadDAOService.saveBibliographicEntity(bibliographicEntity);
         }
         return reportEntityList;
@@ -230,13 +229,13 @@ public class BibDataProcessor {
                             ItemEntity savedItemEntity = bibliographicRepositoryDAO.saveOrUpdateItemEntity(itemEntity);
                             savedItemEntities.add(savedItemEntity);
                         } catch (Exception itemEx) {
-                            logger.error(ScsbConstants.ERROR,itemEx);
+                            log.error(ScsbConstants.ERROR,itemEx);
                             etlDataLoadDAOService.clearSession();
                             setItemFailureReportInfo(dbReportUtil, bibliographicEntity, reportEntity, holdingsEntity, itemEntity, itemEx,null);
                         }
                     }
                 } catch (Exception holdingsEx) {
-                    logger.error(ScsbConstants.ERROR,holdingsEx);
+                    log.error(ScsbConstants.ERROR,holdingsEx);
                     etlDataLoadDAOService.clearSession();
                     List<ReportDataEntity> reportDataEntities = dbReportUtil.generateBibHoldingsFailureReportEntity(bibliographicEntity, holdingsEntity);
                     reportEntity.setReportDataEntities(reportDataEntities);
@@ -254,7 +253,7 @@ public class BibDataProcessor {
             bibliographicEntity.setItemEntities(savedItemEntities);
             etlDataLoadDAOService.saveBibliographicEntity(bibliographicEntity);
         } catch (Exception bibEx) {
-            logger.error(ScsbConstants.ERROR,bibEx);
+            log.error(ScsbConstants.ERROR,bibEx);
             etlDataLoadDAOService.clearSession();
             List<ReportDataEntity> reportDataEntities = dbReportUtil.generateBibFailureReportEntity(bibliographicEntity);
 
