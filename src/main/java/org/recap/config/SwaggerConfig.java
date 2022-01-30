@@ -29,8 +29,8 @@ import java.util.stream.Collectors;
  * Created by hemalathas on 22/8/16.
  */
 @Configuration
-@EnableWebMvc
 @EnableSwagger2
+@EnableWebMvc
 public class SwaggerConfig {
 
     @Bean

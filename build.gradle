@@ -105,9 +105,6 @@ dependencies {
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
 
     implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.26'
-//    implementation('io.springfox:springfox-swagger-ui:3.0.0')
-//    implementation('io.springfox:springfox-swagger2:3.0.0')
-    implementation group: 'io.springfox', name: 'springfox-boot-starter', version: '3.0.0'
     implementation('org.codehaus.jettison:jettison:1.4.1')
 
     implementation 'io.micrometer:micrometer-registry-prometheus'
@@ -125,6 +122,8 @@ dependencies {
     testImplementation('org.springframework.restdocs:spring-restdocs-mockmvc')
     testImplementation group: 'org.powermock', name: 'powermock-api-mockito2', version: '2.0.9'
     testImplementation group: 'org.powermock', name: 'powermock-module-junit4', version: '2.0.9'
+    implementation('io.springfox:springfox-swagger-ui:2.9.2')
+    implementation('io.springfox:springfox-boot-starter:3.0.0')
 
 }
 
