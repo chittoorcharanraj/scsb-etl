@@ -13,7 +13,6 @@ import org.recap.ScsbConstants;
 import org.recap.model.ILSConfigProperties;
 import org.recap.model.export.DataDumpRequest;
 import org.recap.repository.ImsLocationDetailsRepository;
-import org.recap.repository.InstitutionDetailsRepository;
 import org.recap.service.DataExportValidateService;
 import org.recap.util.CommonUtil;
 import org.recap.util.PropertyUtil;
@@ -21,9 +20,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class DataExportValidateServiceUT extends BaseTestCaseUT {
 

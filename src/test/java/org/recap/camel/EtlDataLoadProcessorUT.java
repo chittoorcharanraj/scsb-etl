@@ -1,28 +1,19 @@
 package org.recap.camel;
 
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.ServiceStatus;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 import org.recap.BaseTestCaseUT;
-import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.XmlRecordEntity;
 import org.recap.repository.BibliographicDetailsRepository;
 import org.recap.repository.HoldingsDetailsRepository;
 import org.recap.repository.ItemDetailsRepository;
 import org.recap.repository.XmlRecordRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.File;
 import java.net.URL;
@@ -37,10 +28,7 @@ import static org.junit.Assert.assertNotNull;
  * Created by angelind on 27/7/16.
  */
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(ServiceStatus.class)
-@PowerMockRunnerDelegate(SpringJUnit4ClassRunner.class)
-public class EtlDataLoadProcessorUT extends BaseTestCaseUT {
+public class EtlDataLoadProcessorUT extends  BaseTestCaseUT {
 
     @Mock
     XmlRecordRepository xmlRecordRepository;
@@ -92,7 +80,7 @@ public class EtlDataLoadProcessorUT extends BaseTestCaseUT {
         etlDataLoadProcessor.setProducer(producer);
         etlDataLoadProcessor.setInstitutionName("NYPL");
         assertNotNull(etlDataLoadProcessor.getXmlRecordRepository());
-        assertEquals(etlDataLoadProcessor.getBatchSize(), new Integer(10));
+        assertEquals(etlDataLoadProcessor.getBatchSize(), Integer.valueOf(10));
         assertEquals(etlDataLoadProcessor.getRecordProcessor(), recordProcessor);
         assertEquals(etlDataLoadProcessor.getFileName(), xmlFileName);
         etlDataLoadProcessor.startLoadProcess();
@@ -131,7 +119,7 @@ public class EtlDataLoadProcessorUT extends BaseTestCaseUT {
         etlDataLoadProcessor.setProducer(producer);
         etlDataLoadProcessor.setInstitutionName("NYPL");
         assertNotNull(etlDataLoadProcessor.getXmlRecordRepository());
-        assertEquals(etlDataLoadProcessor.getBatchSize(), new Integer(10));
+        assertEquals(etlDataLoadProcessor.getBatchSize(), Integer.valueOf(10));
         assertEquals(etlDataLoadProcessor.getRecordProcessor(), recordProcessor);
         assertEquals(etlDataLoadProcessor.getFileName(), xmlFileName);
         etlDataLoadProcessor.startLoadProcess();

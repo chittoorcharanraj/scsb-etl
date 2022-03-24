@@ -12,8 +12,6 @@ import org.recap.model.export.S3RecentDataExportInfoList;
 import org.recap.service.RecentDataExportsInfoService;
 import org.recap.util.CommonUtil;
 import org.recap.util.PropertyUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;

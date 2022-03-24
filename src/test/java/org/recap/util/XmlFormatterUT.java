@@ -6,7 +6,9 @@ import org.recap.BaseTestCaseUT;
 
 import java.io.File;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 /**
  * Created by peris on 11/8/16.

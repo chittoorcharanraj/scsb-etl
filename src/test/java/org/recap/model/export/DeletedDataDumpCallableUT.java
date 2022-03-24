@@ -3,18 +3,14 @@ package org.recap.model.export;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.recap.BaseTestCase;
 import org.recap.BaseTestCaseUT;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.HoldingsEntity;
 import org.recap.model.jpa.ItemEntity;
 import org.recap.repository.BibliographicDetailsRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -22,7 +18,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 /**

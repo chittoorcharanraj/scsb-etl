@@ -18,8 +18,6 @@ import org.recap.service.DataExportHelperService;
 import org.recap.service.DataExportValidateService;
 import org.recap.service.preprocessor.DataDumpExportService;
 import org.recap.util.datadump.DataDumpUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.RestTemplate;
 

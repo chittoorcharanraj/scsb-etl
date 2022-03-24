@@ -10,8 +10,6 @@ import org.recap.ScsbConstants;
 import org.recap.model.export.DataDumpRequest;
 import org.recap.model.search.SearchRecordsRequest;
 import org.recap.spring.SwaggerAPIProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.util.ReflectionTestUtils;
 

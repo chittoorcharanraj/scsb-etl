@@ -13,7 +13,10 @@ import org.recap.repository.HoldingsDetailsRepository;
 import org.recap.repository.ItemDetailsRepository;
 
 import javax.persistence.EntityManager;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;

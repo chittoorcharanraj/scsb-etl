@@ -1,16 +1,21 @@
 package org.recap.camel.datadump;
 
-import org.apache.camel.*;
-import org.apache.camel.impl.*;
-import org.apache.camel.support.*;
-import org.junit.*;
-import org.recap.*;
-import org.recap.camel.*;
-import org.recap.model.csv.*;
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.support.DefaultExchange;
+import org.junit.Test;
+import org.recap.ScsbCommonConstants;
+import org.recap.camel.FileNameProcessorForSuccessRecord;
+import org.recap.model.csv.SCSBCSVSuccessRecord;
+import org.recap.model.csv.SuccessReportSCSBCSVRecord;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 public class FileNameProcessorForSuccessRecordUT {
 

@@ -8,8 +8,6 @@ import org.recap.BaseTestCaseUT;
 import org.recap.ScsbConstants;
 import org.recap.model.export.DataDumpRequest;
 import org.recap.model.search.SearchRecordsRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

@@ -25,8 +25,6 @@ import org.recap.repository.MatchingBibInfoDetailRepository;
 import org.recap.repositoryrw.ReportDetailRepository;
 import org.recap.util.DBReportUtil;
 import org.recap.util.XmlFormatter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.util.ReflectionTestUtils;
 

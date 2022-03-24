@@ -5,8 +5,13 @@ import org.mockito.InjectMocks;
 import org.recap.BaseTestCaseUT;
 import org.recap.model.jaxb.BibRecord;
 import org.recap.model.jaxb.JAXBHandler;
-import org.recap.model.jaxb.BibRecord;
-import org.recap.model.jaxb.marc.*;
+import org.recap.model.jaxb.marc.CollectionType;
+import org.recap.model.jaxb.marc.ControlFieldType;
+import org.recap.model.jaxb.marc.DataFieldType;
+import org.recap.model.jaxb.marc.LeaderFieldType;
+import org.recap.model.jaxb.marc.RecordType;
+import org.recap.model.jaxb.marc.RecordTypeType;
+import org.recap.model.jaxb.marc.SubfieldatafieldType;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import javax.xml.bind.JAXBContext;
@@ -19,10 +24,14 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by pvsubrah on 6/22/16.
