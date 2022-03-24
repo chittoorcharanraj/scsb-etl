@@ -20,12 +20,6 @@ public class SwaggerConfigUT extends BaseTestCaseUT {
     @InjectMocks
     SwaggerConfig swaggerConfig;
 
-    @Mock
-    ApplicationContext applicationContext;
-
-    @Mock
-    ServletContext servletContext;
-
     @Before
     public void setup() {
         ReflectionTestUtils.setField(swaggerConfig, "buildVersionNumber", "10");
@@ -33,19 +27,7 @@ public class SwaggerConfigUT extends BaseTestCaseUT {
 
     @Test
     public void documentation() {
-        Docket docket = swaggerConfig.documentation();
+        Docket docket = swaggerConfig.api();
         assertNotNull(docket);
-    }
-
-    @Test
-    public void addResourceHandlers() {
-        ResourceHandlerRegistry registry = new ResourceHandlerRegistry(applicationContext, servletContext);
-        swaggerConfig.addResourceHandlers(registry);
-    }
-
-    @Test
-    public void addInterceptors() {
-        InterceptorRegistry interceptorRegistry = new InterceptorRegistry();
-        swaggerConfig.addInterceptors(interceptorRegistry);
     }
 }

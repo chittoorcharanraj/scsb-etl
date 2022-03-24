@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -108,7 +109,7 @@ public class EtlDataLoadController {
      * @param model the model
      * @return the string
      */
-    @RequestMapping("/")
+    @RequestMapping(value = "/", method = {RequestMethod.GET, RequestMethod.POST})
     public String etlDataLoader(Model model) {
         EtlLoadRequest etlLoadRequest = new EtlLoadRequest();
         model.addAttribute("etlLoadRequest", etlLoadRequest);
