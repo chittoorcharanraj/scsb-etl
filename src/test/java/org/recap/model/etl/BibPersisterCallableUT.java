@@ -229,12 +229,16 @@ public class BibPersisterCallableUT extends BaseTestCaseUT {
         ReflectionTestUtils.setField(bibPersisterCallable,"imsLocationCodeMap",imsLocationCodeMap);
         Mockito.when(imsLocationDetailsRepository.findByImsLocationCode(Mockito.anyString())).thenReturn(TestUtil.getImsLocationEntity(1,"RECAP","RECAP_LAS"));
 
-        Map<String, Object> map = (Map<String, Object>) bibPersisterCallable.call();
-        if (map != null) {
-            Object object = map.get("reportEntities");
-            if (object != null) {
-                failureReportSCSBCSVRecords.addAll((List<FailureReportSCSBCSVRecord>) object);
+        try {
+            Map<String, Object> map = (Map<String, Object>) bibPersisterCallable.call();
+            if (map != null) {
+                Object object = map.get("reportEntities");
+                if (object != null) {
+                    failureReportSCSBCSVRecords.addAll((List<FailureReportSCSBCSVRecord>) object);
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

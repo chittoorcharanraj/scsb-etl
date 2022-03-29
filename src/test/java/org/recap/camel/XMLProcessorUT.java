@@ -13,10 +13,7 @@ import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
 import org.recap.repository.XmlRecordRepository;
 import org.recap.repositoryrw.ReportDetailRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-
 
 import java.util.HashMap;
 import java.util.Map;

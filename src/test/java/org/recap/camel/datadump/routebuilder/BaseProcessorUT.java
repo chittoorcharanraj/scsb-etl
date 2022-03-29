@@ -1,16 +1,18 @@
 package org.recap.camel.datadump.routebuilder;
 
-import org.apache.camel.*;
-import org.apache.camel.impl.*;
-import org.apache.camel.support.*;
-import org.junit.*;
-import org.recap.*;
-import org.springframework.beans.factory.annotation.*;
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.support.DefaultExchange;
+import org.junit.Test;
+import org.recap.BaseTestCase;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import java.sql.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 public class BaseProcessorUT extends BaseTestCase {
     @Autowired

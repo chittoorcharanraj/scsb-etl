@@ -4,7 +4,6 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.recap.BaseTestCaseUT;
 import org.recap.model.csv.DataDumpFailureReport;
-import org.recap.model.csv.DataDumpSuccessReport;
 import org.recap.model.jparw.ReportDataEntity;
 import org.recap.model.jparw.ReportEntity;
 

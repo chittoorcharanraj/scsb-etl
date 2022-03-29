@@ -1,20 +1,13 @@
 package org.recap.controller;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ServiceStatus;
 import org.apache.commons.compress.utils.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 import org.recap.BaseTestCaseUT;
 import org.recap.ScsbCommonConstants;
 import org.recap.camel.RecordProcessor;
@@ -28,8 +21,6 @@ import org.recap.repositoryrw.ReportDetailRepository;
 import org.recap.util.CommonUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
@@ -38,7 +29,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -46,11 +41,7 @@ import static org.junit.Assert.assertNotNull;
  * Created by chenchulakshmig on 14/7/16.
  */
 
-
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(ServiceStatus.class)
-@PowerMockRunnerDelegate(SpringJUnit4ClassRunner.class)
-public class EtlDataLoadControllerUT extends BaseTestCaseUT {
+public class EtlDataLoadControllerUT extends BaseTestCaseUT{
 
     @InjectMocks
     EtlDataLoadController etlDataLoadController;
@@ -124,24 +115,6 @@ public class EtlDataLoadControllerUT extends BaseTestCaseUT {
         assertNotNull(multipartFile);
         EtlLoadRequest etlLoadRequest = new EtlLoadRequest();
         etlDataLoadController.uploadFiles(etlLoadRequest, bindingResult, model);
-    }
-
-    @Test
-    public void testBulkIngest() throws Exception {
-        ReflectionTestUtils.setField(etlDataLoadController, "recordProcessor", recordProcessor);
-        ServiceStatus serviceStatus = PowerMockito.mock(ServiceStatus.class);
-        Mockito.when(camelContext.getStatus()).thenReturn(serviceStatus);
-        Mockito.when(serviceStatus.isStarted()).thenReturn(true);
-        uploadFiles();
-        EtlLoadRequest etlLoadRequest = new EtlLoadRequest();
-        etlLoadRequest.setFileName("SampleRecord.xml");
-        etlLoadRequest.setBatchSize(1000);
-        etlLoadRequest.setUserName(StringUtils.isBlank(etlLoadRequest.getUserName()) ? "etl" : etlLoadRequest.getUserName());
-        etlLoadRequest.setOwningInstitutionName("NYPL");
-        etlDataLoadController.bulkIngest(etlLoadRequest, bindingResult, model);
-
-        String report = etlDataLoadController.report();
-        assertNotNull(report);
     }
 
     @Test

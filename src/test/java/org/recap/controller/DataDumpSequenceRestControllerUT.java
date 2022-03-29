@@ -8,7 +8,6 @@ import org.recap.BaseTestCaseUT;
 import org.recap.ScsbConstants;
 import org.recap.TestUtil;
 import org.recap.camel.dynamicrouter.DynamicRouteBuilder;
-import org.recap.repository.InstitutionDetailsRepository;
 import org.recap.service.executor.datadump.DataDumpSchedulerExecutorService;
 import org.recap.util.CommonUtil;
 

@@ -22,7 +22,6 @@ import org.recap.model.jpa.ItemEntity;
 import org.recap.model.jpa.ItemStatusEntity;
 import org.recap.repository.BibliographicDetailsRepository;
 import org.recap.util.PropertyUtil;
-import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.io.ByteArrayInputStream;
