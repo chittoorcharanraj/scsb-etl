@@ -78,8 +78,8 @@ public class SwaggerConfig {
     @Bean
     public ApiInfo apiInfo() {
         final ApiInfoBuilder builder = new ApiInfoBuilder();
-        builder.title("Phase4-SCSB-ETL").version("2.0").license("(C) Copyright Test")
-                .description("Phase4-SCSB-ETL");
+        builder.title("scsb-etl").version("2.0").license("(C) Copyright Test")
+                .description("scsb-etl");
         return builder.build();
     }
 }
