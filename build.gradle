@@ -52,7 +52,7 @@ test {
 }
 
 jar {
-    archiveBaseName = 'phase4-scsb-etl'
+    archiveBaseName = 'scsb-etl'
     archiveVersion = '0.0.1-SNAPSHOT'
 }
 
