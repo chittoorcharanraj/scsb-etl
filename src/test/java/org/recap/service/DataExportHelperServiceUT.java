@@ -73,6 +73,7 @@ public class DataExportHelperServiceUT extends BaseTestCaseUT {
         Mockito.when(dataExportDBService.saveETLRequestToDB(any())).thenReturn(etlRequestLogEntity);
         Mockito.doNothing().when(dynamicRouteBuilder).addDataDumpExportRoutes();
         Mockito.when(dataDumpUtil.prepareRequestForExistingAwaiting()).thenReturn(dataDumpRequest);
+        Mockito.when(dataExportDBService.findByExportStatusCode(ScsbConstants.INITIATED)).thenReturn(exportStatusEntity);
         Mockito.when(dataDumpExportService.startDataDumpProcess(any())).thenReturn(ScsbConstants.EXPORT_MESSAGE);
         String result = dataExportHelperService.checkForExistingRequestAndStart(dataDumpRequest);
         assertNotNull(result);
