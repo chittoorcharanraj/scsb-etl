@@ -60,6 +60,10 @@ public abstract class AbstractDataDumpExecutorService implements DataDumpExecuto
     @Value("${" + PropertyKeyConstants.DATADUMP_SOLR_FETCH_DELAY + "}")
     private Long solrFetchDelay;
 
+    @Value("${" + PropertyKeyConstants.ETL_DATA_DUMP_FETCHTYPE_FULL + "}")
+    private String fetchTypeFull;
+
+
     /**
      * Initiates the data dump process.
      *
@@ -78,14 +82,22 @@ public abstract class AbstractDataDumpExecutorService implements DataDumpExecuto
         searchRecordsRequest.setPageSize(Integer.valueOf(dataDumpBatchSize));
         searchRecordsRequest.setImsDepositoryCodes(dataDumpRequest.getImsDepositoryCodes());
         populateSearchRequest(searchRecordsRequest, dataDumpRequest);
-
+        if(dataDumpRequest.getFetchType().equals(fetchTypeFull)) {
+            log.info("Inside  if fetchTypeFull");
+            Thread.sleep(30000);
+        }
         Map results = dataDumpSolrService.getResults(searchRecordsRequest);
         Integer totalPageCount = (Integer) results.get("totalPageCount");
         log.info("totalPageCount--->{}",totalPageCount);
         Integer totalBibsCount = Integer.valueOf((String) results.get("totalRecordsCount"));
         log.info("totalBibsCount--->{}",totalBibsCount);
         log.info("solrFetchDelay--->{}",solrFetchDelay);
-
+        if(totalBibsCount == 0 && totalPageCount == 0 && dataDumpRequest.getFetchType().equals(fetchTypeFull)) {
+            Thread.sleep(30000);
+            results = dataDumpSolrService.getResults(searchRecordsRequest);
+            log.info("totalBibsCount now --->{}",totalBibsCount);
+            log.info("solrFetchDelay now --->{}",solrFetchDelay);
+        }
         boolean isRecordsToProcess = totalBibsCount > 0;
         boolean canProcess = canProcessRecords(totalBibsCount, dataDumpRequest.getTransmissionType());
         boolean bibHasItems = bibHasItems(results);
