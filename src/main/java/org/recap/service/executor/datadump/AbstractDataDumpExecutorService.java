@@ -83,7 +83,7 @@ public abstract class AbstractDataDumpExecutorService implements DataDumpExecuto
         searchRecordsRequest.setImsDepositoryCodes(dataDumpRequest.getImsDepositoryCodes());
         populateSearchRequest(searchRecordsRequest, dataDumpRequest);
         if(dataDumpRequest.getFetchType().equals(fetchTypeFull)) {
-            log.info("Inside  if fetchTypeFull");
+            log.info("Waiting for 30 seconds for Full Export");
             Thread.sleep(30000);
         }
         Map results = dataDumpSolrService.getResults(searchRecordsRequest);
@@ -93,10 +93,11 @@ public abstract class AbstractDataDumpExecutorService implements DataDumpExecuto
         log.info("totalBibsCount--->{}",totalBibsCount);
         log.info("solrFetchDelay--->{}",solrFetchDelay);
         if(totalBibsCount == 0 && totalPageCount == 0 && dataDumpRequest.getFetchType().equals(fetchTypeFull)) {
+            log.info("Waiting for 30 seconds since totalBibsCount is zero");
             Thread.sleep(30000);
             results = dataDumpSolrService.getResults(searchRecordsRequest);
             log.info("totalBibsCount now --->{}",totalBibsCount);
-            log.info("solrFetchDelay now --->{}",solrFetchDelay);
+
         }
         boolean isRecordsToProcess = totalBibsCount > 0;
         boolean canProcess = canProcessRecords(totalBibsCount, dataDumpRequest.getTransmissionType());
