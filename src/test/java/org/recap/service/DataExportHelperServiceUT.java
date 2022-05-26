@@ -52,7 +52,7 @@ public class DataExportHelperServiceUT extends BaseTestCaseUT {
         Mockito.when(dataExportDBService.findAllStatusById(exportStatusEntity.getId())).thenReturn(Arrays.asList(etlRequestLogEntity));
         Mockito.when(dataDumpUtil.prepareRequestForAwaiting(any(),any())).thenReturn(etlRequestLogEntity);
         Mockito.when(dataExportDBService.saveETLRequestToDB(any())).thenReturn(etlRequestLogEntity);
-        String result = dataExportHelperService.checkForExistingRequestAndStart(dataDumpRequest);
+        String result = dataExportHelperService.checkForExistingRequestAndStart(dataDumpRequest,false);
         assertNotNull(result);
         assertEquals(ScsbConstants.EXPORT_MESSAGE,result);
     }
@@ -75,7 +75,7 @@ public class DataExportHelperServiceUT extends BaseTestCaseUT {
         Mockito.when(dataDumpUtil.prepareRequestForExistingAwaiting()).thenReturn(dataDumpRequest);
         Mockito.when(dataExportDBService.findByExportStatusCode(ScsbConstants.INITIATED)).thenReturn(exportStatusEntity);
         Mockito.when(dataDumpExportService.startDataDumpProcess(any())).thenReturn(ScsbConstants.EXPORT_MESSAGE);
-        String result = dataExportHelperService.checkForExistingRequestAndStart(dataDumpRequest);
+        String result = dataExportHelperService.checkForExistingRequestAndStart(dataDumpRequest,false);
         assertNotNull(result);
         assertEquals(ScsbConstants.EXPORT_MESSAGE,result);
     }
@@ -92,7 +92,7 @@ public class DataExportHelperServiceUT extends BaseTestCaseUT {
         Mockito.when(dataDumpExportService.startDataDumpProcess(any())).thenReturn(ScsbConstants.EXPORT_MESSAGE);
         Mockito.when(dataExportDBService.findByExportStatusCode(ScsbConstants.IN_PROGRESS)).thenReturn(exportStatusEntity);
         Mockito.when(dataExportDBService.findAllStatusById(exportStatusEntity.getId())).thenReturn(Arrays.asList(etlRequestLogEntity));
-        String result = dataExportHelperService.checkForExistingRequestAndStart(dataDumpRequest);
+        String result = dataExportHelperService.checkForExistingRequestAndStart(dataDumpRequest,false);
         assertNotNull(result);
         assertEquals(ScsbConstants.EXPORT_MESSAGE,result);
     }
