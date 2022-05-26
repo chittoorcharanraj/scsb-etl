@@ -51,7 +51,7 @@ public class DataExportTriggerController {
         EmailPayLoad emailPayLoad = new EmailPayLoad();
         emailPayLoad.setTo(propertyUtil.getILSConfigProperties(dataDumpRequest.getRequestingInstitutionCode()).getEmailDataDumpTo());
         emailPayLoad.setSubject("DataDump export triggered with JOB");
-        producer.sendBodyAndHeader(ScsbConstants.EMAIL_Q, "", ScsbConstants.DATADUMP_EMAILBODY_FOR);
+        producer.sendBodyAndHeader(ScsbConstants.EMAIL_Q, emailPayLoad, ScsbConstants.DATADUMP_EMAILBODY_FOR, "data dump export trigger with JOB");
     }
 
     public Boolean validateDatadumpTrigger() {

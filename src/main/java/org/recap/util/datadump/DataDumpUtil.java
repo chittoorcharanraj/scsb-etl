@@ -270,7 +270,8 @@ public class DataDumpUtil {
                 .split(",")).map(Integer::parseInt)
                 .collect(Collectors.toList());
         dataDumpRequestForAwaiting.setCollectionGroupIds(collectionGroupIds);
-        dataDumpRequestForAwaiting.setImsDepositoryCodes(Arrays.asList(etlRequestLogEntity.getImsRepositoryCodes()));
+        List<String> imsRepositoryList = List.of(etlRequestLogEntity.getImsRepositoryCodes().split(","));
+        dataDumpRequestForAwaiting.setImsDepositoryCodes(imsRepositoryList);
         dataDumpRequestForAwaiting.setRequestingInstitutionCode(etlRequestLogEntity.getRequestingInstCode());
         dataDumpRequestForAwaiting.setInstitutionCodes(Arrays.asList(etlRequestLogEntity.getInstCodeToExport()));
         dataDumpRequestForAwaiting.setDate(etlRequestLogEntity.getProvidedDate()!=null?String.valueOf(etlRequestLogEntity.getProvidedDate()):null);
