@@ -41,7 +41,11 @@ public class DataExportTriggerController {
                         " fileFormat:" + dataDumpRequest.getOutputFileFormat() +
                         " date:" + dataDumpRequest.getDateTimeString()
                 );
-                sendEmailForDataDumpTrigger(dataDumpRequest);
+                try {
+                    sendEmailForDataDumpTrigger(dataDumpRequest);
+                } catch (Exception e) {
+                    log.info("exception occurred while sending email for data dump export job trigger");
+                }
                 dataExportHelperService.checkForExistingRequestAndStart(dataDumpRequest, true);
             }
         }

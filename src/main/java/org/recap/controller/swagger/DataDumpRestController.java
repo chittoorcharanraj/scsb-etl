@@ -84,6 +84,6 @@ public class DataDumpRestController {
     @ResponseBody
     public String exportDataDumpTrigger(){
         demoServicePropertiesExample.dataExportTrigger();
-        return "SUCCESSE";
+        return "SUCCESS";
     }
 }
