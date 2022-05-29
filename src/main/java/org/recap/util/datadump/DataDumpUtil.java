@@ -262,7 +262,6 @@ public class DataDumpUtil {
 
     private DataDumpRequest prepareDataDumpReq(ETLRequestLogEntity etlRequestLogEntity) {
         DataDumpRequest dataDumpRequestForAwaiting=new DataDumpRequest();
-        dataDumpRequestForAwaiting.setImsDepositoryCodes(Arrays.asList(etlRequestLogEntity.getImsRepositoryCodes()));
         dataDumpRequestForAwaiting.setFetchType(etlRequestLogEntity.getFetchType());
         dataDumpRequestForAwaiting.setOutputFileFormat(etlRequestLogEntity.getOutputFormat());
         dataDumpRequestForAwaiting.setTransmissionType(etlRequestLogEntity.getTransmissionType());
@@ -273,7 +272,8 @@ public class DataDumpUtil {
         List<String> imsRepositoryList = List.of(etlRequestLogEntity.getImsRepositoryCodes().split(","));
         dataDumpRequestForAwaiting.setImsDepositoryCodes(imsRepositoryList);
         dataDumpRequestForAwaiting.setRequestingInstitutionCode(etlRequestLogEntity.getRequestingInstCode());
-        dataDumpRequestForAwaiting.setInstitutionCodes(Arrays.asList(etlRequestLogEntity.getInstCodeToExport()));
+        List<String> institutionList = List.of(etlRequestLogEntity.getInstCodeToExport());
+        dataDumpRequestForAwaiting.setInstitutionCodes(institutionList);
         dataDumpRequestForAwaiting.setDate(etlRequestLogEntity.getProvidedDate()!=null?String.valueOf(etlRequestLogEntity.getProvidedDate()):null);
         dataDumpRequestForAwaiting.setDateTimeString(DateUtil.getDateTimeString());
         dataDumpRequestForAwaiting.setRequestFromSwagger(true);

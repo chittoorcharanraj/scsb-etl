@@ -54,7 +54,14 @@ public class DataExportTriggerController {
     private void sendEmailForDataDumpTrigger(DataDumpRequest dataDumpRequest) {
         EmailPayLoad emailPayLoad = new EmailPayLoad();
         emailPayLoad.setTo(propertyUtil.getILSConfigProperties(dataDumpRequest.getRequestingInstitutionCode()).getEmailDataDumpTo());
-        emailPayLoad.setSubject("DataDump export triggered with JOB");
+        emailPayLoad.setFetchType(dataDumpRequest.getFetchType());
+        emailPayLoad.setRequestingInstitution(dataDumpRequest.getRequestingInstitutionCode());
+        emailPayLoad.setInstitutionsRequested(dataDumpRequest.getInstitutionCodes());
+        emailPayLoad.setCollectionGroupCodes(dataDumpUtil.getCollectionGroupCodes(dataDumpRequest.getCollectionGroupIds()));
+        emailPayLoad.setTransmissionType(dataDumpRequest.getTransmissionType());
+        emailPayLoad.setOutputFileFormat(dataDumpRequest.getOutputFileFormat());
+        emailPayLoad.setImsDepositoryCodes(dataDumpRequest.getImsDepositoryCodes());
+        emailPayLoad.setSubject("Data Dump Export Triggered with JOB");
         producer.sendBodyAndHeader(ScsbConstants.EMAIL_Q, emailPayLoad, ScsbConstants.DATADUMP_EMAILBODY_FOR, ScsbConstants.DATADUMP_EXPORT_NOTIFICATION);
     }
 
