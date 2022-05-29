@@ -55,7 +55,7 @@ public class DataExportTriggerController {
         EmailPayLoad emailPayLoad = new EmailPayLoad();
         emailPayLoad.setTo(propertyUtil.getILSConfigProperties(dataDumpRequest.getRequestingInstitutionCode()).getEmailDataDumpTo());
         emailPayLoad.setSubject("DataDump export triggered with JOB");
-        producer.sendBodyAndHeader(ScsbConstants.EMAIL_Q, emailPayLoad, ScsbConstants.DATADUMP_EMAILBODY_FOR, "data dump export trigger with JOB");
+        producer.sendBodyAndHeader(ScsbConstants.EMAIL_Q, emailPayLoad, ScsbConstants.DATADUMP_EMAILBODY_FOR, ScsbConstants.DATADUMP_EXPORT_NOTIFICATION);
     }
 
     public Boolean validateDatadumpTrigger() {
@@ -75,7 +75,7 @@ public class DataExportTriggerController {
             log.info("validation is successfull, data dump export is triggered.");
             return true;
         } else {
-            log.info("validation is not valid, data dump in progress. data dump export not triggered");
+            log.info("data dump in progress or no data dump export requests are present.so,data dump export not triggered");
             return false;
         }
     }
