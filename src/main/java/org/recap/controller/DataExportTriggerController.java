@@ -76,7 +76,7 @@ public class DataExportTriggerController {
             log.info("validation is successfull, data dump export is triggered.");
             return true;
         } else {
-            log.info("data dump in progress or no data dump export requests are present.so,data dump export not triggered");
+            log.info("data dump in progress or no data dump export requests are in waiting state. so,data dump export not triggered");
             return false;
         }
     }
