@@ -6,6 +6,7 @@ import org.recap.ScsbConstants;
 import org.recap.camel.EmailPayLoad;
 import org.recap.model.export.DataDumpRequest;
 import org.recap.service.DataExportHelperService;
+import org.recap.service.email.datadump.DataDumpEmailService;
 import org.recap.util.PropertyUtil;
 import org.recap.util.datadump.DataDumpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,9 @@ public class DataExportTriggerController {
 
     @Autowired
     private ProducerTemplate producer;
+
+    @Autowired
+    private DataDumpEmailService dataDumpEmailService;
 
     public void dataExportTrigger() {
         if (isActive) {
@@ -52,17 +56,7 @@ public class DataExportTriggerController {
     }
 
     private void sendEmailForDataDumpTrigger(DataDumpRequest dataDumpRequest) {
-        EmailPayLoad emailPayLoad = new EmailPayLoad();
-        emailPayLoad.setTo(propertyUtil.getILSConfigProperties(dataDumpRequest.getRequestingInstitutionCode()).getEmailDataDumpTo());
-        emailPayLoad.setFetchType(dataDumpRequest.getFetchType());
-        emailPayLoad.setRequestingInstitution(dataDumpRequest.getRequestingInstitutionCode());
-        emailPayLoad.setInstitutionsRequested(dataDumpRequest.getInstitutionCodes());
-        emailPayLoad.setCollectionGroupCodes(dataDumpUtil.getCollectionGroupCodes(dataDumpRequest.getCollectionGroupIds()));
-        emailPayLoad.setTransmissionType(dataDumpRequest.getTransmissionType());
-        emailPayLoad.setOutputFileFormat(dataDumpRequest.getOutputFileFormat());
-        emailPayLoad.setImsDepositoryCodes(dataDumpRequest.getImsDepositoryCodes());
-        emailPayLoad.setSubject("Data Dump Export Triggered with JOB");
-        producer.sendBodyAndHeader(ScsbConstants.EMAIL_Q, emailPayLoad, ScsbConstants.DATADUMP_EMAILBODY_FOR, ScsbConstants.DATADUMP_EXPORT_NOTIFICATION);
+        dataDumpEmailService.sendEmailNotificationForExport(dataDumpRequest,true);
     }
 
     public Boolean validateDatadumpTrigger() {
