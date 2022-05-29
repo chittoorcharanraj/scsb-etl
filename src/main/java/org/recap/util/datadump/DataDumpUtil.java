@@ -272,7 +272,7 @@ public class DataDumpUtil {
         List<String> imsRepositoryList = List.of(etlRequestLogEntity.getImsRepositoryCodes().split(","));
         dataDumpRequestForAwaiting.setImsDepositoryCodes(imsRepositoryList);
         dataDumpRequestForAwaiting.setRequestingInstitutionCode(etlRequestLogEntity.getRequestingInstCode());
-        List<String> institutionList = List.of(etlRequestLogEntity.getInstCodeToExport());
+        List<String> institutionList = List.of(etlRequestLogEntity.getInstCodeToExport().split(","));
         dataDumpRequestForAwaiting.setInstitutionCodes(institutionList);
         dataDumpRequestForAwaiting.setDate(etlRequestLogEntity.getProvidedDate()!=null?String.valueOf(etlRequestLogEntity.getProvidedDate()):null);
         dataDumpRequestForAwaiting.setDateTimeString(DateUtil.getDateTimeString());
