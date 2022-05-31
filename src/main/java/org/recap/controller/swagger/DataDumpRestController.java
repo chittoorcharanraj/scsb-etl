@@ -84,6 +84,6 @@ public class DataDumpRestController {
     @ResponseBody
     public String exportDataDumpTrigger(){
         demoServicePropertiesExample.dataExportTrigger();
-        return "SUCCESS";
+        return "It will validate and if any request is waiting will start process and will send an email notification upon completion";
     }
 }

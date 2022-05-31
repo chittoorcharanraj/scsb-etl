@@ -6,6 +6,7 @@ import org.recap.ScsbConstants;
 import org.recap.camel.EmailPayLoad;
 import org.recap.model.export.DataDumpRequest;
 import org.recap.service.DataExportHelperService;
+import org.recap.service.email.datadump.DataDumpEmailService;
 import org.recap.util.PropertyUtil;
 import org.recap.util.datadump.DataDumpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,9 @@ public class DataExportTriggerController {
 
     @Autowired
     private ProducerTemplate producer;
+
+    @Autowired
+    private DataDumpEmailService dataDumpEmailService;
 
     public void dataExportTrigger() {
         if (isActive) {
@@ -52,10 +56,7 @@ public class DataExportTriggerController {
     }
 
     private void sendEmailForDataDumpTrigger(DataDumpRequest dataDumpRequest) {
-        EmailPayLoad emailPayLoad = new EmailPayLoad();
-        emailPayLoad.setTo(propertyUtil.getILSConfigProperties(dataDumpRequest.getRequestingInstitutionCode()).getEmailDataDumpTo());
-        emailPayLoad.setSubject("DataDump export triggered with JOB");
-        producer.sendBodyAndHeader(ScsbConstants.EMAIL_Q, emailPayLoad, ScsbConstants.DATADUMP_EMAILBODY_FOR, "data dump export trigger with JOB");
+        dataDumpEmailService.sendEmailNotificationForExport(dataDumpRequest,true);
     }
 
     public Boolean validateDatadumpTrigger() {
@@ -75,7 +76,7 @@ public class DataExportTriggerController {
             log.info("validation is successfull, data dump export is triggered.");
             return true;
         } else {
-            log.info("validation is not valid, data dump in progress. data dump export not triggered");
+            log.info("data dump in progress or no data dump export requests are in waiting state. so,data dump export not triggered");
             return false;
         }
     }
