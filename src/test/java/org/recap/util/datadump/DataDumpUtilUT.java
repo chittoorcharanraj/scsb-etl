@@ -292,6 +292,8 @@ public class DataDumpUtilUT extends BaseTestCaseUT {
         collectionGroupEntityList.add(getCollectionGroupEntity(ScsbConstants.COLLECTION_GROUP_SHARED, ScsbConstants.DATADUMP_CGD_SHARED));
         collectionGroupEntityList.add(getCollectionGroupEntity(ScsbConstants.COLLECTION_GROUP_OPEN, ScsbConstants.DATADUMP_CGD_OPEN));
         collectionGroupEntityList.add(getCollectionGroupEntity(ScsbConstants.COLLECTION_GROUP_PRIVATE, ScsbConstants.DATADUMP_CGD_PRIVATE));
+        collectionGroupEntityList.add(getCollectionGroupEntity(ScsbConstants.COLLECTION_GROUP_COMMITTED, ScsbConstants.DATADUMP_CGD_COMMITTED));
+        collectionGroupEntityList.add(getCollectionGroupEntity(ScsbConstants.COLLECTION_GROUP_UNCOMMITTABLE, ScsbConstants.DATADUMP_CGD_UNCOMMITTABLE));
         return collectionGroupEntityList;
     }
 
