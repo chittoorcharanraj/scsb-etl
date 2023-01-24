@@ -274,5 +274,7 @@ public class ScsbConstants {
     public static final String GATEWAY_VALIDATION_LOG_MESSAGE = "gateway requests log id's are {} updated with validation status";
     public static final String GATEWAY_VALIDATION_FAILURE = "FAILURE";
     public static final String GATEWAY_VALIDATION_SUCCESS = "SUCCESS";
+    public static final String GATEWAY_EXCEPTION_UPDATE = "exception occurred while update requests log id with validation message is :: {}";
+    public static final String RESPONSE_LOG = "Resonse Message is {}";
 
 }

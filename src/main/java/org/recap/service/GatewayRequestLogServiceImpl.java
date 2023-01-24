@@ -65,14 +65,14 @@ public class GatewayRequestLogServiceImpl implements GatewayRequestLogService {
             itemRequestInformationRepository.updateAllByIdIn(ScsbConstants.GATEWAY_VALIDATION_FAILURE,failureIdsSet);
             itemRequestInformationRepository.updateAllByIdIn(ScsbConstants.GATEWAY_VALIDATION_SUCCESS,successIdsSet);
         } catch (Exception e) {
-            log.info("exception occurred while update requests log id with validation message is :: {}",e.getMessage());
+            log.info(ScsbConstants.GATEWAY_EXCEPTION_UPDATE,e.getMessage());
         }
 
     }
 
     private Boolean checkRequestFailedwithValidationExcpetion(String responseMessage) {
         List<String> validataionExceptionsList = List.of(validationExceptions.split("\\|"));
-        log.info("Resonse Message is {}",responseMessage);
+        log.info(ScsbConstants.RESPONSE_LOG, responseMessage);
         return validataionExceptionsList.stream().anyMatch(a -> a.contains(responseMessage));
     }
 }
