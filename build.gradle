@@ -1,7 +1,7 @@
 buildscript {
     ext {
-        springBootVersion = '2.7.1'
-        set('springCloudVersion', "2021.0.3")
+        springBootVersion = '2.7.8'
+        set('springCloudVersion', "2021.0.5")
     }
     repositories {
         mavenCentral()
@@ -24,7 +24,7 @@ buildscript {
 
 plugins {
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-    id 'org.springframework.boot' version '2.7.1'
+    id 'org.springframework.boot' version '2.7.8'
     id "org.sonarqube" version "3.4.0.2513"
 }
 
@@ -65,28 +65,28 @@ repositories {
 
 
 dependencies {
-    implementation fileTree(dir: '/data/commonjar', include: '*2.3.jar')
-    implementation('org.apache.camel.springboot:camel-spring-boot-starter:3.18.0')
-    implementation('org.apache.camel.springboot:camel-spring-boot-dependencies:3.18.0')
-    implementation('org.apache.camel:camel-activemq:3.18.0')
-    implementation('org.apache.camel:camel-ftp:3.18.0')
-    implementation('org.apache.camel:camel-csv:3.18.0')
-    implementation('org.apache.camel:camel-bindy:3.18.0')
-    implementation('org.apache.camel:camel-mail:3.18.0')
-    implementation('org.apache.camel:camel-stream:3.18.0')
-    implementation('org.apache.camel:camel-jaxb:3.18.0')
-    implementation('org.apache.camel:camel-zipfile:3.18.0')
-    implementation('org.apache.camel:camel-jms:3.18.0')
+    implementation fileTree(dir: '/data/commonjar', include: '*2.4.jar')
+    implementation('org.apache.camel.springboot:camel-spring-boot-starter:3.20.2')
+    implementation('org.apache.camel.springboot:camel-spring-boot-dependencies:3.20.2')
+    implementation('org.apache.camel:camel-activemq:3.20.2')
+    implementation('org.apache.camel:camel-ftp:3.20.2')
+    implementation('org.apache.camel:camel-csv:3.20.2')
+    implementation('org.apache.camel:camel-bindy:3.20.2')
+    implementation('org.apache.camel:camel-mail:3.20.2')
+    implementation('org.apache.camel:camel-stream:3.20.2')
+    implementation('org.apache.camel:camel-jaxb:3.20.2')
+    implementation('org.apache.camel:camel-zipfile:3.20.2')
+    implementation('org.apache.camel:camel-jms:3.20.2')
     implementation('org.apache.camel.springboot:camel-aws-s3-starter:3.8.0')
     implementation('org.apache.camel:camel-aws-s3:3.8.0')
 
     implementation('org.apache.commons:commons-csv:1.9.0')
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
 
-    implementation('org.apache.activemq:activemq-camel:5.16.5')
-    implementation('org.apache.activemq:activemq-pool:5.17.1')
-    implementation('org.apache.activemq:activemq-broker:5.17.1')
-    implementation('org.apache.activemq:activemq-client:5.17.1')
+    implementation('org.apache.activemq:activemq-camel:5.16.6')
+    implementation('org.apache.activemq:activemq-pool:5.17.4')
+    implementation('org.apache.activemq:activemq-broker:5.17.4')
+    implementation('org.apache.activemq:activemq-client:5.17.4')
 
     implementation('org.springframework.boot:spring-boot-starter-data-jpa')
     implementation('org.springframework.boot:spring-boot-starter-thymeleaf')
