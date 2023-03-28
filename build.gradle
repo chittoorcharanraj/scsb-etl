@@ -49,6 +49,8 @@ sonarqube {
 //added to accept systemproperties while executing gradlew test cmd
 test {
     systemProperties = System.properties
+    jvmArgs "--add-opens", "java.base/java.lang=ALL-UNNAMED"
+    jvmArgs "--add-opens", "java.base/java.util=ALL-UNNAMED"
 }
 
 jar {
