@@ -284,6 +284,8 @@ public class DataDumpUtil {
         dataDumpRequestForAwaiting.setEtlRequestId(etlRequestLogEntity.getId());
         dataDumpRequestForAwaiting.setToEmailAddress(etlRequestLogEntity.getEmailIds());
         dataDumpRequestForAwaiting.setUserName(etlRequestLogEntity.getUserName());
+        dataDumpRequestForAwaiting.setRequestId(new SimpleDateFormat(ScsbCommonConstants.DATE_FORMAT_YYYYMMDDHHMM).format(new Date())+
+                "-"+dataDumpRequestForAwaiting.getInstitutionCodes()+"-"+dataDumpRequestForAwaiting.getRequestingInstitutionCode()+"-"+dataDumpRequestForAwaiting.getFetchType());
         return dataDumpRequestForAwaiting;
     }
 
