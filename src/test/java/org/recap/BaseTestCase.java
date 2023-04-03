@@ -20,8 +20,8 @@ import static org.junit.Assert.assertNotNull;
 @Rollback()
 public class BaseTestCase {
 
-    @Autowired
-    public CamelContext camelContext;
+//    @Autowired
+//    public CamelContext camelContext;
 
     @Test
     public void contextLoads() {
