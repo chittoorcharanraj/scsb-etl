@@ -57,10 +57,10 @@ public class GatewayRequestLogController {
         Executor executor = Executors.newSingleThreadExecutor();
         executor.execute(() -> gatewayRequestLogServiceImpl.updateGatewayRequestLogRequests(date));
 
-        Optional<List<ItemRequestReceivedInformationEntity>> entityList = null;
+      //  Optional<List<ItemRequestReceivedInformationEntity>> entityList = null;
         try {
-            entityList = itemRequestInformationRepository.findAllByDateAndStatus(date, ScsbConstants.FAILED);
-            count = entityList != null ? entityList.isPresent() ? entityList.get().size() : 0 : 0;
+            Optional<List<ItemRequestReceivedInformationEntity>> entityList = itemRequestInformationRepository.findAllByDateAndStatus(date, ScsbConstants.FAILED);
+            count = entityList.map(List::size).orElse(0);
             if(count > 0)
                 sendEmailNotification(entityList.get());
         } catch (Exception e) {

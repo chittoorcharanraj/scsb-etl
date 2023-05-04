@@ -35,10 +35,10 @@ public class GatewayRequestLogServiceImpl implements GatewayRequestLogService {
     public void updateGatewayRequestLogRequests(Date date) {
         Integer count = 0;
 
-        Optional<List<ItemRequestReceivedInformationEntity>> entityList = null;
+      //  Optional<List<ItemRequestReceivedInformationEntity>> entityList = null;
         try {
-            entityList = itemRequestInformationRepository.findAllByDateAndStatus(date, ScsbConstants.SUCCESS);
-            count = entityList != null ? entityList.isPresent() ? entityList.get().size() : 0 : 0;
+            Optional<List<ItemRequestReceivedInformationEntity>> entityList = itemRequestInformationRepository.findAllByDateAndStatus(date, ScsbConstants.SUCCESS);
+            count = entityList.map(List::size).orElse(0);
             if(count > 0)
                 updateRecentGatewayRequests(entityList.get());
         } catch (Exception e) {
