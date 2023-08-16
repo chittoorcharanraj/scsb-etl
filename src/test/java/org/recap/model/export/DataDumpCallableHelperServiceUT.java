@@ -33,7 +33,7 @@ public class DataDumpCallableHelperServiceUT extends BaseTestCaseUT {
         dataDumpRequest.setDate(new Date().toString());
         dataDumpRequest.setCollectionGroupIds(Arrays.asList(1,2,3));
         dataDumpRequest.setInstitutionCodes(Arrays.asList("PUL"));
-        Mockito.when(bibliographicDetailsRepository.getDeletedRecordsForIncrementalDump(Mockito.any(),Mockito.any(),Mockito.any(),Mockito.any())).thenReturn(bibliographicEntities);
+        Mockito.when(bibliographicDetailsRepository.getDeletedRecordsForIncrementalDump(Mockito.any(),Mockito.any(),Mockito.any(),Mockito.any(),Mockito.any())).thenReturn(bibliographicEntities);
         Mockito.when(bibliographicEntities.getContent()).thenReturn(new ArrayList<>());
         List<BibliographicEntity> bibliographicEntities=dataDumpCallableHelperService.getDeletedRecords(1,1,dataDumpRequest,bibliographicDetailsRepository);
         assertNotNull(bibliographicEntities);
@@ -45,7 +45,7 @@ public class DataDumpCallableHelperServiceUT extends BaseTestCaseUT {
         dataDumpRequest.setDate(null);
         dataDumpRequest.setCollectionGroupIds(Arrays.asList(1,2,3));
         dataDumpRequest.setInstitutionCodes(Arrays.asList("PUL"));
-        Mockito.when(bibliographicDetailsRepository.getDeletedRecordsForFullDump(Mockito.any(),Mockito.any(),Mockito.any())).thenReturn(bibliographicEntities);
+        Mockito.when(bibliographicDetailsRepository.getDeletedRecordsForFullDump(Mockito.any(),Mockito.any(),Mockito.any(),Mockito.any())).thenReturn(bibliographicEntities);
         Mockito.when(bibliographicEntities.getContent()).thenReturn(new ArrayList<>());
         List<BibliographicEntity> bibliographicEntities=dataDumpCallableHelperService.getDeletedRecords(1,1,dataDumpRequest,bibliographicDetailsRepository);
         assertNotNull(bibliographicEntities);
@@ -57,7 +57,7 @@ public class DataDumpCallableHelperServiceUT extends BaseTestCaseUT {
         dataDumpRequest.setDate(null);
         dataDumpRequest.setCollectionGroupIds(Arrays.asList(1,2,3));
         dataDumpRequest.setInstitutionCodes(Arrays.asList("PUL"));
-        Mockito.when(bibliographicDetailsRepository.getRecordsForFullDump(Mockito.any(),Mockito.any(),Mockito.any())).thenReturn(bibliographicEntities);
+        Mockito.when(bibliographicDetailsRepository.getRecordsForFullDump(Mockito.any(),Mockito.any(),Mockito.any(),Mockito.any())).thenReturn(bibliographicEntities);
         Mockito.when(bibliographicEntities.getContent()).thenReturn(new ArrayList<>());
         List<BibliographicEntity> bibliographicEntities=dataDumpCallableHelperService.getFullDataDumpRecords(1,1,dataDumpRequest,bibliographicDetailsRepository);
         assertNotNull(bibliographicEntities);
@@ -69,7 +69,7 @@ public class DataDumpCallableHelperServiceUT extends BaseTestCaseUT {
         dataDumpRequest.setDate(null);
         dataDumpRequest.setCollectionGroupIds(Arrays.asList(1,2,3));
         dataDumpRequest.setInstitutionCodes(Arrays.asList("PUL"));
-        Mockito.when(bibliographicDetailsRepository.getRecordsForIncrementalDump(Mockito.any(),Mockito.any(),Mockito.any(),Mockito.any())).thenReturn(bibliographicEntities);
+        Mockito.when(bibliographicDetailsRepository.getRecordsForIncrementalDump(Mockito.any(),Mockito.any(),Mockito.any(),Mockito.any(),Mockito.any())).thenReturn(bibliographicEntities);
         Mockito.when(bibliographicEntities.getContent()).thenReturn(new ArrayList<>());
         List<BibliographicEntity> bibliographicEntities=dataDumpCallableHelperService.getIncrementalDataDumpRecords(1,1,dataDumpRequest,bibliographicDetailsRepository);
         assertNotNull(bibliographicEntities);

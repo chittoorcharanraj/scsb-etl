@@ -14,9 +14,9 @@ import org.recap.model.jaxb.marc.RecordTypeType;
 import org.recap.model.jaxb.marc.SubfieldatafieldType;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Unmarshaller;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
