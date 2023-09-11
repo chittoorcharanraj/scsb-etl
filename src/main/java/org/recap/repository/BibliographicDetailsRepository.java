@@ -87,7 +87,7 @@ public interface BibliographicDetailsRepository extends BaseRepository<Bibliogra
             "BIB.owningInstitutionBibId IN (SELECT DISTINCT BIB1.owningInstitutionBibId FROM BibliographicEntity as BIB1 INNER JOIN BIB1.institutionEntity AS INST1 " +
             "INNER JOIN BIB1.holdingsEntities AS HOLDING INNER JOIN HOLDING.itemEntities AS ITEMS WHERE ITEMS.collectionGroupId IN (?1) AND INST1.institutionCode IN (?2) " +
             "AND ITEMS.isDeleted = ?3)")
-    Long countRecordsForFullDump(Collection<Integer> cgIds, Collection<String> institutionCodes, Integer deleted);
+    Long countRecordsForFullDump(Collection<Integer> cgIds, Collection<String> institutionCodes, Boolean deleted);
 
     /**
      * Count deleted records for full dump long.
@@ -100,7 +100,7 @@ public interface BibliographicDetailsRepository extends BaseRepository<Bibliogra
             "BIB.owningInstitutionBibId IN (SELECT DISTINCT BIB1.owningInstitutionBibId FROM BibliographicEntity as BIB1 INNER JOIN BIB1.institutionEntity AS INST1 " +
             "INNER JOIN BIB1.holdingsEntities AS HOLDING INNER JOIN HOLDING.itemEntities AS ITEMS WHERE ITEMS.collectionGroupId IN (?1) AND INST1.institutionCode IN (?2) " +
             "AND ITEMS.isDeleted != ?3)")
-    Long countDeletedRecordsForFullDump(Collection<Integer> cgIds, Collection<String> institutionCodes, Integer deleted);
+    Long countDeletedRecordsForFullDump(Collection<Integer> cgIds, Collection<String> institutionCodes, Boolean deleted);
 
     /**
      * Count records for incremental dump long.
@@ -114,7 +114,7 @@ public interface BibliographicDetailsRepository extends BaseRepository<Bibliogra
             "BIB.owningInstitutionBibId IN (SELECT DISTINCT BIB1.owningInstitutionBibId FROM BibliographicEntity as BIB1 INNER JOIN BIB1.institutionEntity AS INST1 " +
             "INNER JOIN BIB1.holdingsEntities AS HOLDINGS INNER JOIN BIB1.itemEntities AS ITEMS WHERE ITEMS.collectionGroupId IN (?1) AND INST1.institutionCode IN (?2) AND (BIB1.lastUpdatedDate >= (?3) " +
             "OR HOLDINGS.lastUpdatedDate >= (?3) OR ITEMS.lastUpdatedDate >= (?3)) AND ITEMS.isDeleted = ?4)")
-    Long countRecordsForIncrementalDump(Collection<Integer> cgIds, Collection<String> institutionIds, Date lastUpdatedDate, Integer deleted);
+    Long countRecordsForIncrementalDump(Collection<Integer> cgIds, Collection<String> institutionIds, Date lastUpdatedDate, Boolean deleted);
 
     /**
      * Count deleted records for incremental long.
@@ -128,7 +128,7 @@ public interface BibliographicDetailsRepository extends BaseRepository<Bibliogra
             "BIB.owningInstitutionBibId IN (SELECT DISTINCT BIB1.owningInstitutionBibId FROM BibliographicEntity as BIB1 INNER JOIN BIB1.institutionEntity AS INST1 " +
             "INNER JOIN BIB1.holdingsEntities AS HOLDINGS INNER JOIN BIB1.itemEntities AS ITEMS WHERE ITEMS.collectionGroupId IN (?1) AND INST1.institutionCode IN (?2) AND (BIB1.lastUpdatedDate >= (?3) " +
             "OR HOLDINGS.lastUpdatedDate >= (?3) OR ITEMS.lastUpdatedDate >= (?3)) AND ITEMS.isDeleted != ?4)")
-    Long countDeletedRecordsForIncremental(Collection<Integer> cgIds, Collection<String> institutionIds, Date lastUpdatedDate, Integer deleted);
+    Long countDeletedRecordsForIncremental(Collection<Integer> cgIds, Collection<String> institutionIds, Date lastUpdatedDate, Boolean deleted);
 
     /**
      * Gets records for full dump.
@@ -154,7 +154,7 @@ public interface BibliographicDetailsRepository extends BaseRepository<Bibliogra
     @Query(value="SELECT BIB FROM BibliographicEntity as BIB INNER JOIN BIB.institutionEntity AS INST WHERE INST.institutionCode IN(?2) AND " +
             "BIB.owningInstitutionBibId IN(SELECT DISTINCT BIB1.owningInstitutionBibId FROM BibliographicEntity as BIB1 INNER JOIN BIB1.institutionEntity AS INST1 " +
             "INNER JOIN BIB1.itemEntities AS ITEMS WHERE ITEMS.collectionGroupId IN (?1) AND INST1.institutionCode IN (?2) AND ITEMS.isDeleted != ?3)")
-    Page<BibliographicEntity> getDeletedRecordsForFullDump(Pageable pageable, Collection<Integer> cgIds, Collection<String> institutionCodes, Integer deleted);
+    Page<BibliographicEntity> getDeletedRecordsForFullDump(Pageable pageable, Collection<Integer> cgIds, Collection<String> institutionCodes, Boolean deleted);
 
     /**
      * Gets records for incremental dump.
@@ -169,7 +169,7 @@ public interface BibliographicDetailsRepository extends BaseRepository<Bibliogra
             "BIB.owningInstitutionBibId IN (SELECT DISTINCT BIB1.owningInstitutionBibId FROM BibliographicEntity as BIB1 INNER JOIN BIB1.institutionEntity AS INST1 " +
             "INNER JOIN BIB1.holdingsEntities AS HOLDINGS INNER JOIN BIB1.itemEntities AS ITEMS WHERE ITEMS.collectionGroupId IN (?1) AND INST1.institutionCode IN (?2) AND (BIB1.lastUpdatedDate >= ?3 " +
             "OR HOLDINGS.lastUpdatedDate >= (?3) OR ITEMS.lastUpdatedDate >= (?3)) AND ITEMS.isDeleted = ?4)")
-    Page<BibliographicEntity> getRecordsForIncrementalDump(Pageable pageable, Collection<Integer> cgIds, Collection<String> institutionCodes, Date lastUpdatedDate, Integer deleted);
+    Page<BibliographicEntity> getRecordsForIncrementalDump(Pageable pageable, Collection<Integer> cgIds, Collection<String> institutionCodes, Date lastUpdatedDate, Boolean deleted);
 
     /**
      * Gets deleted records for incremental dump.
@@ -184,6 +184,6 @@ public interface BibliographicDetailsRepository extends BaseRepository<Bibliogra
             "BIB.owningInstitutionBibId IN (SELECT DISTINCT BIB1.owningInstitutionBibId FROM BibliographicEntity as BIB1 INNER JOIN BIB1.institutionEntity AS INST1 " +
             "INNER JOIN BIB1.holdingsEntities AS HOLDINGS INNER JOIN BIB1.itemEntities AS ITEMS WHERE ITEMS.collectionGroupId IN (?1) AND INST1.institutionCode IN (?2) AND (BIB1.lastUpdatedDate >= ?3 " +
             "OR HOLDINGS.lastUpdatedDate >= (?3) OR ITEMS.lastUpdatedDate >= (?3)) AND ITEMS.isDeleted != ?4) ")
-    Page<BibliographicEntity> getDeletedRecordsForIncrementalDump(Pageable pageable, Collection<Integer> cgIds, Collection<String> institutionCodes, Date lastUpdatedDate, Integer deleted);
+    Page<BibliographicEntity> getDeletedRecordsForIncrementalDump(Pageable pageable, Collection<Integer> cgIds, Collection<String> institutionCodes, Date lastUpdatedDate, Boolean deleted);
 
 }

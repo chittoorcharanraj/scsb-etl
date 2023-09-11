@@ -49,7 +49,7 @@ public class DataDumpCallableHelperService {
         Date inputDate = DateUtil.getDateFromString(dataDumpRequest.getDate(), ScsbCommonConstants.DATE_FORMAT_YYYYMMDDHHMM);
         Page<BibliographicEntity> bibliographicEntities;
         bibliographicEntities = bibliographicDetailsRepository.getRecordsForIncrementalDump(PageRequest.of(page, size)
-                    , dataDumpRequest.getCollectionGroupIds(), dataDumpRequest.getInstitutionCodes(), inputDate,0);
+                    , dataDumpRequest.getCollectionGroupIds(), dataDumpRequest.getInstitutionCodes(), inputDate, Boolean.FALSE);
         return bibliographicEntities.getContent();
     }
 
@@ -67,10 +67,10 @@ public class DataDumpCallableHelperService {
         Date inputDate = DateUtil.getDateFromString(dataDumpRequest.getDate(), ScsbCommonConstants.DATE_FORMAT_YYYYMMDDHHMM);
         if(dataDumpRequest.getDate()==null){
             bibliographicEntities = bibliographicDetailsRepository.getDeletedRecordsForFullDump(PageRequest.of(page, size),
-                    dataDumpRequest.getCollectionGroupIds(), dataDumpRequest.getInstitutionCodes(),0);
+                    dataDumpRequest.getCollectionGroupIds(), dataDumpRequest.getInstitutionCodes(),Boolean.FALSE);
         }else{
             bibliographicEntities = bibliographicDetailsRepository.getDeletedRecordsForIncrementalDump(PageRequest.of(page, size)
-                    , dataDumpRequest.getCollectionGroupIds(), dataDumpRequest.getInstitutionCodes(), inputDate,0);
+                    , dataDumpRequest.getCollectionGroupIds(), dataDumpRequest.getInstitutionCodes(), inputDate, Boolean.FALSE);
         }
         return bibliographicEntities.getContent();
     }
