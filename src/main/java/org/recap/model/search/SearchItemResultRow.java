@@ -1,11 +1,12 @@
 package org.recap.model.search;
 
-import io.swagger.annotations.ApiModel;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * Created by rajesh on 18-Jul-16.
  */
-@ApiModel(value="SearchItemResultRow", description="Model for Displaying Item Result")
+
 public class SearchItemResultRow extends AbstractSearchItemResultRow implements Comparable<SearchItemResultRow> {
 
     @Override
