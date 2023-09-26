@@ -21,8 +21,8 @@ import org.recap.util.DBReportUtil;
 import org.recap.util.MarcUtil;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.Unmarshaller;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;

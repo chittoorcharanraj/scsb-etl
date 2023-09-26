@@ -32,7 +32,7 @@ public class DataDumpCallableHelperService {
             , BibliographicDetailsRepository bibliographicDetailsRepository) {
         Page<BibliographicEntity> bibliographicEntities;
         bibliographicEntities = bibliographicDetailsRepository.getRecordsForFullDump(PageRequest.of(page, size)
-                    , dataDumpRequest.getCollectionGroupIds(), dataDumpRequest.getInstitutionCodes());
+                    , dataDumpRequest.getCollectionGroupIds(), dataDumpRequest.getInstitutionCodes(),0);
         return bibliographicEntities.getContent();
     }
 
@@ -49,7 +49,7 @@ public class DataDumpCallableHelperService {
         Date inputDate = DateUtil.getDateFromString(dataDumpRequest.getDate(), ScsbCommonConstants.DATE_FORMAT_YYYYMMDDHHMM);
         Page<BibliographicEntity> bibliographicEntities;
         bibliographicEntities = bibliographicDetailsRepository.getRecordsForIncrementalDump(PageRequest.of(page, size)
-                    , dataDumpRequest.getCollectionGroupIds(), dataDumpRequest.getInstitutionCodes(), inputDate);
+                    , dataDumpRequest.getCollectionGroupIds(), dataDumpRequest.getInstitutionCodes(), inputDate, Boolean.FALSE);
         return bibliographicEntities.getContent();
     }
 
@@ -66,11 +66,11 @@ public class DataDumpCallableHelperService {
         Page<BibliographicEntity> bibliographicEntities;
         Date inputDate = DateUtil.getDateFromString(dataDumpRequest.getDate(), ScsbCommonConstants.DATE_FORMAT_YYYYMMDDHHMM);
         if(dataDumpRequest.getDate()==null){
-            bibliographicEntities = bibliographicDetailsRepository.getDeletedRecordsForFullDump(PageRequest.of(page, size)
-                    , dataDumpRequest.getCollectionGroupIds(), dataDumpRequest.getInstitutionCodes());
+            bibliographicEntities = bibliographicDetailsRepository.getDeletedRecordsForFullDump(PageRequest.of(page, size),
+                    dataDumpRequest.getCollectionGroupIds(), dataDumpRequest.getInstitutionCodes(),Boolean.FALSE);
         }else{
             bibliographicEntities = bibliographicDetailsRepository.getDeletedRecordsForIncrementalDump(PageRequest.of(page, size)
-                    , dataDumpRequest.getCollectionGroupIds(), dataDumpRequest.getInstitutionCodes(), inputDate);
+                    , dataDumpRequest.getCollectionGroupIds(), dataDumpRequest.getInstitutionCodes(), inputDate, Boolean.FALSE);
         }
         return bibliographicEntities.getContent();
     }
