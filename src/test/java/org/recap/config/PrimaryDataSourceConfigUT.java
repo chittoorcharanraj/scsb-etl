@@ -8,7 +8,6 @@ import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.recap.BaseTestCaseUT;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
-import org.springframework.boot.jdbc.DataSourceInitializationMode;
 import org.springframework.core.env.Environment;
 
 import javax.sql.DataSource;
