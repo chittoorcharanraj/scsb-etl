@@ -76,7 +76,7 @@ public class GatewayRequestLogControllerUT extends BaseTestCaseUT {
         Date date = new Date();
         doNothing().when(gatewayRequestLogServiceImpl).updateGatewayRequestLogRequests(date);
         Optional<List<ItemRequestReceivedInformationEntity>> entityList = getItemRequestReceivedInformationEntityTest();
-        Mockito.when(itemRequestInformationRepository.findAllByDateAndStatus(date, eq(Mockito.any())));
+        Mockito.when(itemRequestInformationRepository.findAllByDateAndStatus(date, ScsbConstants.FAILURE));
         ResponseEntity<String> response = gatewayRequestLogController.requestsLogEmailNotification();
         assertEquals(HttpStatus.OK, response.getStatusCode());
         verify(gatewayRequestLogServiceImpl, times(0)).updateGatewayRequestLogRequests(date);
