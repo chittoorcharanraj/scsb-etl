@@ -1,19 +1,15 @@
 package org.recap.controller;
 
-import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ProducerTemplate;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.*;
 import org.recap.BaseTestCaseUT;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbConstants;
-import org.recap.camel.EmailPayLoad;
 import org.recap.model.jpa.ItemRequestReceivedInformationEntity;
 import org.recap.repository.ItemRequestInformationRepository;
 import org.recap.service.GatewayRequestLogServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +25,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.Mockito.*;
 import static org.powermock.api.mockito.PowerMockito.doNothing;
-import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
  * @author Charan Raj C created on 30/03/23
@@ -81,7 +76,7 @@ public class GatewayRequestLogControllerUT extends BaseTestCaseUT {
         Date date = new Date();
         doNothing().when(gatewayRequestLogServiceImpl).updateGatewayRequestLogRequests(date);
         Optional<List<ItemRequestReceivedInformationEntity>> entityList = getItemRequestReceivedInformationEntityTest();
-        Mockito.when(itemRequestInformationRepository.findAllByDateAndStatus(date, ScsbConstants.FAILED));
+        Mockito.when(itemRequestInformationRepository.findAllByDateAndStatus(date, ScsbConstants.FAILURE));
         ResponseEntity<String> response = gatewayRequestLogController.requestsLogEmailNotification();
         assertEquals(HttpStatus.OK, response.getStatusCode());
         verify(gatewayRequestLogServiceImpl, times(0)).updateGatewayRequestLogRequests(date);
